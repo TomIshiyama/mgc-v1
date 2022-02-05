@@ -1,0 +1,72 @@
+{
+    "React Void Fuctional Component": {
+        "prefix": "rvfce",
+        "body": [
+            "import React from \"react\";",
+            "",
+            "export type ${TM_FILENAME_BASE}Props = {};",
+            "",
+            "export const ${TM_FILENAME_BASE}: React.VFC<${TM_FILENAME_BASE}Props> = ({}) => {",
+            "\treturn (",
+            "\t\t<>",
+            "\t\t\t$1",
+            "\t\t</>",
+            "\t)",
+            "};",
+            ""
+        ],
+        "description": "React Void Fuctional Component Export "
+    },
+    "React Void Fuctional Component with Documents": {
+        "prefix": "rvfced",
+        "body": [
+            "import React from \"react\";",
+            "",
+            "export type ${TM_FILENAME_BASE}Props = {};",
+            "",
+            "/**",
+            " *",
+            " * Description:",
+            " *",
+            " * - $1",
+            " *",
+            " * info:",
+            " *",
+            " * @author $2",
+            " * @version 1.0 ",
+            " */",
+            "export const ${TM_FILENAME_BASE}: React.VFC<${TM_FILENAME_BASE}Props> = ({}) => {",
+            "\treturn (",
+            "\t\t<>",
+            "\t\t\t$3",
+            "\t\t</>",
+            "\t)",
+            "};",
+            ""
+        ],
+        "description": "React Void Fuctional Component Export with Documents"
+    },
+    "Next Page Component": {
+        "prefix": "npc",
+        "body": [
+            "import React from \"react\";",
+            "import { Head } from \"../components/common/Head\";",
+            "",
+            "const ${TM_FILENAME_BASE/(.*)$/${1:/capitalize}/} = () => {",
+            "\treturn (",
+            "\t\t<>",
+            "\t\t\t<Head title=\"\" description=\"\" keyword=\"\"/>",
+            "\t\t\t$3",
+            "\t\t</>",
+            "\t)",
+            "};",
+            "",
+            "${TM_FILENAME_BASE/(.*)$/${1:/capitalize}/}.getLayout = (page: React.ReactNode) => {",
+            "\treturn <$2Layout>{page}</$2Layout>;",
+            "};",
+            "",
+            "export default ${TM_FILENAME_BASE/(.*)$/${1:/capitalize}/};"
+        ],
+        "description": "Next Page Component "
+    }
+}
