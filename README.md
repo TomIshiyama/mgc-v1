@@ -51,6 +51,24 @@ MGC は次の機能を持っているアプリケーション：
 
 -   npm run dev でクライアント起動をする
 
+## 作業の進め方
+
+参考ページ
+[ブランチ切って更新してマージするまでの流れ](https://qiita.com/shuntaro_tamura/items/6c8bf792087fe5dc5103)
+
+-   Gira のタスク番号を確認しその`タスク番号-任意の名称`**に dev ブランチ配下**でブランチを切る
+
+```
+git checkout -b MGC-20-top-page # 例
+```
+
+-   作業をすすめプルリクエストを送る
+    [ローカルで add⇒commit、Github へ push する](https://qiita.com/samurai_runner/items/7442521bce2d6ac9330b#%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E3%81%A7addcommitgithub%E3%81%B8push%E3%81%99%E3%82%8B)
+
+-   プルリクエストで Reviewer からサムズアップのマークがおされ、指摘事項の対応
+
+-   最後に dev ブランチにマージをして push を実施する
+
 ## License
 
 -   GNU AGPLv3
