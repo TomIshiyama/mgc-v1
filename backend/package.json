@@ -1,0 +1,28 @@
+{
+    "name": "mgc",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "init:db": "cd db && bash init_db.sh",
+        "init:node": "npm i && node index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+ssh://git@bitbucket.org/Tomoki_Ishiyama/mgc.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://bitbucket.org/Tomoki_Ishiyama/mgc/issues"
+    },
+    "homepage": "https://bitbucket.org/Tomoki_Ishiyama/mgc#readme",
+    "dependencies": {
+        "express": "^4.17.1",
+        "mysql": "^2.18.1"
+    },
+    "devDependencies": {
+        "prettier": "2.3.2"
+    }
+}

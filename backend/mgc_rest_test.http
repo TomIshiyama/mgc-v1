@@ -1,0 +1,97 @@
+
+//RESTプラグインをインストールした後、下記のリクエストをテストに使えるようになります。
+
+
+###
+//GET body
+GET http://localhost:8080/users
+content-type: application/json
+
+{
+    "email": "satou@test.com",
+    "password": "123456"
+}
+###
+// POST body
+POST http://localhost:8080/users
+content-type: application/json
+
+{
+    "email": "satou@test.com",
+    "password": "123456"
+}
+
+###
+// POST url
+POST http://localhost:8080/users
+?email=satou@test.com
+&password=123456
+
+content-type: application/json
+
+###
+//POST url real
+
+POST http://localhost:8080/users
+?given_name=Tester
+&family_name=Query
+&given_kana=Tester
+&family_kana=Query
+&email=querty.tester@test.com
+&password=123456
+&division=Yokohama+Div
+&position=GD
+&icon_path=dummmypath/path/icon4
+&icon_name=dummyIcon4
+&description=just a discription
+&thema=blue
+&is_admin=0
+&is_stop=0
+&last_update=2021-07-04 10:32:20
+
+###
+//POST url real
+
+POST http://localhost:8080/users
+content-type: application/json
+
+{
+    "given_name": "Tester3",
+    "family_name": "Query3",
+    "given_kana": "Tester3",
+    "family_kana": "Query3",
+    "email": "querty.tester3@test.com",
+    "password": "123456",
+    "division": "Yokohama Div",
+    "position": "GD",
+    "icon_path": "dummmypath/path/icon5",
+    "icon_name": "dummyIcon6",
+    "description": "just a discription",
+    "thema": "blue",
+    "is_admin": "0",
+    "is_stop": "0",
+    "last_update": "2021-07-10 10:32:20"
+
+}
+
+
+###
+//POST login
+
+POST http://localhost:8080/login
+content-type: application/json
+
+{
+    "email": "querty.tester2@test.com",
+    "password": "123456"
+}
+
+###
+//POST events filter
+
+POST http://localhost:8080/events/filter
+content-type: application/json
+
+{
+    "name": "qu"
+}
