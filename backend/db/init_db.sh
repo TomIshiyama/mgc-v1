@@ -5,9 +5,12 @@
 #run the setup script to create the DB and the schema in the DB
 # TODO: ほんまはDockerコンテナから立ち上げたい
 
+mysql.server start
+
 CURRENT=$(cd $(dirname $0);pwd)
+
 FILE_PATH=`pwd -P`
 # echo $FILE_PATH
-echo $CURRENT
-echo "$CURRENT/init_mgc_db.sql"
+echo "execute file :$CURRENT/init.db.sh"
+echo "sql file :$CURRENT/init_mgc_db.sql"
 mysqldump --defaults-extra-file=my.cnf -h localhost mgc < "$CURRENT/init_mgc_db.sql"
