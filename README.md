@@ -76,3 +76,8 @@ git checkout -b MGC-20-top-page # 例
 
 -   GNU AGPLv3
     https://choosealicense.com/licenses/agpl-3.0/
+
+## TEST PUSH
+
+-   (テストプッシュのとき下記の文言を変更します。)
+-   へもへももへじ
