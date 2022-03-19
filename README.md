@@ -25,7 +25,7 @@ MGC は次の機能を持っているアプリケーション：
 
 ## Git
 
--   https://github.com/ishiyama-tomoki-work/mgc-v1
+-   https://github.com/TomIshiyama/mgc-v1.git
 
 ## PM
 
@@ -43,7 +43,7 @@ MGC は次の機能を持っているアプリケーション：
    git init
 
 4. PJ レポジトリーへプールリクエストをする：
-   git pull https://github.com/ishiyama-tomoki-work/mgc-v1.git main
+   git pull https://github.com/TomIshiyama/mgc-v1.git main
 
 5. npm install で必要なモジュール（ライブラリ）をダウンロードする
 
