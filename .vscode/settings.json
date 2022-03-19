@@ -19,5 +19,6 @@
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "typescript.suggest.paths": true, // importやrequireコールの中のパスの提案
-    "typescript.enablePromptUseWorkspaceTsdk": true
+    "typescript.enablePromptUseWorkspaceTsdk": true,
+    "eslint.workingDirectories": ["./frontend"]
 }
