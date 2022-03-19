@@ -4,8 +4,7 @@
 
 #run the setup script to create the DB and the schema in the DB
 # TODO: ほんまはDockerコンテナから立ち上げたい
-
-mysql.server start
+mysql.server stop && mysql.server start
 
 CURRENT=$(cd $(dirname $0);pwd)
 
