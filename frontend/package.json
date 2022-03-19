@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
+        "init": "npm i && npm run dev",
         "dev": "run-p dev:*",
         "dev:next": "next dev",
         "dev:path": "pathpida --watch",
