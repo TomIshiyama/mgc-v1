@@ -9,28 +9,31 @@ module.exports = {
         sourceType: "module",
         ecmaVersion: 2020,
         tsconfigRootDir: __dirname,
-        project: ["./tsconfig.eslint.json"],
+        project: ["./tsconfig.eslint.json", "./tsconfig.json"],
     },
-    plugins: ["@typescript-eslint"], // TypeScriptプラグインのルールを適用
+    plugins: ["react", "@typescript-eslint"], // TypeScriptプラグインのルールを適用
     extends: [
         "eslint:recommended", //ESLintのJavaScriptルールを適用
         "plugin:@typescript-eslint/recommended", // 型チェックが不要なルールを適用
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:import/recommended",
         "prettier",
-        "prettier/@typescript-eslint", // Prettierでカバーできるルールを無効化
     ],
     ignorePatterns: [
         // Storybook の設定フォルダを追加する
         "!.storybook",
     ],
-
-    rules: {
-        "import/order": [
-            "error",
-            {
-                group: ["builtin", "external", "internal"],
-                alphabetize: { order: "asc" },
+    settings: {
+        //  Unable to resolve path to module import/no-unresolvedを防ぐ
+        "import/resolver": {
+            node: {
+                extensions: [".js", ".jsx", ".ts", ".tsx"],
             },
-        ],
+        },
+    },
+    rules: {
+        "import/order": ["error"],
         "no-console": ["error"],
+        "no-debugger": ["error"],
     },
 };
