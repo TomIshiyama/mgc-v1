@@ -1,15 +1,21 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: ''
+title: ""
 labels: enhancement
 assignees: TomIshiyama
-
 ---
 
-### やったこと
-- 
-- 
-### やってないこと
-- 
+### 現象
+
+-
+
+### 再現手順
+
+1.
+2.
+
+### 原因・または仮設
+
+-
 -
