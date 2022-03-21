@@ -6,12 +6,12 @@ labels: enhancement
 assignees: TomIshiyama
 ---
 
-### やったこと
+### :sparkles:やったこと
 
 -
 -
 
-### やってないこと
+### :construction:やってないこと
 
 -
 -
