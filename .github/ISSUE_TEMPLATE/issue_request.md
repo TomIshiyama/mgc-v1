@@ -1,21 +1,26 @@
 ---
-name: Feature request
+name: ":bug: Bug Report"
 about: Suggest an idea for this project
-title: ""
-labels: enhancement
+title: ''
+labels: bug
 assignees: TomIshiyama
+
 ---
 
-### 現象
+### :bug: 現象
 
 -
 
-### 再現手順
+### :memo:再現手順
 
 1.
 2.
 
-### 原因・または仮設
+### :monocle_face:原因・または仮設
 
+-
+-
+
+### :white_check_mark:確認したこと（もしあれば）
 -
 -
