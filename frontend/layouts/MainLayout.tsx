@@ -176,7 +176,7 @@ export const MenuItems: React.VFC<MenuItemsProps> = ({ defs }) => {
     );
 };
 
-export const MainLayout: React.FC = ({ children }: { children: React.ReactNode }) => {
+export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const theme = useTheme();
     const [open, setOpen] = React.useState<boolean>(true);
 
