@@ -1,7 +1,9 @@
 import { Typography } from "@mui/material";
+import "modern-css-reset/dist/reset.min.css"; // CSSのリセット
 import { NextPage } from "next";
 import { AppProps } from "next/app";
 import React, { ReactElement, ReactNode } from "react";
+import "react-big-calendar/lib/css/react-big-calendar.css"; // カレンダーのスタイルを取り込む
 import { MaterialThemeProvider } from "../common/MaterialThemeProvider";
 import { MediaQueryProvider } from "../common/MediaQueryProvider";
 
