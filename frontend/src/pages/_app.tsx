@@ -1,12 +1,14 @@
 import { Typography } from "@mui/material";
 import "modern-css-reset/dist/reset.min.css"; // CSSのリセット
+import moment from "moment";
+import "moment/locale/ja";
 import { NextPage } from "next";
 import { AppProps } from "next/app";
 import React, { ReactElement, ReactNode } from "react";
 import "react-big-calendar/lib/css/react-big-calendar.css"; // カレンダーのスタイルを取り込む
 import { MaterialThemeProvider } from "../common/MaterialThemeProvider";
 import { MediaQueryProvider } from "../common/MediaQueryProvider";
-
+moment.locale("ja");
 type NextPageWithLayout = NextPage & {
     getLayout?: (page: ReactElement) => ReactNode;
 };
