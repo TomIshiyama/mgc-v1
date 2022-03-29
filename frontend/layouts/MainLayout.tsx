@@ -99,6 +99,9 @@ export type MenuDefType = {
     label: string;
     icon: React.ReactNode;
     link: LinkProps["href"];
+    prefix?: React.ReactNode;
+    suffix?: React.ReactNode;
+    divider?: boolean;
 };
 
 export type SideMenuDefType = {
@@ -147,31 +150,35 @@ export type MenuItemsProps = {
 export const MenuItems: React.VFC<MenuItemsProps> = ({ defs }) => {
     return (
         <>
-            {defs.map(({ title, menuList }, i) => {
-                return (
-                    <Container key={`container_${i}`} sx={{ paddingBottom: "2em" }}>
-                        <Typography variant="h6">{title}</Typography>
-                        {menuList.map(({ label, icon, link }, j) => {
-                            return (
-                                <Link href={link} key={`${i}_${j}`}>
-                                    <MLink
-                                        color={"primary"}
-                                        style={{
-                                            color: "white",
-                                            textDecoration: "none",
-                                        }}
-                                    >
-                                        <ListItem button>
-                                            <ListItemIcon>{icon}</ListItemIcon>
-                                            <ListItemText primary={label} />
-                                        </ListItem>
-                                    </MLink>
-                                </Link>
-                            );
-                        })}
-                    </Container>
-                );
-            })}
+            <List>
+                {defs.map(({ title, menuList }, i) => {
+                    return (
+                        <Container key={`container_${i}`} sx={{ paddingBottom: "2em" }}>
+                            <Typography variant="h6">{title}</Typography>
+                            {menuList.map(({ label, icon, link, prefix, suffix }, j) => {
+                                return (
+                                    <Link href={link} key={`${i}_${j}`}>
+                                        <MLink
+                                            color={"primary"}
+                                            style={{
+                                                color: "white",
+                                                textDecoration: "none",
+                                            }}
+                                        >
+                                            <ListItem button>
+                                                {prefix}
+                                                <ListItemIcon>{icon}</ListItemIcon>
+                                                <ListItemText primary={label} />
+                                                {suffix}
+                                            </ListItem>
+                                        </MLink>
+                                    </Link>
+                                );
+                            })}
+                        </Container>
+                    );
+                })}
+            </List>
         </>
     );
 };
@@ -315,9 +322,7 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
                     </IconButton>
                 </DrawerHeader>
 
-                <List>
-                    <MenuItems defs={menuDefs} />
-                </List>
+                <MenuItems defs={menuDefs} />
 
                 <Container sx={{ marginTop: "auto", padding: "2em 0", width: "100%" }}>
                     <Divider sx={{ borderColor: "white", margin: "2em 0" }} />
