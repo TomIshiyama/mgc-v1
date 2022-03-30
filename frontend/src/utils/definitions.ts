@@ -1,6 +1,6 @@
 export const defDrawerWidth = {
     main: 300,
-    subMain: 350,
+    subMain: 400,
 } as const;
 
 export const defDateFormat = {
@@ -12,4 +12,4 @@ export const defDateFormat = {
     ymdJa: "YYYY年MM月DD日(dddd)",
     dayOfWeek: "ddd",
     fullDayOfWeek: "dddd",
-};
+} as const;
