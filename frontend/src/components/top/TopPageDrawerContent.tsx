@@ -1,39 +1,48 @@
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CircleTwoToneIcon from "@mui/icons-material/CircleTwoTone";
-import { Box, Container, IconButton, IconButtonProps, Typography } from "@mui/material";
+import * as material from "@mui/material";
 import React from "react";
 import { Bar, BarChart, Legend, Tooltip, XAxis, YAxis } from "recharts";
 import { defDrawerWidth } from "../../utils/definitions";
-import { BaseListItemButton, ButtonListType } from "../common/BaseListItemButton";
+import { EventCategoryType } from "../../utils/displayData";
+import { ButtonListType } from "../common/BaseListItemButton";
+import { EventListItem } from "../common/EventListItem";
 
 export type TopPageDrawerContentProps = {
     title?: string;
     subtitle?: string;
     description?: React.ReactNode;
     buttonList: ButtonListType[];
-    onClickIcon?: IconButtonProps["onClick"];
+    onClickIcon?: material.IconButtonProps["onClick"];
 };
 
+//FIXME: 削除
 const buttonList = [
     {
-        label: "aaa",
+        label: "UD会議",
         icon: <CircleTwoToneIcon />,
+        subLabel: "17:00 - 19:00",
+        category: "meeting",
     },
     {
-        label: "aaa",
+        label: "はまべん",
         icon: <CircleTwoToneIcon />,
+        subLabel: "17:00 - 19:00",
+        category: "tech",
     },
     {
-        label: "aaa",
+        label: "はまとーーーーく",
         icon: <CircleTwoToneIcon />,
+        subLabel: "17:00 - 19:00",
+        category: "meetup",
     },
 ];
 
 const data = [
     {
-        uv: 4000,
-        pv: 2400,
-        amt: 2400,
+        pv: 1,
+        uv: 1,
+        meeting: 2,
     },
 ];
 
@@ -44,8 +53,8 @@ export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
 }) => {
     return (
         <>
-            <Container>
-                <IconButton
+            <material.Container>
+                <material.IconButton
                     color="inherit"
                     aria-label="open drawer"
                     edge="end"
@@ -61,17 +70,20 @@ export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
                     // open ? handleDrawerClose : handleDrawerOpen
                 >
                     <ArrowForwardIosIcon />
-                </IconButton>
+                </material.IconButton>
 
-                <Box display="flex" alignItems="end">
-                    <Typography color="primary" variant="h4">
+                <material.Box display="flex" alignItems="end">
+                    <material.Typography color="primary" variant="h4">
                         {title}
-                    </Typography>
-                    <Typography color="primary" variant="subtitle1">
+                    </material.Typography>
+                    <material.Typography color="primary" variant="subtitle1">
                         {subtitle}
-                    </Typography>
-                </Box>
+                    </material.Typography>
+                </material.Box>
 
+                {/* 分布 */}
+                {/* TODO: コンポーネント切り分け */}
+                <material.Typography variant="h6">イベント分布</material.Typography>
                 <BarChart
                     width={defDrawerWidth.subMain - 25}
                     height={80}
@@ -97,12 +109,24 @@ export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
                         tick={false}
                         tickMargin={0}
                     />
+                    {/* //FIXME:  定数を使用*/}
                     <Bar dataKey="pv" stackId="userEventId" fill="#8884d8" />
                     <Bar dataKey="uv" stackId="userEventId" fill="#82ca9d" />
-                    <Bar dataKey="amt" stackId="userEventId" fill="#74ca1d" />
+                    <Bar dataKey="meeting" stackId="userEventId" fill="#74ca1d" />
                 </BarChart>
-                <BaseListItemButton buttonList={buttonList} />
-            </Container>
+
+                {/* <List> */}
+                {buttonList.map((datum, i) => (
+                    <EventListItem
+                        key={`${i}`}
+                        itemTitle={datum.label}
+                        itemText={datum.subLabel}
+                        category={datum.category as EventCategoryType}
+                        style={{ marginBottom: "1em" }}
+                    />
+                ))}
+                {/* </List> */}
+            </material.Container>
         </>
     );
 };
