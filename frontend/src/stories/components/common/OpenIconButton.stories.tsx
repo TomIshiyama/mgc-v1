@@ -1,3 +1,4 @@
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Button } from "@mui/material";
 import { ComponentStory } from "@storybook/react";
@@ -30,21 +31,19 @@ const props: OpenIconButtonProps = {
         </Button>
     ),
     tooltip: "open profile",
+    allSuffix: <ArrowForwardIosIcon style={{ color: "dimgray" }} />,
     menuList: [
         {
-            icon: "",
+            icon: <ArrowForwardIosIcon />,
             label: "プロフィール",
-            link: "#",
         },
         {
             icon: "",
             label: "枚イベント",
-            link: "#",
         },
         {
             icon: "",
             label: "設定",
-            link: "#",
         },
     ],
 };
