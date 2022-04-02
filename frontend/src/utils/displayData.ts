@@ -11,3 +11,7 @@ export const eventCategory = {
 } as const;
 
 export type EventCategoryType = keyof typeof eventCategoryCode;
+
+export type EventCategoryObjectType = {
+    [key in EventCategoryType]: number;
+};
