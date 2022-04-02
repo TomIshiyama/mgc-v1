@@ -1,13 +1,17 @@
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import DateRangeOutlinedIcon from "@mui/icons-material/DateRangeOutlined";
 import EmojiFlagsIcon from "@mui/icons-material/EmojiFlags";
+import FlagCircleOutlinedIcon from "@mui/icons-material/FlagCircleOutlined";
 import GroupIcon from "@mui/icons-material/Group";
+import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
 import {
     Autocomplete,
-    Avatar,
     Button,
     Container,
     Grid,
@@ -32,8 +36,28 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Link, { LinkProps } from "next/link";
 import * as React from "react";
+import { OpenIconButton } from "../src/components/common/OpenIconButton";
 import { top100Films } from "../src/mock/autocomplete";
 import { pagesPath } from "../src/utils/$path";
+import { COLOR } from "../src/utils/styling";
+
+const openMenuList = [
+    {
+        icon: <AccountCircleOutlinedIcon />,
+        label: "プロフィール",
+        link: "#",
+    },
+    {
+        icon: <FlagCircleOutlinedIcon sx={{ color: COLOR.event }} />,
+        label: "マイイベント",
+        link: "#",
+    },
+    {
+        icon: <SettingsApplicationsIcon sx={{ color: COLOR.setting }} />,
+        label: "設定",
+        link: "#",
+    },
+];
 
 export const drawerWidth = 240;
 
@@ -285,7 +309,24 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
                                 <Typography variant="subtitle1">User Name</Typography>
                             </Grid>
                             <Grid item>
-                                <Avatar />
+                                <OpenIconButton
+                                    title={"YRU太郎"}
+                                    subTitle={"Group Director"}
+                                    tooltip={"メニューを開く"}
+                                    menuList={openMenuList}
+                                    allSuffix={
+                                        <ArrowForwardIosIcon sx={{ color: "dimgray" }} />
+                                    }
+                                    footer={
+                                        <Button
+                                            color="warning"
+                                            variant="contained"
+                                            endIcon={<LogoutIcon />}
+                                        >
+                                            ログアウト
+                                        </Button>
+                                    }
+                                />
                             </Grid>
                         </Grid>
                     </Grid>
