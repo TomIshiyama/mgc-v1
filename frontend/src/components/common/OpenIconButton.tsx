@@ -7,16 +7,16 @@ import {
     Divider,
     Grid,
     IconButton,
-    Link as MLink,
+    ListItemIcon,
     Menu,
     MenuItem,
     Tooltip,
     Typography,
 } from "@mui/material";
-import Link from "next/link";
 import React from "react";
 import { MenuDefType } from "../../../layouts/MainLayout";
-export type OpenIconButtonProps = {
+import { BaseListItemButton, BaseListItemButtonProps } from "./BaseListItemButton";
+export type OpenIconButtonProps = BaseListItemButtonProps & {
     title: string;
     subTitle: string;
     iconSrc?: string;
@@ -24,9 +24,7 @@ export type OpenIconButtonProps = {
     icon?: React.ReactNode;
     children?: React.ReactNode;
     tooltip: TooltipProps["title"];
-    menuList: MenuDefType[];
-    showAllDivider?: boolean;
-    footer?: React.ReactNode;
+    width?: string;
 };
 
 export const OpenIconButton: React.VFC<OpenIconButtonProps> = ({
@@ -36,9 +34,8 @@ export const OpenIconButton: React.VFC<OpenIconButtonProps> = ({
     iconSrc,
     icon,
     tooltip,
-    menuList,
-    showAllDivider,
-    footer,
+    width = "250px",
+    ...baseListItemProps
 }) => {
     // メニュー開閉用ステート anchorEL により表示位置をボタンの下に固定する
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -74,8 +71,14 @@ export const OpenIconButton: React.VFC<OpenIconButtonProps> = ({
                 open={open}
                 onClose={handleClose}
                 onClick={handleClose}
-                transformOrigin={{ horizontal: "right", vertical: "top" }}
-                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                transformOrigin={{ horizontal: "left", vertical: "top" }}
+                anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
+                sx={{
+                    ".css-1poimk-MuiPaper-root-MuiMenu-paper-MuiPaper-root-MuiPopover-paper":
+                        {
+                            borderRadius: "2em",
+                        },
+                }}
             >
                 <Grid
                     container
@@ -83,6 +86,7 @@ export const OpenIconButton: React.VFC<OpenIconButtonProps> = ({
                     spacing={0}
                     direction="column"
                     justifyContent="center"
+                    sx={{ width }}
                 >
                     <Grid item xs={12} margin="0.5em">
                         {/* HACK: アイコンの大きさは定数化する */}
@@ -101,7 +105,9 @@ export const OpenIconButton: React.VFC<OpenIconButtonProps> = ({
                     </Grid>
                 </Grid>
                 <Divider style={{ margin: "1em" }} />
-                {menuList.map(({ divider, link, ...itemProps }, i) => (
+
+                <BaseListItemButton {...baseListItemProps} />
+                {/* {menuList.map(({ divider, link, ...itemProps }, i) => (
                     <>
                         {link ? (
                             <Link href={link} key={`${i}`} passHref>
@@ -134,7 +140,7 @@ export const OpenIconButton: React.VFC<OpenIconButtonProps> = ({
                     >
                         {footer}
                     </Box>
-                )}
+                )} */}
             </Menu>
         </>
     );
@@ -155,11 +161,11 @@ const InternalMenuItem = ({
                 alignItems="center"
                 justifyContent={"space-between"}
             >
-                <Grid item container xs={10} spacing={1} alignItems="center">
+                <Grid item container xs={10} alignItems="center">
                     <Grid item>
-                        <Avatar>{icon}</Avatar>
+                        <ListItemIcon sx={{ display: "inline" }}>{icon}</ListItemIcon>
                     </Grid>
-                    <Grid item>{prefix}</Grid>
+                    {prefix && <Grid item>{prefix}</Grid>}
                     <Grid item>
                         <Typography variant="body1" style={{ color: "dimgray" }}>
                             {label}
