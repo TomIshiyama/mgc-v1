@@ -1,6 +1,13 @@
-import { Typography } from "@mui/material";
+import moment from "moment";
+import React from "react";
+import { Calendar, momentLocalizer } from "react-big-calendar";
 import { MainLayout } from "../../layouts/MainLayout";
 import { Head } from "../components/common/Head";
+import { TopPageComponent } from "../components/top/TopPageComponent";
+import { eventListMock } from "../mock/eventList";
+
+// モーメントを使用する
+const mLocalizer = momentLocalizer(moment);
 
 const Top = () => {
     return (
@@ -10,7 +17,15 @@ const Top = () => {
                 description="TOP画面 "
                 keyword="カレンダー トップ画面"
             />
-            <Typography variant="h2">ああああああ</Typography>
+            <TopPageComponent>
+                <Calendar
+                    localizer={mLocalizer}
+                    events={eventListMock}
+                    startAccessor="start"
+                    endAccessor="end"
+                    style={{ minHeight: 500, height: "80vh" }}
+                />
+            </TopPageComponent>
         </>
     );
 };
