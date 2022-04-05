@@ -68,6 +68,7 @@ export const BaseListItemButton: React.VFC<BaseListItemButtonProps> = ({
                             ) : (
                                 // <InternalMenuItem {...internalProps} />
                                 <InternalMenuItem
+                                    key={`${i}`}
                                     {...{
                                         suffix: allSuffix,
                                         prefix: allPrefix,

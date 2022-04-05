@@ -138,7 +138,7 @@ export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
                     {/* as [EventCategoryType,number] */}
                     <MUI.Box sx={{ position: "absolute", bottom: "0.5em" }}>
                         {Object.entries(data[0]).map(([key, val], idx) => (
-                            <MUI.Typography variant="caption">
+                            <MUI.Typography key={`${idx}`} variant="caption">
                                 {`${eventCategory[key as EventCategoryType]} : ${val} `}
                             </MUI.Typography>
                         ))}
@@ -146,9 +146,9 @@ export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
                 </MUI.Box>
 
                 {/* <List> */}
-                {buttonList.map((datum, i) => (
+                {buttonList.map((datum, idx) => (
                     <EventListItem
-                        key={`${i}`}
+                        key={`${idx}`}
                         itemTitle={datum.label}
                         itemText={datum.subLabel}
                         category={datum.category as EventCategoryType}
