@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const port = 8080;
 const get = require("./api/get");
@@ -10,7 +11,7 @@ const del = require("./api/delete");
 //起動のためにexpressのインストールが必須
 //user, event,attendee,categoryが入っているURLだけでハンドリングをして、該当のAPIを呼び出して、APIに引数を渡せます。引数は今のところURLですが、本来ならばリクエストボディーです。
 
-app.use(express.json());
+app.use(express.json(), cors());
 app.route(/(users|events|attendees|categories|login|filter)\?*/)
     .get((req, res) => {
         get(req)
