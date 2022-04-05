@@ -20,7 +20,7 @@ module.exports = function (req) {
 
     const mySqlQuery = _apiName.includes("login") ? loginQue : insertQue;
 
-    console.log("msq query: ", mySqlQuery);
+    console.log("mySqlQuery : ", mySqlQuery);
     return new Promise((resolve, reject) => {
         pool.getConnection((err, con) => {
             if (err) {
