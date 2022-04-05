@@ -5,7 +5,7 @@ export type UseFetchType = <T>(props: UseFetchProps<T>) => UseFetchResponse<T>;
 
 export type UseFetchProps<T> = {
     initialUrl: string;
-    initialData: T;
+    initialData?: T;
     method?: "get" | "post";
     params?: Params;
     headers: AxiosRequestConfig["headers"];
@@ -48,7 +48,7 @@ export const useFetch: UseFetchType = <T,>({
     skip = false,
     onError,
 }: UseFetchProps<T>) => {
-    const [data, setData] = React.useState<T | null>(initialData);
+    const [data, setData] = React.useState<T | null>(initialData ?? null);
     const [loading, setLoading] = React.useState<boolean>(false);
     const [error, setError] = React.useState<AxiosError | null>(null);
     const [hasError, setHasError] = React.useState<boolean>(false);
