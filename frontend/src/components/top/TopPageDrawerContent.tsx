@@ -1,16 +1,11 @@
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CircleTwoToneIcon from "@mui/icons-material/CircleTwoTone";
 import * as MUI from "@mui/material";
+import dynamic from "next/dynamic";
 import React from "react";
-import { Bar, BarChart, Tooltip, XAxis, YAxis } from "recharts";
 import { defDrawerWidth } from "../../utils/definitions";
-import {
-    eventCategory,
-    eventCategoryCode,
-    EventCategoryObjectType,
-    EventCategoryType,
-} from "../../utils/displayData";
-import { COLOR, Z_INDEX } from "../../utils/styling";
+import { EventCategoryType } from "../../utils/displayData";
+import { Z_INDEX } from "../../utils/styling";
 import { ButtonListType } from "../common/BaseListItemButton";
 import { EventListItem } from "../common/EventListItem";
 
@@ -44,13 +39,9 @@ const buttonList = [
     },
 ];
 
-const data: EventCategoryObjectType[] = [
-    {
-        [eventCategoryCode.meeting]: 1,
-        [eventCategoryCode.tech]: 3,
-        [eventCategoryCode.meetup]: 2,
-    },
-];
+// Recharts - Warning: Prop id did not match. Server: を解消するため動的に取得
+// see -> https://github.com/vercel/next.js/issues/12863
+const DynamicEventChart = dynamic(() => import("./EventChart"), { ssr: false });
 
 export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
     title,
@@ -89,61 +80,7 @@ export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
                 </MUI.Box>
 
                 {/* 分布 */}
-                {/* TODO: コンポーネント切り分け */}
-                <MUI.Box margin="3em 0" position="relative">
-                    <MUI.Typography variant="h6">イベント分布</MUI.Typography>
-                    <BarChart
-                        width={defDrawerWidth.subMain - 25}
-                        height={80}
-                        layout="vertical"
-                        data={data}
-                        margin={{ top: 0, left: -20, right: 20, bottom: 0 }}
-                        // style={{ position: "absolute" }}
-                    >
-                        <Tooltip />
-                        {/* <Legend /> */}
-                        <XAxis
-                            type="number"
-                            axisLine={false}
-                            tickLine={false}
-                            tick={false}
-                            tickMargin={0}
-                        />
-                        <YAxis
-                            dataKey="name"
-                            type="category"
-                            axisLine={false}
-                            tickLine={false}
-                            tick={false}
-                            tickMargin={0}
-                        />
-                        {/* //FIXME: カテゴリは追加される可能性があるので動的にコンテンツを作る*/}
-                        <Bar
-                            dataKey={eventCategoryCode.meeting}
-                            stackId="userEventId"
-                            fill={COLOR.meeting}
-                        />
-                        <Bar
-                            dataKey={eventCategoryCode.tech}
-                            stackId="userEventId"
-                            fill={COLOR.tech}
-                        />
-                        <Bar
-                            dataKey={eventCategoryCode.meetup}
-                            stackId="userEventId"
-                            fill={COLOR.meetup}
-                        />
-                    </BarChart>
-                    {/* // カテゴリが追加されることを考慮しイテレーションで */}
-                    {/* as [EventCategoryType,number] */}
-                    <MUI.Box sx={{ position: "absolute", bottom: "0.5em" }}>
-                        {Object.entries(data[0]).map(([key, val], idx) => (
-                            <MUI.Typography key={`${idx}`} variant="caption">
-                                {`${eventCategory[key as EventCategoryType]} : ${val} `}
-                            </MUI.Typography>
-                        ))}
-                    </MUI.Box>
-                </MUI.Box>
+                <DynamicEventChart />
 
                 {/* <List> */}
                 {buttonList.map((datum, idx) => (
