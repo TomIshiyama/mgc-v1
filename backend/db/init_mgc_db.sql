@@ -18,7 +18,7 @@ create table IF NOT EXISTS users (
     icon_path VARCHAR(255) NOT NULL,
     icon_name VARCHAR(255) NOT NULL,
     description TEXT,
-    thema VARCHAR(255) NOT NULL, -- FIXME: スペルミス
+    theme VARCHAR(255) NOT NULL,
     is_admin TINYINT NOT NULL,
     is_stop TINYINT NOT NULL,
     last_update TIMESTAMP NOT NULL)
