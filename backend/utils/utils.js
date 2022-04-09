@@ -5,11 +5,11 @@ const Status = {
     Post: "POST",
     Delete: "DELETE",
     Put: "PUT",
-}
+};
 
 const generateGetSql = (_tableRef) => {
-    let baseSelect = `select * from ${_tableRef}`
-}
+    let baseSelect = `select * from ${_tableRef}`;
+};
 
 /**
  *
@@ -21,8 +21,8 @@ const _checkVal = (val) => {
         ? val
         : val.match(/^([1-9]\d*|0)$/)
         ? +val
-        : `\'${val}\'`
-}
+        : `\'${val}\'`;
+};
 
 /**
  * @param _tableRef {string} テーブルの名称
@@ -30,28 +30,25 @@ const _checkVal = (val) => {
  * @returns {string} MySQL update文
  */
 const generateUpdateSql = (_tableRef, _setCondition) => {
-    const base = `UPDATE ${_tableRef} SET`
+    const base = `UPDATE ${_tableRef} SET`;
 
-    const rt = Object.entries(_setCondition).reduce(
-        (accumulator, [key, val], index) => {
-            let _snakeKey = camelToSnakeCase(key)
-            return index === 0
-                ? `${accumulator} ${_snakeKey} = ${_checkVal(val)}`
-                : `${accumulator}, ${_snakeKey} = ${_checkVal(val)}`
-        },
-        base
-    )
+    const rt = Object.entries(_setCondition).reduce((accumulator, [key, val], index) => {
+        let _snakeKey = camelToSnakeCase(key);
+        return index === 0
+            ? `${accumulator} ${_snakeKey} = ${_checkVal(val)}`
+            : `${accumulator}, ${_snakeKey} = ${_checkVal(val)}`;
+    }, base);
 
-    return rt + " "
-}
+    return rt + " ";
+};
 
 // TODO: 外部参照もとを削除するとき
 const generateDeleteSql = (_tableRef) => {
-    const baseDelete = `delete from ${_tableRef}`
+    const baseDelete = `delete from ${_tableRef}`;
 
-    return baseDelete + " "
+    return baseDelete + " ";
     // userが削除されるとき　-> 面倒だから制約を緩和すべきでは？
-}
+};
 
 /**
  * オブジェクトからWHERE句を生成する
@@ -59,17 +56,17 @@ const generateDeleteSql = (_tableRef) => {
  * @returns {string} SQL WHERE句
  */
 const addWhere = (_obj) => {
-    const base = "WHERE"
+    const base = "WHERE";
 
     const rt = Object.entries(_obj).reduce((accumulator, [key, val], index) => {
-        let _snakeKey = camelToSnakeCase(key)
+        let _snakeKey = camelToSnakeCase(key);
         return index === 0
             ? `${accumulator} ${_snakeKey} = ${_checkVal(val)}`
-            : `${accumulator} AND ${_snakeKey} = ${_checkVal(val)}`
-    }, base)
+            : `${accumulator} AND ${_snakeKey} = ${_checkVal(val)}`;
+    }, base);
 
-    return rt + " "
-}
+    return rt + " ";
+};
 
 /**
  * 文字列の配列からORDER BY句を生成する
@@ -77,16 +74,14 @@ const addWhere = (_obj) => {
  * @returns {string} SQL ORDER BY句
  */
 const addOrderBy = (...args) => {
-    const base = "ORDER BY"
+    const base = "ORDER BY";
 
     const rt = args.reduce((accumulator, current, index) => {
-        return index === 0
-            ? `${accumulator} ${current}`
-            : `${accumulator}, ${current}`
-    }, base)
+        return index === 0 ? `${accumulator} ${current}` : `${accumulator}, ${current}`;
+    }, base);
 
-    return rt + " "
-}
+    return rt + " ";
+};
 
 /**
  *
@@ -94,8 +89,8 @@ const addOrderBy = (...args) => {
  * @returns {string} SQL LIMIT句
  */
 const addLimit = (num) => {
-    return `LIMIT ${num} `
-}
+    return `LIMIT ${num} `;
+};
 
 /**
  * キャメルケースからスネークケースへ変換する
@@ -105,8 +100,8 @@ const addLimit = (num) => {
 const camelToSnakeCase = (str) => {
     return str.replace(/[\w]([A-Z])/g, (letter) =>
         `${letter[0]}_${letter[1]}`.toLowerCase()
-    )
-}
+    );
+};
 
 /**
  *
@@ -116,8 +111,8 @@ const camelToSnakeCase = (str) => {
 const getApiName = (req) => {
     return (_apiName = req.url.includes("?")
         ? req.url.slice(1, req.url.indexOf("?"))
-        : req.url.split("/")[1])
-}
+        : req.url.split("/")[1]);
+};
 
 /**
  *
@@ -125,8 +120,8 @@ const getApiName = (req) => {
  * @returns {boolean} オブジェクトが存在する→true, 存在しない→false
  */
 const isExist = (obj) => {
-    return Object.keys(obj).length
-}
+    return Object.keys(obj).length;
+};
 
 /**
  *
@@ -136,7 +131,7 @@ const isExist = (obj) => {
 const queryEntriesFromBody = (obj) =>
     Object.entries(obj)
         .map(([key, value]) => `${key} = '${value}'`)
-        .join(", ")
+        .join(", ");
 
 /**
  *
@@ -146,14 +141,14 @@ const queryEntriesFromBody = (obj) =>
 const queryEntriesFromString = (obj) =>
     Object.entries(obj)
         .map(([key, value]) => `${key} = '%${value}%'`)
-        .join(", ")
+        .join(", ");
 
 /**
  *
  * @param {Array} obj
  * @returns {String} 渡されたパラメーターをmysqlで使えるStringの形で返します
  */
-const queryKeys = (obj) => Object.keys(obj).join(", ")
+const queryKeys = (obj) => Object.keys(obj).join(", ");
 
 /**
  *
@@ -163,19 +158,19 @@ const queryKeys = (obj) => Object.keys(obj).join(", ")
 const queryValues = (obj) =>
     Object.values(obj)
         .map((item) => `'${item}'`)
-        .join(", ")
+        .join(", ");
 
 // 各関数をエクスポート
-exports.generateGetSql = generateGetSql
-exports.generateUpdateSql = generateUpdateSql
-exports.generateDeleteSql = generateDeleteSql
-exports.addWhere = addWhere
-exports.addOrderBy = addOrderBy
-exports.addLimit = addLimit
-exports.camelToSnakeCase = camelToSnakeCase
-exports.getApiName = getApiName
-exports.isExist = isExist
-exports.queryEntriesFromBody = queryEntriesFromBody
-exports.queryEntriesFromString = queryEntriesFromString
-exports.queryKeys = queryKeys
-exports.queryValues = queryValues
+exports.generateGetSql = generateGetSql;
+exports.generateUpdateSql = generateUpdateSql;
+exports.generateDeleteSql = generateDeleteSql;
+exports.addWhere = addWhere;
+exports.addOrderBy = addOrderBy;
+exports.addLimit = addLimit;
+exports.camelToSnakeCase = camelToSnakeCase;
+exports.getApiName = getApiName;
+exports.isExist = isExist;
+exports.queryEntriesFromBody = queryEntriesFromBody;
+exports.queryEntriesFromString = queryEntriesFromString;
+exports.queryKeys = queryKeys;
+exports.queryValues = queryValues;
