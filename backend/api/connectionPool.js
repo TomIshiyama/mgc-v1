@@ -1,4 +1,4 @@
-const mysql = require("mysql")
+const mysql = require("mysql");
 
 const pool = mysql.createPool({
     host: "localhost",
@@ -6,5 +6,5 @@ const pool = mysql.createPool({
     password: "root",
     database: "mgc",
     multipleStatements: true,
-})
-module.exports = pool
+});
+module.exports = pool;

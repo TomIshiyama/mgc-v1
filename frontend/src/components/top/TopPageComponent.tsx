@@ -5,7 +5,7 @@ import { styled } from "@mui/material/styles";
 import moment from "moment";
 import React from "react";
 import { defDateFormat, defDrawerWidth } from "../../utils/definitions";
-import { COLOR } from "../../utils/styling";
+import { COLOR, Z_INDEX } from "../../utils/styling";
 import { TopPageDrawerContent } from "./TopPageDrawerContent";
 
 const Main = styled("div", { shouldForwardProp: (prop) => prop !== "open" })<{
@@ -82,9 +82,10 @@ export const TopPageComponent: React.VFC<TopPageComponentProps> = ({ children })
                     width: defDrawerWidth.subMain,
                     flexShrink: 0,
                     "& .MuiDrawer-paper": {
+                        zIndex: Z_INDEX.subDrawer,
                         width: defDrawerWidth.subMain,
-                        height: "calc(100% - 60px)",
-                        top: 60,
+                        // height: "calc(100% - 60px)",
+                        // top: 60,
                         background: COLOR.normal.sideBgcolor,
                     },
                 }}

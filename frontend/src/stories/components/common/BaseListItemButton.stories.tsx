@@ -1,3 +1,4 @@
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import LockIcon from "@mui/icons-material/Lock";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Button } from "@mui/material";
@@ -29,7 +30,7 @@ const props: BaseListItemButtonProps = {
             ログアウト
         </Button>
     ),
-    buttonList: [
+    menuList: [
         {
             icon: <LockIcon />,
             label: "プロフィール",
@@ -44,6 +45,7 @@ const props: BaseListItemButtonProps = {
             label: "設定",
         },
     ],
+    allSuffix: <ArrowForwardIosIcon style={{ color: "dimgray" }} />,
 };
 
 Default.args = props;
