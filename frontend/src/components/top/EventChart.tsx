@@ -1,15 +1,23 @@
 import * as MUI from "@mui/material";
+import React from "react";
 import { Bar, BarChart, XAxis, YAxis } from "recharts";
+import { FetchEventContext } from "../../common/FetchEventProvider";
+import { BaseCategoryProps } from "../../types/connection";
 import { defDrawerWidth } from "../../utils/definitions";
 import {
-    eventCategory,
     eventCategoryCode,
     EventCategoryObjectType,
     EventCategoryType,
 } from "../../utils/displayData";
 import { COLOR } from "../../utils/styling";
 
-const data: EventCategoryObjectType[] = [
+type CategorizedEventListType = {
+    name: string;
+    code: string;
+    count?: number;
+};
+
+export const data: EventCategoryObjectType[] = [
     {
         [eventCategoryCode.meeting]: 1,
         [eventCategoryCode.tech]: 3,
@@ -18,10 +26,37 @@ const data: EventCategoryObjectType[] = [
 ];
 // TODO: 細かい表示調整
 /**右サブDrawerに表示されるイベント分布のbar chartコンポーネント*/
-const EventChart = () => {
+export const EventChart = React.memo(() => {
+    const { event, category } = React.useContext(FetchEventContext);
+
+    const categorizedEventList = React.useMemo(
+        () =>
+            // カテゴリIDごとにカウントアップし分配する
+            event?.data?.reduce((acc: Record<number, CategorizedEventListType>, cur) => {
+                const tmp: BaseCategoryProps | undefined = category?.data?.find(
+                    (v) => cur.categoryId === v.id
+                );
+                return tmp
+                    ? {
+                          ...acc,
+                          [tmp.id]: {
+                              name: tmp.name,
+                              code: tmp.categoryCode,
+                              count: acc?.[tmp.id]?.count
+                                  ? Number(acc?.[tmp.id]?.count) + 1
+                                  : 1,
+                          },
+                      }
+                    : { ...cur };
+            }, {}),
+        [event?.data]
+    );
+
     return (
         <MUI.Box margin="3em 0" position="relative">
-            <MUI.Typography variant="h6">イベント分布</MUI.Typography>
+            {/* TODO: うまく虹色になるように配色 */}
+            <MUI.Typography variant="h6">イベント分布(虹色にしたい)</MUI.Typography>
+            {/* Stacked Bar Chart を表示する */}
             <BarChart
                 width={defDrawerWidth.subMain - 25}
                 height={80}
@@ -30,6 +65,7 @@ const EventChart = () => {
                 margin={{ top: 0, left: -20, right: 20, bottom: 0 }}
                 // style={{ position: "absolute" }}
             >
+                {/* Tooltip  legendに関しては不要そうなので一旦非表示 */}
                 {/* <Tooltip /> */}
                 {/* <Legend /> */}
                 <XAxis
@@ -47,34 +83,23 @@ const EventChart = () => {
                     tick={false}
                     tickMargin={0}
                 />
-                {/* //FIXME: カテゴリは追加される可能性があるので動的にコンテンツを作る*/}
-                <Bar
-                    dataKey={eventCategoryCode.meeting}
-                    stackId="userEventId"
-                    fill={COLOR.meeting}
-                />
-                <Bar
-                    dataKey={eventCategoryCode.tech}
-                    stackId="userEventId"
-                    fill={COLOR.tech}
-                />
-                <Bar
-                    dataKey={eventCategoryCode.meetup}
-                    stackId="userEventId"
-                    fill={COLOR.meetup}
-                />
+                {/* Bar Chart を生成 */}
+                {category?.data?.map((datum, idx) => (
+                    <Bar
+                        dataKey={eventCategoryCode.meeting}
+                        stackId="userEventId"
+                        fill={COLOR[datum.categoryCode as EventCategoryType]}
+                    />
+                ))}
             </BarChart>
-            {/* // カテゴリが追加されることを考慮しイテレーションで */}
-            {/* as [EventCategoryType,number] */}
-            <MUI.Box sx={{ position: "absolute", bottom: "0.5em" }}>
-                {Object.entries(data[0]).map(([key, val], idx) => (
+            {/* Legend部分 */}
+            <MUI.Box sx={{ position: "absolute" }}>
+                {Object.values(categorizedEventList ?? []).map((datum, idx) => (
                     <MUI.Typography key={`${idx}`} variant="caption">
-                        {`${eventCategory[key as EventCategoryType]} : ${val} `}
+                        {`${datum.name} : ${datum.count ?? 0} `}
                     </MUI.Typography>
                 ))}
             </MUI.Box>
         </MUI.Box>
     );
-};
-export default EventChart;
-// NOTE: default export でないと dynamic componentが使用できないぽい？
+});
