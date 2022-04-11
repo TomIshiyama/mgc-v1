@@ -12,4 +12,4 @@ FILE_PATH=`pwd -P`
 # echo $FILE_PATH
 echo "execute file :$CURRENT/init.db.sh"
 echo "sql file :$CURRENT/init_mgc_db.sql"
-mysqldump --defaults-extra-file=my.cnf -h localhost mgc < "$CURRENT/init_mgc_db.sql"
+mysql --defaults-extra-file=my.cnf -h localhost mgc < "$CURRENT/init_mgc_db.sql"

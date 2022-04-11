@@ -1,7 +1,9 @@
+import { createFilterOptions } from "@mui/core";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import CircleIcon from "@mui/icons-material/Circle";
 import DateRangeOutlinedIcon from "@mui/icons-material/DateRangeOutlined";
 import EmojiFlagsIcon from "@mui/icons-material/EmojiFlags";
 import FlagCircleOutlinedIcon from "@mui/icons-material/FlagCircleOutlined";
@@ -36,9 +38,11 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Link, { LinkProps } from "next/link";
 import * as React from "react";
+import { FetchEventContext } from "../src/common/FetchEventProvider";
 import { OpenIconButton } from "../src/components/common/OpenIconButton";
-import { top100Films } from "../src/mock/autocomplete";
+import { mapAutocomplete } from "../src/pages/top";
 import { pagesPath } from "../src/utils/$path";
+import { EventCategoryType } from "../src/utils/displayData";
 import { COLOR } from "../src/utils/styling";
 
 const openMenuList = [
@@ -224,6 +228,18 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
         // console.log("onClickTempRegister Clicked!");
     }, []);
 
+    // const { data, loading } = useFetch<BaseEventProps[]>({
+    //     initialUrl: `${process.env.NEXT_PUBLIC_API_ENDPOINT!}events`,
+    //     headers: {},
+    // });
+
+    // const { data: categoryList } = useFetch<BaseCategoryProps[]>({
+    //     initialUrl: `${process.env.NEXT_PUBLIC_API_ENDPOINT!}categories`,
+    //     headers: {},
+    // });
+
+    const { event, category } = React.useContext(FetchEventContext);
+
     return (
         <Box sx={{ display: "flex" }}>
             <CssBaseline />
@@ -243,11 +259,123 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
                     <Grid container spacing={3} justifyContent="space-between">
                         {/* <Grid item xs={1} /> */}
                         <Grid container item xs={5} minWidth="25em">
+                            {/* FIXME: コンポーネント切り分け */}
+
                             <Autocomplete
+                                loading={event?.loading ?? true}
                                 freeSolo
                                 disableClearable
                                 fullWidth
-                                options={top100Films.map((option) => option.title)}
+                                options={mapAutocomplete(event?.data ?? [])}
+                                // options={top100Films.map((option) => option.title)}
+
+                                filterOptions={createFilterOptions({
+                                    // label と fromでフィルタ可能にする
+                                    stringify: (option) => option.label + option.from,
+                                })}
+                                renderOption={(props, option) => (
+                                    <>
+                                        <Box
+                                            component="li"
+                                            sx={{
+                                                "& > img": { mr: 2, flexShrink: 0 },
+                                            }}
+                                            {...props}
+                                        >
+                                            <Box
+                                                width="100%"
+                                                display="flex"
+                                                justifyContent={"space-between"}
+                                                alignItems="center"
+                                            >
+                                                <ListItemIcon
+                                                    sx={{
+                                                        minWidth: (theme) =>
+                                                            theme.spacing(4),
+                                                    }}
+                                                >
+                                                    <CircleIcon
+                                                        sx={{
+                                                            width: ".5em",
+                                                            height: ".5em",
+                                                            color: COLOR[
+                                                                category?.data?.find(
+                                                                    (v) =>
+                                                                        v.id ===
+                                                                        option.categoryId
+                                                                )
+                                                                    ?.categoryCode as EventCategoryType
+                                                            ],
+                                                        }}
+                                                    />
+                                                </ListItemIcon>
+                                                <ListItemText>
+                                                    <Typography variant="body1">
+                                                        {option.label}
+                                                        {/* {option.categoryId} */}
+                                                        {
+                                                            category?.data?.find(
+                                                                (v) =>
+                                                                    v.id ===
+                                                                    option.categoryId
+                                                            )?.categoryCode
+                                                        }
+                                                    </Typography>
+                                                </ListItemText>
+                                                <Box>
+                                                    <Typography
+                                                        component="li"
+                                                        variant="caption"
+                                                        sx={{
+                                                            color: COLOR.normal.caption,
+                                                        }}
+                                                    >
+                                                        {option.from} -
+                                                    </Typography>
+                                                    <Typography
+                                                        variant="caption"
+                                                        sx={{
+                                                            color: COLOR.normal.caption,
+                                                        }}
+                                                    >
+                                                        {option.to}
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+                                        </Box>
+                                        <Divider />
+                                    </>
+                                    // <ListItemButton
+                                    //     // CSSプロパティは差分更新する
+                                    //     sx={{
+                                    //         ...style,
+                                    //     }}
+                                    //     // selected={selected}
+                                    //     // onClick={onClick}
+                                    //     color="primary"
+                                    //     {...props}
+                                    // >
+                                    //     <ListItemIcon>
+                                    //         <CircleIcon
+                                    //             sx={{
+                                    //                 width: ".5em",
+                                    //                 height: ".5em",
+                                    //                 // color: COLOR[category],
+                                    //             }}
+                                    //         />
+                                    //     </ListItemIcon>
+                                    //     <ListItemText>
+                                    //         <Box>
+                                    //             <Typography variant="subtitle1">
+                                    //                 {option.label}
+                                    //             </Typography>
+                                    //             <Typography variant="caption">
+                                    //                 {option.from}-{option.to}
+                                    //             </Typography>
+                                    //         </Box>
+                                    //     </ListItemText>
+                                    // </ListItemButton>
+                                )}
                                 renderInput={(params) => (
                                     <>
                                         <TextField

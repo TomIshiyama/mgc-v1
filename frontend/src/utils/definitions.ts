@@ -10,6 +10,7 @@ export const defDateFormat = {
     dayJa: "MM月DD日",
     fullTime: "YYYY/MM/DD HH:mm",
     ymdJa: "YYYY年MM月DD日(dddd)",
+    ymd: "YYYY/MM/DD",
     dayOfWeek: "ddd",
     fullDayOfWeek: "dddd",
 } as const;
