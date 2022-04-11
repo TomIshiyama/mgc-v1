@@ -6,6 +6,7 @@ import { NextPage } from "next";
 import { AppProps } from "next/app";
 import React, { ReactElement, ReactNode } from "react";
 import "react-big-calendar/lib/css/react-big-calendar.css"; // カレンダーのスタイルを取り込む
+import { FetchEventProvider } from "../common/FetchEventProvider";
 import { MaterialThemeProvider } from "../common/MaterialThemeProvider";
 import { MediaQueryProvider } from "../common/MediaQueryProvider";
 moment.locale("ja");
@@ -46,7 +47,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
         <>
             <MaterialThemeProvider>
                 <MediaQueryProvider>
-                    {getLayout(<Component {...pageProps} />)}
+                    <FetchEventProvider>
+                        {getLayout(<Component {...pageProps} />)}
+                    </FetchEventProvider>
                 </MediaQueryProvider>
             </MaterialThemeProvider>
         </>
