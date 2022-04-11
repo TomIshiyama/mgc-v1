@@ -97,3 +97,21 @@ export const eventListMock = [
         end: new Date(new Date().setHours(new Date().getHours() + 3)),
     },
 ];
+
+export const buttonList = [
+    {
+        label: "UD会議",
+        subLabel: "17:00 - 19:00",
+        category: "meeting",
+    },
+    {
+        label: "はまべん",
+        subLabel: "17:00 - 19:00",
+        category: "tech",
+    },
+    {
+        label: "はまとーーーーく",
+        subLabel: "17:00 - 19:00",
+        category: "meetup",
+    },
+];
