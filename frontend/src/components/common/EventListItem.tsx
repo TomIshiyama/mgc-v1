@@ -17,6 +17,7 @@ export type EventListItemProps = {
     itemTitle: string;
     itemText: string;
     category: EventCategoryType;
+    chipLabel?: string;
     noStyle?: boolean;
     selected?: ListItemButton_1.ListItemButtonProps["selected"];
     onClick?: ListItemButton_1.ListItemButtonProps["onClick"];
@@ -32,6 +33,7 @@ export const EventListItem: React.VFC<EventListItemProps> = ({
     itemTitle,
     itemText,
     category,
+    chipLabel,
     noStyle,
     selected,
     onClick,
@@ -49,9 +51,21 @@ export const EventListItem: React.VFC<EventListItemProps> = ({
                 onClick={onClick}
                 color="primary"
             >
-                <ListItemIcon>
+                <ListItemIcon
+                    sx={{
+                        // MEMO: スタイル関数だとうまく動作する謎、ハマったので記事にする
+                        // " .MuiListItemIcon-root": {
+                        //     minWidth: "0.5em",
+                        // },
+                        minWidth: (theme) => theme.spacing(4),
+                    }}
+                >
                     <CircleIcon
-                        sx={{ width: ".5em", height: ".5em", color: COLOR[category] }}
+                        sx={{
+                            width: ".5em",
+                            height: ".5em",
+                            color: COLOR[category],
+                        }}
                     />
                 </ListItemIcon>
                 <ListItemText>
@@ -63,8 +77,11 @@ export const EventListItem: React.VFC<EventListItemProps> = ({
                 <Stack direction="row" spacing={2} alignItems="center">
                     <Chip
                         size="small"
-                        label={eventCategory[category]}
-                        sx={{ padding: "0 .5em", bgcolor: COLOR[category] }}
+                        label={chipLabel ?? eventCategory[category]}
+                        sx={{
+                            padding: "0 .5em",
+                            bgcolor: COLOR[category],
+                        }}
                     />
                     <ArrowForwardIosIcon />
                 </Stack>
