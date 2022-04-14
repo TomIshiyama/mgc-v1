@@ -18,12 +18,21 @@ import * as React from "react";
 
 export const LoginLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const theme = useTheme();
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        console.log({
+            email: data.get("email"),
+            password: data.get("password"),
+        });
+    };
 
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
             <Box
                 component="form"
+                onSubmit={handleSubmit}
                 sx={{
                     marginTop: 8,
                     display: "flex",
@@ -84,6 +93,44 @@ export const LoginLayout: React.FC<{ children: React.ReactNode }> = ({ children 
 export const UserRegisterLayout: React.FC<{ children: React.ReactNode }> = ({
     children,
 }) => {
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        console.log({
+            familyName: data.get("family_name"),
+            givenName: data.get("given_name"),
+            familyKana: data.get("family_kana"),
+            givenKana: data.get("given_kana"),
+            positionSelect: data.get("position-select"),
+            email: data.get("email"),
+            password: data.get("password"),
+        });
+
+        //     const { doPost, isLoading } = usePost({
+        //         method: "post",
+        //         url: "/api/user/",
+        //     });
+        //     doPost({
+        //         url: "/api/user/",
+        //         params: {
+        //             familyName: data.get("family_name"),
+        //             givenName: data.get("given_name"),
+        //             familyKana: data.get("family_kana"),
+        //             givenKana: data.get("given_kana"),
+        //             positionSelect: data.get("position-select"),
+        //             email: data.get("email"),
+        //             password: data.get("password"),
+        //         },
+        //         onSuccess: (familyName) => {
+        //             console.log(`create ${familyName}  success!`);
+        //         },
+        //         onError: (err) => {
+        //             console.log(err.message);
+        //         },
+        //     });
+        // };
+    };
+
     const theme = useTheme();
 
     const [position, setPosition] = React.useState("");
@@ -97,6 +144,7 @@ export const UserRegisterLayout: React.FC<{ children: React.ReactNode }> = ({
             <CssBaseline />
             <Box
                 component="form"
+                onSubmit={handleSubmit}
                 sx={{
                     marginTop: 8,
                     display: "flex",
@@ -109,12 +157,12 @@ export const UserRegisterLayout: React.FC<{ children: React.ReactNode }> = ({
                 <Typography component="h1" variant="h5">
                     ユーザー新規登録
                 </Typography>
-                <Box component="form" noValidate sx={{ mt: 8 }}></Box>
                 <TextField
                     margin="normal"
                     required
                     fullWidth
                     id="family_name"
+                    name="family_name"
                     label="姓"
                     autoFocus
                 />
@@ -123,6 +171,7 @@ export const UserRegisterLayout: React.FC<{ children: React.ReactNode }> = ({
                     required
                     fullWidth
                     id="given_name"
+                    name="given_name"
                     label="名"
                     autoFocus
                 />
@@ -130,6 +179,7 @@ export const UserRegisterLayout: React.FC<{ children: React.ReactNode }> = ({
                     margin="normal"
                     fullWidth
                     id="family_kana"
+                    name="family_kana"
                     label="姓（カナ）"
                     autoFocus
                 />
@@ -137,6 +187,7 @@ export const UserRegisterLayout: React.FC<{ children: React.ReactNode }> = ({
                     margin="normal"
                     fullWidth
                     id="given_kana"
+                    name="given_kana"
                     label="名（カナ）"
                     autoFocus
                 />
@@ -145,6 +196,7 @@ export const UserRegisterLayout: React.FC<{ children: React.ReactNode }> = ({
                     <Select
                         labelId="position-select-label"
                         id="position-select"
+                        name="position-select"
                         value={position}
                         label="ポジション"
                         onChange={handleChange}
@@ -176,7 +228,7 @@ export const UserRegisterLayout: React.FC<{ children: React.ReactNode }> = ({
                     autoComplete="current-password"
                 />
                 <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-                    Register
+                    登録
                 </Button>
                 <Grid container>
                     <Grid item>
