@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
     Box,
+    // eslint-disable-next-line import/named
     BoxProps,
     Button,
     Dialog,
@@ -9,39 +11,51 @@ import {
     DialogTitle,
     TextField,
 } from "@mui/material";
+import moment from "moment";
 import React from "react";
-import { DateRange } from "react-date-range";
+import { CalendarProps, DateRange } from "react-date-range";
+// FIXME: localeのimport エラーどうするか問題
 import * as locales from "react-date-range/dist/locale";
 import "react-date-range/dist/styles.css"; // react-date-range main css file
 import "react-date-range/dist/theme/default.css"; // react-date-range theme css file
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
+import { defDateFormat } from "../../utils/definitions";
 
 export type DateRangePickerModalProps = {
-    onClose?: DateRangePickerProps["onClose"];
-    onAccept?: DateRangePickerProps["onAccept"];
     title?: string;
     contentText?: React.ReactNode;
     onSubmit?: BoxProps["onSubmit"];
     onCancel?: VoidFunction;
+    onSelect?: (val: StateType) => void;
     onCancelLabel?: string;
     onSubmitLabel?: string;
+    dateFormat?: string;
 };
 
 type FormValues = {
-    from: Date;
-    to: Date;
-    term: DateRangePickerProps["value"];
+    eventTitle: string;
+    // term: DateRangePickerProps["value"];
+};
+
+type StateType = {
+    selection: {
+        startDate?: Date | null;
+        endDate?: Date | null;
+        key: string;
+    };
 };
 
 export const DateRangePickerModal: React.VFC<DateRangePickerModalProps> = ({
-    onClose,
-    onAccept,
+    // onClose,
+    // onAccept,
     title,
     contentText,
     onSubmit,
     onCancel,
+    onSelect,
     onCancelLabel = "取消",
     onSubmitLabel = "仮登録",
+    dateFormat = defDateFormat.ymd,
 }) => {
     const { handleSubmit, control } = useForm<FormValues>();
 
@@ -65,9 +79,9 @@ export const DateRangePickerModal: React.VFC<DateRangePickerModalProps> = ({
         setOpen(false);
     };
 
-    const [state, setState] = React.useState({
+    const [state, setState] = React.useState<StateType>({
         selection: {
-            startDate: new Date(),
+            startDate: moment().toDate(),
             endDate: null,
             key: "selection",
         },
@@ -79,7 +93,11 @@ export const DateRangePickerModal: React.VFC<DateRangePickerModalProps> = ({
         // },
     });
 
-    console.log(state);
+    // HACK: 型
+    const onChangeDateRange = (item: any) => {
+        setState({ ...state, ...item });
+        onSelect?.(state);
+    };
 
     return (
         <>
@@ -98,26 +116,44 @@ export const DateRangePickerModal: React.VFC<DateRangePickerModalProps> = ({
                         display="flex"
                         flexDirection="column"
                     >
-                        <TextField
-                            id="name"
+                        <Controller
+                            control={control}
                             name="eventTitle"
-                            autoFocus
-                            margin="normal"
-                            label="イベント名称"
-                            // fullWidth
-                            variant="outlined"
-                            size="small"
+                            rules={{ required: "入力必須です" }}
+                            render={({
+                                field: { onChange, onBlur, value, name, ref },
+                                fieldState: { invalid, isTouched, isDirty, error },
+                                formState,
+                            }) => (
+                                <TextField
+                                    id={"dateRange-controller-text-field"}
+                                    name={name}
+                                    value={value}
+                                    onChange={onChange}
+                                    autoFocus
+                                    margin="normal"
+                                    label="イベント名称"
+                                    variant="outlined"
+                                    size="small"
+                                    error={Boolean(error)}
+                                    helperText={error?.message}
+                                />
+                            )}
                         />
 
                         <DateRange
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                             locale={locales["ja"]} // 日本語表記
-                            onChange={(item) => setState({ ...state, ...item })}
-                            ranges={[state.selection]}
+                            onChange={onChangeDateRange}
+                            ranges={
+                                [state.selection] as unknown as CalendarProps["ranges"]
+                            }
                             editableDateInputs
-                            showSelectionPreview={false}
                             moveRangeOnFirstSelection={false}
                             showMonthArrow={false}
                             showPreview={false}
+                            dateDisplayFormat={"yyyy/MM/dd"} // 日付表示のフォーマット
+                            monthDisplayFormat={"yyyy年MMM"} // 月表示のフォーマット
                         />
                     </Box>
                 </DialogContent>
