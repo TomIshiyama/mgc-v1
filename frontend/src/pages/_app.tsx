@@ -6,9 +6,12 @@ import { NextPage } from "next";
 import { AppProps } from "next/app";
 import React, { ReactElement, ReactNode } from "react";
 import "react-big-calendar/lib/css/react-big-calendar.css"; // カレンダーのスタイルを取り込む
+import "react-date-range/dist/styles.css"; // react-date-range main css file
+import "react-date-range/dist/theme/default.css"; // react-date-range theme css file
 import { FetchEventProvider } from "../common/FetchEventProvider";
 import { MaterialThemeProvider } from "../common/MaterialThemeProvider";
 import { MediaQueryProvider } from "../common/MediaQueryProvider";
+
 moment.locale("ja");
 type NextPageWithLayout = NextPage & {
     getLayout?: (page: ReactElement) => ReactNode;
