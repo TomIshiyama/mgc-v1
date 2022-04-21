@@ -154,6 +154,7 @@ export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
                                         {displayWord}
                                     </Typography>
                                     {buttonList && buttonList.length <= 0 ? (
+                                        // TODO: デザイン修正
                                         <Alert variant="filled" severity="info">
                                             予定はございません👍
                                         </Alert>
