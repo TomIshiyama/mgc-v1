@@ -14,6 +14,10 @@ import { defDateFormat } from "../utils/definitions";
 // モーメントを使用する
 const mLocalizer = momentLocalizer(moment);
 
+// TODO: 仮登録項目がある場合アサーションを出す
+// TODO: 登録ボタンクリック時に確認ダイアログ出す
+// TODO: 登録完了時にはメッセージをだす
+// TODO: 削除時に確認ダイアログ出す
 const Top = () => {
     // 疎通の動作確認のためだけに書いた
     const { data, loading, error } = useFetch({

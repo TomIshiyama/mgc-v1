@@ -2,7 +2,7 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import React, { createContext } from "react";
 
-const MediaQueryContext = createContext<{
+export const MediaQueryContext = createContext<{
     isSm: boolean;
     isMd: boolean;
     isLg: boolean;
