@@ -26,7 +26,7 @@ type DoPost<T> = ({ url, params }: Args<T>) => Promise<void>;
 
 interface PostResponse<T> {
     doPost: DoPost<T>;
-    isLoading: boolean;
+    loading: boolean;
 }
 
 export function usePost<T>({
@@ -38,7 +38,7 @@ export function usePost<T>({
     const methodInternal = useMemo(() => method, [method]);
     const urlInternal = useMemo(() => url, [url]);
     const paramsInternal = useMemo(() => params, [params]);
-    const [isLoading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const doPost = useCallback<DoPost<T>>(
         async <T,>(args: Args<T>) => {
             const reqUrl = args.url ?? urlInternal ?? "";
@@ -74,6 +74,6 @@ export function usePost<T>({
 
     return {
         doPost,
-        isLoading,
+        loading,
     };
 }
