@@ -4,13 +4,15 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
+    DialogTitle,
+    IconButton,
     InputAdornment,
     Menu,
     TextField,
 } from "@mui/material";
 import moment from "moment";
 import React from "react";
-import { CalendarProps, DateRange } from "react-date-range";
+import { CalendarProps, DateRange, DateRangeProps } from "react-date-range";
 import "react-date-range/dist/styles.css"; // react-date-range main css file
 import "react-date-range/dist/theme/default.css"; // react-date-range theme css file
 import { defDateFormat } from "../../utils/definitions";
@@ -23,10 +25,20 @@ const SHOW_MODE = {
 export type DateRangePickerProps = {
     mode: keyof typeof SHOW_MODE;
     dateFormat?: string;
+    title?: string;
+};
+
+type StateType = {
+    selection: {
+        startDate?: Date | null;
+        endDate?: Date | null;
+        key: string;
+    } | null;
 };
 
 export const DateRangePicker: React.VFC<DateRangePickerProps> = ({
     mode,
+    title,
     dateFormat = defDateFormat.ymd,
 }) => {
     const [open, setOpen] = React.useState(false);
@@ -48,6 +60,21 @@ export const DateRangePicker: React.VFC<DateRangePickerProps> = ({
         setOpen(false);
         setAnchorEl(null);
         // テキストフィールドを初期化する
+        // document?.getElementById("date-range-text-field")?.value = "";
+
+        setState({
+            selection: {
+                startDate: moment().toDate(),
+                endDate: null,
+                key: "selection",
+            },
+        });
+        setTextFieldState(null);
+    };
+
+    const handleOnChange: DateRangeProps["onChange"] = (item) => {
+        setState({ ...state, ...item });
+        setTextFieldState(moment(state.selection?.startDate).format(dateFormat));
     };
 
     const handleSubmit = () => {
@@ -55,7 +82,7 @@ export const DateRangePicker: React.VFC<DateRangePickerProps> = ({
         setAnchorEl(null);
     };
 
-    const [state, setState] = React.useState({
+    const [state, setState] = React.useState<StateType>({
         selection: {
             startDate: moment().toDate(),
             endDate: null,
@@ -69,34 +96,31 @@ export const DateRangePicker: React.VFC<DateRangePickerProps> = ({
         // },
     });
 
-    // コンポーネントを共通化してやるとなぜかクリックで選択範囲できないバグ
-    // const InternalDateRange = () => (
-    //     <DateRange
-    //         onChange={(item) => setState({ ...state, ...item })}
-    //         ranges={[state.selection]}
-    //         // showSelectionPreview={false}
-    //         // showMonthArrow={false}
-    //         // showPreview={false}
-    //         editableDateInputs
-    //     />
-    // );
+    const [textFieldState, setTextFieldState] = React.useState<string | null>(null);
 
     return (
         <>
             <TextField
-                id="standard-basic"
-                label="Standard"
+                id="date-range-text-field"
+                placeholder="YYYY/MM/DD"
                 color="primary"
-                onClick={handleClickOpen}
+                // onClick={handleClickOpen}
+                onChange={(e) => setTextFieldState(e.target.value)}
                 InputProps={{
                     endAdornment: (
                         <InputAdornment position="end">
                             {/* <ExpandMore /> */}
-                            <AccessTimeIcon />
+                            <IconButton
+                                edge="end"
+                                aria-label="Toggle password visibility"
+                                onClick={handleClickOpen}
+                            >
+                                <AccessTimeIcon />
+                            </IconButton>
                         </InputAdornment>
                     ),
                 }}
-                value={moment(state.selection.startDate).format(dateFormat)}
+                value={textFieldState}
             />
 
             {mode === SHOW_MODE.menu ? (
@@ -115,10 +139,11 @@ export const DateRangePicker: React.VFC<DateRangePickerProps> = ({
                         },
                     }}
                 >
+                    {/* HACK:コンポーネントを共通化してやるとなぜかクリックで選択範囲できないバグ */}
+
                     <DateRange
-                        onChange={(item) => setState({ ...state, ...item })}
+                        onChange={handleOnChange}
                         ranges={[state.selection] as unknown as CalendarProps["ranges"]}
-                        // showSelectionPreview={false}
                         showMonthArrow={false}
                         showPreview={false}
                         editableDateInputs
@@ -128,14 +153,13 @@ export const DateRangePicker: React.VFC<DateRangePickerProps> = ({
                 </Menu>
             ) : mode === SHOW_MODE.dialog ? (
                 <Dialog open={open} onClose={handleClose}>
-                    {/* {title && <DialogTitle>{title}</DialogTitle>} */}
+                    {title && <DialogTitle>{title}</DialogTitle>}
                     <DialogContent>
                         <DateRange
-                            onChange={(item) => setState({ ...state, ...item })}
+                            onChange={handleOnChange}
                             ranges={
                                 [state.selection] as unknown as CalendarProps["ranges"]
                             }
-                            // showSelectionPreview={false}
                             showMonthArrow={false}
                             showPreview={false}
                             editableDateInputs
