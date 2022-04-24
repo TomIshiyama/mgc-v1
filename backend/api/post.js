@@ -1,5 +1,6 @@
 const pool = require("./connectionPool");
 const util = require("../utils/utils");
+const humps = require("humps");
 
 module.exports = function (req) {
     console.log("req.url: ", req.url);
@@ -11,13 +12,15 @@ module.exports = function (req) {
     };
     if (!checkBody()) return;
 
-    const queryEntries = util.queryEntriesFromBody(req.body);
-    const queryKeys = util.queryKeys(req.body);
-    const queryValues = util.queryValues(req.body);
+    // camelCase -> snake_case
+    const snakes = humps.decamelizeKeys(req.body);
+    console.log("body in index: ", snakes);
+    const queryEntries = util.queryEntriesFromBody(snakes);
+    const queryKeys = util.queryKeys(snakes);
+    const queryValues = util.queryValues(snakes);
 
     const loginQue = `select * from users where ${queryEntries.replace(/,/g, " AND")}`;
-    const insertQue = `INSERT into ${_apiName} (${queryKeys}) values (${queryValues})`;
-
+    const insertQue = `INSERT into ${_apiName} (${queryKeys}) values (${queryValues});`;
     const mySqlQuery = _apiName.includes("login") ? loginQue : insertQue;
 
     console.log("mySqlQuery : ", mySqlQuery);
