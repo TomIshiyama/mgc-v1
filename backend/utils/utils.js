@@ -1,4 +1,5 @@
 // TODO: React プロジェクトに統合時、エクスポート宣言を変更
+const dayjs = require("dayjs");
 
 const Status = {
     Get: "GET",
@@ -109,9 +110,9 @@ const camelToSnakeCase = (str) => {
  * @returns {string}apiName
  */
 const getApiName = (req) => {
-    return (_apiName = req.url.includes("?")
+    return req.url.includes("?")
         ? req.url.slice(1, req.url.indexOf("?"))
-        : req.url.split("/")[1]);
+        : req.url.split("/")[1];
 };
 
 /**
@@ -160,6 +161,14 @@ const queryValues = (obj) =>
         .map((item) => `'${item}'`)
         .join(", ");
 
+const parseValuesDateString = (value) =>
+    dayjs(new Date(value)).isValid() ? dayjs(value).format("YYYY-MM-DD HH:mm:ss") : value;
+
+const mapDateString = (object) =>
+    Object.entries(object).reduce((accum, [key, val], idx) => {
+        return { ...accum, [key]: parseValuesDateString(val) };
+    }, {});
+
 // 各関数をエクスポート
 exports.generateGetSql = generateGetSql;
 exports.generateUpdateSql = generateUpdateSql;
@@ -174,3 +183,4 @@ exports.queryEntriesFromBody = queryEntriesFromBody;
 exports.queryEntriesFromString = queryEntriesFromString;
 exports.queryKeys = queryKeys;
 exports.queryValues = queryValues;
+exports.mapDateString = mapDateString;

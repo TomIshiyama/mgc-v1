@@ -21,7 +21,7 @@ create table IF NOT EXISTS users (
     theme VARCHAR(255) NOT NULL,
     is_admin TINYINT NOT NULL,
     is_stop TINYINT NOT NULL,
-    last_update TIMESTAMP NOT NULL)
+    last_update TIMESTAMP NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP)
 ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS category_code_master (
@@ -45,13 +45,13 @@ CREATE TABLE IF NOT EXISTS events (
     user_id INTEGER NOT NULL,
     category_id TINYINT,
     name VARCHAR(255) NOT NULL,
-    location VARCHAR(255) NOT NULL,
-    detail TEXT NOT NULL,
+    location VARCHAR(255),
+    detail TEXT,
     begin TIMESTAMP NOT NULL,
     end TIMESTAMP NOT NULL,
     is_temporary TINYINT NOT NULL,
-    last_update TIMESTAMP NOT NULL,
-    created_date TIMESTAMP NOT NULL,
+    last_update TIMESTAMP NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    created_date TIMESTAMP NOT NULL default CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     CONSTRAINT fk_user_id
         FOREIGN KEY (user_id)
@@ -71,7 +71,7 @@ create table IF NOT EXISTS attendees(
     FOREIGN KEY (event_id)
     REFERENCES events (id)
     ON DELETE CASCADE ON UPDATE CASCADE,
-    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id, event_id)
 )
@@ -93,10 +93,10 @@ VALUES
 ('10', 'Jean', 'Polnareff', 'ジャン', 'ポルナレフ', 'tester5@test.com', '123456', 'Yokohama Div', 'YR3', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 ');
 
 -- category_code_master insert
-INSERT IGNORE INTO category_code_master (code) VALUES ("fff"),("meeting"),("tech"),("meetup"),("primary"),("anniversary"),("etc");
+INSERT IGNORE INTO category_code_master (code) VALUES ("fff"),("meeting"),("tech"),("meetup"),("primary"),("anniversary"),("etc"),("temporary");
 
 -- categories insert
-INSERT IGNORE INTO categories (id,category_code,name) VALUES (1,"fff","FFF"),(2,"meeting","会議"),(3,"tech","技術"),(4,"meetup","交流"),(5,"primary","重要"),(6,"anniversary","設立記念日"),(7,"etc","その他");
+INSERT IGNORE INTO categories (id,category_code,name) VALUES (1,"fff","FFF"),(2,"meeting","会議"),(3,"tech","技術"),(4,"meetup","交流"),(5,"primary","重要"),(6,"anniversary","設立記念日"),(7,"etc","その他"),(8,"temporary","仮登録");
 -- (5,"laoreet, libero et"),(6,"cursus vestibulum. Mauris"),(7,"erat, eget tincidunt"),(8,"sed libero. Proin"),(9,"lorem, luctus ut,"),(10,"aliquet, sem ut"),(11,"eu turpis. Nulla"),(12,"libero dui nec"),(13,"cursus non, egestas"),(14,"natoque penatibus et"),(15,"primis in faucibus"),(16,"eget, dictum placerat,"),(17,"Cum sociis natoque"),(18,"at sem molestie"),(19,"tortor, dictum eu,"),(20,"Sed dictum. Proin"),(21,"Mauris non dui"),(22,"Etiam ligula tortor,"),(23,"consectetuer rhoncus. Nullam"),(24,"dictum mi, ac"),(25,"ac nulla. In"),(26,"orci tincidunt adipiscing."),(27,"malesuada id, erat."),(28,"erat. Vivamus nisi."),(29,"massa. Quisque porttitor"),(30,"Cras dolor dolor,"),(31,"iaculis quis, pede."),(32,"fermentum risus, at"),(33,"et ultrices posuere"),(34,"euismod et, commodo"),(35,"enim non nisi."),(36,"Donec sollicitudin adipiscing"),(37,"dictum augue malesuada"),(38,"eget nisi dictum"),(39,"sodales at, velit."),(40,"vulputate ullamcorper magna."),(41,"pede, ultrices a,"),(42,"vel quam dignissim"),(43,"eu erat semper"),(44,"Aliquam adipiscing lobortis"),(45,"ligula. Aenean euismod"),(46,"tortor nibh sit"),(47,"vitae erat vel"),(48,"Suspendisse commodo tincidunt"),(49,"Maecenas mi felis,"),(50,"porta elit, a"),(51,"elit elit fermentum"),(52,"Morbi sit amet"),(53,"erat neque non"),(54,"montes, nascetur ridiculus"),(55,"Aliquam nec enim."),(56,"nisi sem semper"),(57,"mollis. Phasellus libero"),(58,"ultrices posuere cubilia"),(59,"enim, condimentum eget,"),(60,"convallis erat, eget"),(61,"ligula. Aenean euismod"),(62,"posuere cubilia Curae;"),(63,"placerat. Cras dictum"),(64,"in magna. Phasellus"),(65,"consequat purus. Maecenas"),(66,"sapien, gravida non,"),(67,"placerat. Cras dictum"),(68,"at sem molestie"),(69,"eget ipsum. Suspendisse"),(70,"Aliquam fringilla cursus"),(71,"arcu et pede."),(72,"nec, diam. Duis"),(73,"vehicula aliquet libero."),(74,"consectetuer adipiscing elit."),(75,"leo elementum sem,"),(76,"mollis vitae, posuere"),(77,"Aenean egestas hendrerit"),(78,"Fusce aliquet magna"),(79,"velit in aliquet"),(80,"hendrerit neque. In"),(81,"eu nibh vulputate"),(82,"mus. Aenean eget"),(83,"nec metus facilisis"),(84,"a nunc. In"),(85,"vel sapien imperdiet"),(86,"auctor, velit eget"),(87,"egestas, urna justo"),(88,"egestas. Aliquam fringilla"),(89,"magna sed dui."),(90,"Duis sit amet"),(91,"nisi magna sed"),(92,"Suspendisse ac metus"),(93,"risus. In mi"),(94,"Donec sollicitudin adipiscing"),(95,"ipsum ac mi"),(96,"dis parturient montes,"),(97,"ac mattis velit"),(98,"nisi dictum augue"),(99,"dui. Fusce diam"),(100,"eu sem. Pellentesque");
 
 -- events insert
@@ -147,7 +147,7 @@ https://alhinc.workplace.com/groups/483609602459852/permalink/932638967556911/",
 (28,3,1,"ut","7154 Rutrum. Av.","odio semper cursus. Integer mollis. Integer tincidunt aliquam arcu. Aliquam ultrices iaculis odio. Nam interdum enim","2022-07-07 03:24:05","2022-07-07 06:24:05","1","2020-12-26 18:29:33","2020-11-25 21:35:30"),
 (29,1,7,"lobortis","3371 Sollicitudin St.","morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aliquam fringilla cursus purus. Nullam scelerisque neque sed sem","2022-07-08 03:24:05","2022-07-08 06:24:05","0","2020-07-15 16:52:56","2022-04-29 04:44:33"),
 (30,3,7,"rhoncus","4201 Purus Av.","Aenean sed pede nec ante blandit viverra. Donec tempus, lorem fringilla ornare placerat, orci lacus vestibulum lorem, sit amet ultricies sem magna nec","2022-07-09 03:24:05","2022-07-09 06:24:05","1","2020-08-12 10:36:39","2022-11-25 09:58:16"),
-(31,3,4,"ipsum","P.O. Box 776, 5179 Tortor, Street","vehicula risus.","2022-07-12 03:24:05","2022-07-12 06:24:05","0","2022-02-05 22:46:26","2022-05-28 10:22:11"),
+(31,3,8,"ipsum","P.O. Box 776, 5179 Tortor, Street","vehicula risus.","2022-07-12 03:24:05","2022-07-12 06:24:05","0","2022-02-05 22:46:26","2022-05-28 10:22:11"),
 (32,1,3,"Integer","4280 Neque Av.","pede blandit congue. In scelerisque scelerisque dui. Suspendisse ac metus vitae velit egestas lacinia. Sed congue, elit sed consequat auctor, nunc nulla vulputate dui, nec tempus mauris erat eget ipsum. Suspendisse","2022-07-12 03:24:05","2022-07-12 06:24:05","1","2022-07-18 22:48:42","2022-03-02 04:52:14"),
 (33,2,7,"enim.","392-7611 Pharetra. St.","<h3>これはタイトルのテスト</h3><strong>太字のテスト</strong></br>aaaaaaaaa </br>ああああああああああああああああ","2022-07-13 03:24:05","2022-07-14 06:24:05","1","2022-04-08 09:13:46","2022-06-10 15:24:58"),
 (34,1,1,"ファンファンファミリー","Zoom on line meeting","【ZoomURL】
