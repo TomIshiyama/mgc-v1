@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
     Box,
-    // eslint-disable-next-line import/named
-    BoxProps,
     Button,
     Dialog,
     DialogActions,
@@ -11,9 +9,8 @@ import {
     DialogTitle,
     TextField,
 } from "@mui/material";
-import moment from "moment";
 import React from "react";
-import { CalendarProps, DateRange } from "react-date-range";
+import { CalendarProps, DateRange, RangeKeyDict } from "react-date-range";
 // FIXME: localeのimport エラーどうするか問題
 import * as locales from "react-date-range/dist/locale";
 import "react-date-range/dist/styles.css"; // react-date-range main css file
@@ -22,9 +19,10 @@ import { Controller, useForm } from "react-hook-form";
 import { defDateFormat } from "../../utils/definitions";
 
 export type DateRangePickerModalProps = {
+    buttonLabel: string;
     title?: string;
     contentText?: React.ReactNode;
-    onSubmit?: BoxProps["onSubmit"];
+    onSubmit?: (values: FormValues) => void;
     onCancel?: VoidFunction;
     onSelect?: (val: StateType) => void;
     onCancelLabel?: string;
@@ -34,6 +32,8 @@ export type DateRangePickerModalProps = {
 
 type FormValues = {
     eventTitle: string;
+    startDate?: Date | null;
+    endDate?: Date | null;
     // term: DateRangePickerProps["value"];
 };
 
@@ -45,10 +45,15 @@ type StateType = {
     };
 };
 
+const defaultValues = {
+    startDate: null,
+    endDate: null,
+};
 export const DateRangePickerModal: React.VFC<DateRangePickerModalProps> = ({
     // onClose,
     // onAccept,
     title,
+    buttonLabel,
     contentText,
     onSubmit,
     onCancel,
@@ -57,7 +62,13 @@ export const DateRangePickerModal: React.VFC<DateRangePickerModalProps> = ({
     onSubmitLabel = "仮登録",
     dateFormat = defDateFormat.ymd,
 }) => {
-    const { handleSubmit, control } = useForm<FormValues>();
+    const { handleSubmit, control, getValues, setValue, reset, trigger, register } =
+        useForm<FormValues>({
+            defaultValues: defaultValues,
+        });
+
+    register("startDate", { required: true });
+    register("endDate", { validate: {} });
 
     const [open, setOpen] = React.useState(false);
 
@@ -67,22 +78,45 @@ export const DateRangePickerModal: React.VFC<DateRangePickerModalProps> = ({
 
     const handleClose = () => {
         setOpen(false);
+        reset();
+        setState({
+            selection: {
+                ...defaultValues,
+                key: "selection",
+            },
+        });
     };
 
     const handleCancel = () => {
         setOpen(false);
         // テキストフィールドを初期化する
+        reset();
+        setState({
+            selection: {
+                ...defaultValues,
+                key: "selection",
+            },
+        });
         onCancel?.();
     };
 
-    const handleOnSubmit = () => {
+    const handleOnSubmit = async () => {
         setOpen(false);
+        // FIXME: バリデーション実装
+        const triggered = await trigger(["eventTitle", "startDate", "endDate"]);
+        onSubmit?.(getValues());
+        reset();
+        setState({
+            selection: {
+                ...defaultValues,
+                key: "selection",
+            },
+        });
     };
 
     const [state, setState] = React.useState<StateType>({
         selection: {
-            startDate: moment().toDate(),
-            endDate: null,
+            ...defaultValues,
             key: "selection",
         },
         // TODO: Date Range Pickerで2つカレンダーを表記する場合に使う
@@ -94,15 +128,18 @@ export const DateRangePickerModal: React.VFC<DateRangePickerModalProps> = ({
     });
 
     // HACK: 型
-    const onChangeDateRange = (item: any) => {
+    const onChangeDateRange = (item: RangeKeyDict) => {
+        // FIXME: 入力日付の大小を比較する
         setState({ ...state, ...item });
+        setValue("startDate", item.selection.startDate);
+        setValue("endDate", item.selection.endDate);
         onSelect?.(state);
     };
 
     return (
         <>
-            <Button color="primary" variant="outlined" onClick={handleClickOpen}>
-                Button
+            <Button color="primary" variant="contained" onClick={handleClickOpen}>
+                {buttonLabel}
             </Button>
             <Dialog open={open} onClose={handleClose}>
                 {title && <DialogTitle>{title}</DialogTitle>}
@@ -111,7 +148,7 @@ export const DateRangePickerModal: React.VFC<DateRangePickerModalProps> = ({
 
                     <Box
                         component="form"
-                        onSubmit={onSubmit}
+                        onSubmit={handleOnSubmit}
                         width="100%"
                         display="flex"
                         flexDirection="column"
@@ -158,8 +195,12 @@ export const DateRangePickerModal: React.VFC<DateRangePickerModalProps> = ({
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCancel}>{onCancelLabel}</Button>
-                    <Button onClick={handleOnSubmit}>{onSubmitLabel}</Button>
+                    <Button variant="outlined" onClick={handleCancel}>
+                        {onCancelLabel}
+                    </Button>
+                    <Button variant="contained" type="submit" onClick={handleOnSubmit}>
+                        {onSubmitLabel}
+                    </Button>
                 </DialogActions>
             </Dialog>
         </>
