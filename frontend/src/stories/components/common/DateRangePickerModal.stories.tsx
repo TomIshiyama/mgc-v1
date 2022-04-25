@@ -17,5 +17,7 @@ const Template: ComponentStory<typeof DateRangePickerModal> = (args) => (
 
 export const Default = Template.bind({});
 
-const props = {};
+const props = {
+    buttonLabel: "仮登録",
+};
 Default.args = props;

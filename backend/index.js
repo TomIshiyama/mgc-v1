@@ -23,7 +23,6 @@ app.route(/(users|events|attendees|categories|login|filter)\?*/)
             });
     })
     .post((req, res) => {
-        console.log("body in index: ", req.body);
         post(req)
             .then((result) => {
                 res.send(humps.camelizeKeys(result));

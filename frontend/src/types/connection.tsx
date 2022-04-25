@@ -1,10 +1,10 @@
 export type BaseEventProps = {
-    id: number;
+    id?: number;
     userId: number;
     categoryId?: number;
     name: string;
-    location: string;
-    detail: string;
+    location?: string;
+    detail?: string;
     begin: Date;
     end: Date;
     isTemporary: number; // TODO: booleanにしたいがDBの定義修正がいる
@@ -13,7 +13,7 @@ export type BaseEventProps = {
 };
 
 export type BaseUserProps = {
-    id: number;
+    id?: number;
     givenName: string;
     familyName: string;
     givenKana?: string;
@@ -32,16 +32,16 @@ export type BaseUserProps = {
 };
 
 export type BaseCategoryProps = {
-    id: number;
+    id?: number;
     categoryCode: string;
     name: string;
 };
 
 export type BaseAttendeeProps = {
-    userId: number;
+    userId?: number;
     eventId: number;
-    lastUpdate: Date;
-    createdDate: Date;
+    lastUpdate?: Date;
+    createdDate?: Date;
 };
 
 // WARNING: 徐々に変わりつつあるので未使用

@@ -36,14 +36,20 @@ import ListItemText from "@mui/material/ListItemText";
 import { styled, SxProps, useTheme } from "@mui/material/styles/";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
+import moment from "moment";
 import Link, { LinkProps } from "next/link";
 import * as React from "react";
 import { FetchEventContext } from "../src/common/FetchEventProvider";
+import { DateRangePickerModal } from "../src/components/common/DateRangePickerModal";
 import { OpenIconButton } from "../src/components/common/OpenIconButton";
+import { usePost } from "../src/hooks/request/usePost";
 import { mapAutocomplete } from "../src/pages/top";
+import { BaseEventProps } from "../src/types/connection";
 import { pagesPath } from "../src/utils/$path";
+import { mapDateString } from "../src/utils/collection";
 import { EventCategoryType } from "../src/utils/displayData";
 import { COLOR } from "../src/utils/styling";
+import { Serialized } from "../src/utils/types";
 
 const openMenuList = [
     {
@@ -223,22 +229,13 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
         setOpen(false);
     }, []);
 
-    const onClickTempRegister = React.useCallback(() => {
-        // FIXME: 疎通 実装
-        // console.log("onClickTempRegister Clicked!");
-    }, []);
-
-    // const { data, loading } = useFetch<BaseEventProps[]>({
-    //     initialUrl: `${process.env.NEXT_PUBLIC_API_ENDPOINT!}events`,
-    //     headers: {},
-    // });
-
-    // const { data: categoryList } = useFetch<BaseCategoryProps[]>({
-    //     initialUrl: `${process.env.NEXT_PUBLIC_API_ENDPOINT!}categories`,
-    //     headers: {},
-    // });
-
     const { event, category } = React.useContext(FetchEventContext);
+    const { doPost, loading } = usePost<
+        Partial<BaseEventProps>,
+        Serialized<BaseEventProps>
+    >({
+        url: `${process.env.NEXT_PUBLIC_API_ENDPOINT!}events`,
+    });
 
     return (
         <Box sx={{ display: "flex" }}>
@@ -423,14 +420,27 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
                             justifyContent="flex-end"
                         >
                             <Grid item>
-                                <Button
-                                    onClick={onClickTempRegister}
-                                    // color="primary"
-                                    variant="contained"
-                                    sx={{ bgcolor: "lightCoral" }}
-                                >
-                                    仮登録
-                                </Button>
+                                <DateRangePickerModal
+                                    buttonLabel="仮登録"
+                                    onSubmit={async (formValues) => {
+                                        // FIXME: validation 実装
+                                        const data = mapDateString({
+                                            userId: 1, // FIXME: Login 機能を実装する
+                                            name: formValues.eventTitle,
+                                            begin: formValues.startDate!,
+                                            end: formValues.endDate!,
+                                            isTemporary: 1, // HACK: これENUM使いたいな・・・
+                                            categoryId: category?.data?.find(
+                                                (v) => v.categoryCode === "temporary"
+                                            )?.id,
+                                            lastUpdate: moment().toDate(),
+                                            createdDate: moment().toDate(),
+                                        });
+                                        await doPost({
+                                            params: data,
+                                        });
+                                    }}
+                                />
                             </Grid>
                             <Grid item>
                                 {/* FIXME: 疎通実装 */}

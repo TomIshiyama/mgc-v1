@@ -5,42 +5,42 @@ interface Params {
     [key: string]: any;
 }
 
-interface Args<T> {
+interface Args<T, V> {
     url?: string;
-    params?: Params;
-    body?: Params;
+    params?: V;
+    body?: V;
     method?: Method;
     onSuccess?: (data?: T) => void;
     onError?: (err: AxiosError) => void;
 }
 
-interface PostRequest {
+interface PostRequest<V> {
     method?: Method;
     url?: string;
-    params?: Params;
-    body?: Params;
+    params?: V;
+    body?: V;
     headers?: AxiosRequestConfig["headers"];
 }
 
-type DoPost<T> = ({ url, params }: Args<T>) => Promise<void>;
+type DoPost<T, V = Params> = ({ url, params }: Args<T, V>) => Promise<void>;
 
-interface PostResponse<T> {
-    doPost: DoPost<T>;
-    isLoading: boolean;
+interface PostResponse<T, V> {
+    doPost: DoPost<T, V>;
+    loading: boolean;
 }
 
-export function usePost<T>({
+export function usePost<T, V = Params>({
     method = "post",
     url,
     params,
     headers,
-}: PostRequest): PostResponse<T> {
+}: PostRequest<V>): PostResponse<T, V> {
     const methodInternal = useMemo(() => method, [method]);
     const urlInternal = useMemo(() => url, [url]);
     const paramsInternal = useMemo(() => params, [params]);
-    const [isLoading, setLoading] = useState(false);
-    const doPost = useCallback<DoPost<T>>(
-        async <T,>(args: Args<T>) => {
+    const [loading, setLoading] = useState(false);
+    const doPost = useCallback<DoPost<T, V>>(
+        async <T,>(args: Args<T, V>) => {
             const reqUrl = args.url ?? urlInternal ?? "";
             if (!reqUrl) {
                 return;
@@ -74,6 +74,6 @@ export function usePost<T>({
 
     return {
         doPost,
-        isLoading,
+        loading,
     };
 }
