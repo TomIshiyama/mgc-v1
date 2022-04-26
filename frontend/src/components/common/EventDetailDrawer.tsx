@@ -98,7 +98,7 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({
             <TemporaryDrawer {...temporaryDrawerProps}>
                 <Box
                     sx={{
-                        minHeight: "calc(100vh - 6em)",
+                        minHeight: "calc(100vh - 10em)", // FIXME: 動的に対応
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "space-between",

@@ -153,7 +153,16 @@ export const TemporaryDrawer: React.VFC<TemporaryDrawerProps> = ({
                         <CloseIcon />
                     </IconButton>
                 )}
-                <Container sx={showCloseButton ? { marginTop: "3em" } : {}}>
+                <Container
+                    sx={
+                        showCloseButton
+                            ? {
+                                  marginTop: "3em",
+                                  height: `${makeMargin(margin)?.height ?? "100%"}-30px`,
+                              }
+                            : {}
+                    }
+                >
                     {children}
                 </Container>
             </SwipeableDrawer>
