@@ -1,3 +1,4 @@
+import { Button } from "@mui/material";
 import { ComponentStory } from "@storybook/react";
 import {
     EventDetailDrawer,
@@ -35,7 +36,6 @@ const props: EventDetailDrawerProps = {
         top: "5em",
         bottom: "5em",
     },
-    // children: "aaaaaaaaaaaaaaaaaaaa",
     description:
         "<strong>わくわく！ファンファンイベント！</strong><br /><br /><p>あああああああああああああああああああああああ</p><p>いいいいいいいいいいいい</p>",
     avatarList: [
@@ -53,14 +53,36 @@ const props: EventDetailDrawerProps = {
         },
     ],
     category: "meetup",
-    // children: (
-    //     <>
-    //         <Typography>ああああああああ</Typography>
-    //         <Button color="primary" variant="contained" endIcon={<LogoutIcon />}>
-    //             <Chip label="Deletable" variant="outlined" color="secondary" />
-    //         </Button>
-    //     </>
-    // ),
+    render: (toggleDrawer, anchor) => {
+        return (
+            <Button size="large" variant="contained" onClick={toggleDrawer(anchor, true)}>
+                Open
+            </Button>
+        );
+    },
+    showCloseButton: true,
 };
 
 Default.args = props;
+
+//
+export const ButtonList = Template.bind({});
+
+const buttonListProps: EventDetailDrawerProps = {
+    ...props,
+    buttonList: [
+        {
+            label: "イベント参加",
+            onClick: (e) => {
+                e;
+            },
+            color: "primary",
+        },
+        {
+            label: "編集",
+            color: "secondary",
+        },
+    ],
+};
+
+ButtonList.args = buttonListProps;
