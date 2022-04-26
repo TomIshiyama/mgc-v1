@@ -20,7 +20,6 @@ const Template: ComponentStory<typeof TemporaryDrawer> = (args) => (
 );
 
 export const Default = Template.bind({});
-
 const props: TemporaryDrawerProps = {
     // title: "YOUR NAME",
     // subTitle: "Your department",
@@ -44,5 +43,11 @@ const props: TemporaryDrawerProps = {
     //     </>
     // ),
 };
-
 Default.args = props;
+
+export const ShowCloseButton = Template.bind({});
+const showCloseButtonProps: TemporaryDrawerProps = {
+    ...props,
+    showCloseButton: true,
+};
+ShowCloseButton.args = showCloseButtonProps;

@@ -1,6 +1,8 @@
 // eslint-disable-next-line import/named
-import { Container } from "@mui/material";
-import { Theme, useTheme } from "@mui/material/styles";
+import CloseIcon from "@mui/icons-material/Close";
+import { Container, IconButton } from "@mui/material";
+// eslint-disable-next-line import/named
+import * as MUIStyles from "@mui/material/styles";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import { makeStyles } from "@mui/styles";
 import * as React from "react";
@@ -32,6 +34,7 @@ export type TemporaryDrawerProps = {
     defaultOpen?: boolean;
     children: React.ReactNode;
     margin?: MarginProps;
+    showCloseButton?: boolean;
 };
 
 type MarginProps = {
@@ -55,8 +58,8 @@ const makeMargin = (margin?: MarginProps) => {
         : undefined;
 };
 
-const useStyles = (theme: Theme, state: boolean, margin?: MarginProps) => {
-    return makeStyles((_theme: Theme) => ({
+const useStyles = (theme: MUIStyles.Theme, state: boolean, margin?: MarginProps) => {
+    return makeStyles((_theme: MUIStyles.Theme) => ({
         drawer: {
             ...(state
                 ? {
@@ -86,6 +89,7 @@ export const TemporaryDrawer: React.VFC<TemporaryDrawerProps> = ({
     children,
     defaultOpen = false,
     margin,
+    showCloseButton = false,
 }) => {
     const [state, setState] = React.useState({
         top: defaultOpen,
@@ -94,7 +98,7 @@ export const TemporaryDrawer: React.VFC<TemporaryDrawerProps> = ({
         right: defaultOpen,
     });
 
-    const theme = useTheme();
+    const theme = MUIStyles.useTheme();
     const classes = useStyles(theme, state.bottom, margin);
 
     const toggleDrawer = React.useCallback(
@@ -133,7 +137,25 @@ export const TemporaryDrawer: React.VFC<TemporaryDrawerProps> = ({
                 onClose={toggleDrawer(anchor, false)}
                 onBackdropClick={toggleDrawer(anchor, false)}
             >
-                <Container>{children}</Container>
+                {showCloseButton && (
+                    <IconButton
+                        color="inherit"
+                        aria-label="IconButton"
+                        edge="end"
+                        onClick={toggleDrawer(anchor, false)}
+                        sx={{
+                            position: "fixed",
+                            display: "block",
+                            right: ".5em",
+                            marginTop: ".5em",
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                )}
+                <Container sx={showCloseButton ? { marginTop: "3em" } : {}}>
+                    {children}
+                </Container>
             </SwipeableDrawer>
         </React.Fragment>
     );
