@@ -1,5 +1,5 @@
-import Button from "@mui/material/Button";
 // eslint-disable-next-line import/named
+import { Container } from "@mui/material";
 import { Theme, useTheme } from "@mui/material/styles";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import { makeStyles } from "@mui/styles";
@@ -15,8 +15,21 @@ export const ANCHOR = {
 type Anchor = typeof ANCHOR[keyof typeof ANCHOR];
 
 export type TemporaryDrawerProps = {
-    defaultOpen?: boolean;
     anchor: Anchor;
+    render: (
+        toggleDrawer: (
+            anchor: Anchor,
+            open: boolean
+        ) => (event: React.KeyboardEvent | React.MouseEvent) => void,
+        anchor: Anchor,
+        state?: {
+            top: boolean;
+            left: boolean;
+            bottom: boolean;
+            right: boolean;
+        }
+    ) => React.ReactNode;
+    defaultOpen?: boolean;
     children: React.ReactNode;
     margin?: MarginProps;
 };
@@ -68,6 +81,7 @@ const useStyles = (theme: Theme, state: boolean, margin?: MarginProps) => {
 };
 
 export const TemporaryDrawer: React.VFC<TemporaryDrawerProps> = ({
+    render,
     anchor,
     children,
     defaultOpen = false,
@@ -99,9 +113,10 @@ export const TemporaryDrawer: React.VFC<TemporaryDrawerProps> = ({
         [state]
     );
 
+    const child = render(toggleDrawer, anchor, state);
     return (
         <React.Fragment key={anchor}>
-            <Button onClick={toggleDrawer(anchor, true)}>{anchor}</Button>
+            {child}
             {/* <Main open={state[anchor]}>
                 <DrawerHeader />
                 {mainContent}
@@ -118,7 +133,7 @@ export const TemporaryDrawer: React.VFC<TemporaryDrawerProps> = ({
                 onClose={toggleDrawer(anchor, false)}
                 onBackdropClick={toggleDrawer(anchor, false)}
             >
-                {children}
+                <Container>{children}</Container>
             </SwipeableDrawer>
         </React.Fragment>
     );
