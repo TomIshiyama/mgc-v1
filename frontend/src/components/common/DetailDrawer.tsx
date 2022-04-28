@@ -19,7 +19,7 @@ export type BasicButtonType = {
     options?: Omit<MUIProps.ButtonProps, "onClick" | "color" | "sx" | "variant">;
 };
 
-export type EventDetailDrawerProps = Omit<TemporaryDrawerProps, "children"> & {
+export type DetailDrawerProps = Omit<TemporaryDrawerProps, "children"> & {
     title: string;
     subTitle?: string;
     max?: MUIProps.AvatarGroupProps["max"];
@@ -46,7 +46,7 @@ const commonMap: {
     stack: { direction: "row", spacing: 1 },
 };
 
-export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({
+export const DetailDrawer: React.VFC<DetailDrawerProps> = ({
     title,
     subTitle,
     max,

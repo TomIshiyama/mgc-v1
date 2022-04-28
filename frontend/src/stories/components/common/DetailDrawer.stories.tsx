@@ -1,9 +1,6 @@
 import { Button } from "@mui/material";
 import { ComponentStory } from "@storybook/react";
-import {
-    EventDetailDrawer,
-    EventDetailDrawerProps,
-} from "../../../components/common/EventDetailDrawer";
+import { DetailDrawer, DetailDrawerProps } from "../../../components/common/DetailDrawer";
 import { ANCHOR } from "../../../components/common/TemporaryDrawer";
 
 export default {
@@ -11,17 +8,17 @@ export default {
      * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
      * to learn how to generate automatic titles
      */
-    component: EventDetailDrawer,
-    title: "EventDetailDrawer",
+    component: DetailDrawer,
+    title: "DetailDrawer",
 };
 
-const Template: ComponentStory<typeof EventDetailDrawer> = (args) => (
-    <EventDetailDrawer {...args} />
+const Template: ComponentStory<typeof DetailDrawer> = (args) => (
+    <DetailDrawer {...args} />
 );
 
 export const Default = Template.bind({});
 
-const props: EventDetailDrawerProps = {
+const props: DetailDrawerProps = {
     title: "ファンファンファミリー",
     subTitle: "イベント詳細",
     max: 2,
@@ -68,7 +65,7 @@ Default.args = props;
 //
 export const ButtonList = Template.bind({});
 
-const buttonListProps: EventDetailDrawerProps = {
+const buttonListProps: DetailDrawerProps = {
     ...props,
     buttonList: [
         {
