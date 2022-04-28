@@ -14,6 +14,7 @@ import React from "react";
 import { eventCategory, EventCategoryType } from "../../utils/displayData";
 import { COLOR } from "../../utils/styling";
 export type EventListItemProps = {
+    key?: React.Key;
     itemTitle: string;
     itemText: string;
     category: EventCategoryType;
