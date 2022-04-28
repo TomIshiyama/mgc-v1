@@ -1,3 +1,4 @@
+import { Button } from "@mui/material";
 import { ComponentStory } from "@storybook/react";
 import {
     ANCHOR,
@@ -19,10 +20,16 @@ const Template: ComponentStory<typeof TemporaryDrawer> = (args) => (
 );
 
 export const Default = Template.bind({});
-
 const props: TemporaryDrawerProps = {
     // title: "YOUR NAME",
     // subTitle: "Your department",
+    render: (toggleDrawer, anchor) => {
+        return (
+            <Button size="large" variant="contained" onClick={toggleDrawer(anchor, true)}>
+                Open
+            </Button>
+        );
+    },
     anchor: ANCHOR.RIGHT,
     children: "aaaaaaaaaaaaaaaaaaaa",
     defaultOpen: false,
@@ -36,5 +43,11 @@ const props: TemporaryDrawerProps = {
     //     </>
     // ),
 };
-
 Default.args = props;
+
+export const ShowCloseButton = Template.bind({});
+const showCloseButtonProps: TemporaryDrawerProps = {
+    ...props,
+    showCloseButton: true,
+};
+ShowCloseButton.args = showCloseButtonProps;

@@ -9,6 +9,7 @@ export const COLOR = {
     etc: "RosyBrown",
     event: "SteelBlue",
     setting: "LightSeaGreen",
+    temporary: "orange",
     dark: {},
     normal: {
         caption: "dimgray",
