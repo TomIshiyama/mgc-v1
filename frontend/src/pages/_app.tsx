@@ -8,6 +8,7 @@ import React, { ReactElement, ReactNode } from "react";
 import "react-big-calendar/lib/css/react-big-calendar.css"; // カレンダーのスタイルを取り込む
 import "react-date-range/dist/styles.css"; // react-date-range main css file
 import "react-date-range/dist/theme/default.css"; // react-date-range theme css file
+import { DetailDrawerProvider } from "../common/DetailDrawerProvider";
 import { FetchEventProvider } from "../common/FetchEventProvider";
 import { MaterialThemeProvider } from "../common/MaterialThemeProvider";
 import { MediaQueryProvider } from "../common/MediaQueryProvider";
@@ -51,7 +52,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout): JSX.Element {
             <MaterialThemeProvider>
                 <MediaQueryProvider>
                     <FetchEventProvider>
-                        {getLayout(<Component {...pageProps} />)}
+                        <DetailDrawerProvider>
+                            {getLayout(<Component {...pageProps} />)}
+                        </DetailDrawerProvider>
                     </FetchEventProvider>
                 </MediaQueryProvider>
             </MaterialThemeProvider>
