@@ -1,11 +1,12 @@
-// eslint-disable-next-line import/named
 import CloseIcon from "@mui/icons-material/Close";
-import { Container, IconButton } from "@mui/material";
 // eslint-disable-next-line import/named
+import { Container, IconButton, IconButtonProps } from "@mui/material";
 import * as MUIStyles from "@mui/material/styles";
-import SwipeableDrawer from "@mui/material/SwipeableDrawer";
+// eslint-disable-next-line import/named
+import SwipeableDrawer, { SwipeableDrawerProps } from "@mui/material/SwipeableDrawer";
 import { makeStyles } from "@mui/styles";
 import * as React from "react";
+import { useDrawer } from "../../hooks/components/useDrawer";
 
 export const ANCHOR = {
     TOP: "top",
@@ -14,27 +15,36 @@ export const ANCHOR = {
     RIGHT: "right",
 } as const;
 
-type Anchor = typeof ANCHOR[keyof typeof ANCHOR];
+export type Anchor = typeof ANCHOR[keyof typeof ANCHOR];
+export type TemporaryDrawerStateType = {
+    top: boolean;
+    left: boolean;
+    bottom: boolean;
+    right: boolean;
+};
 
 export type TemporaryDrawerProps = {
     anchor: Anchor;
-    render: (
+    render?: (
         toggleDrawer: (
             anchor: Anchor,
             open: boolean
         ) => (event: React.KeyboardEvent | React.MouseEvent) => void,
         anchor: Anchor,
-        state?: {
-            top: boolean;
-            left: boolean;
-            bottom: boolean;
-            right: boolean;
-        }
+        state?: TemporaryDrawerStateType
     ) => React.ReactNode;
     defaultOpen?: boolean;
     children: React.ReactNode;
     margin?: MarginProps;
     showCloseButton?: boolean;
+    manageDrawer?: (anchor: Anchor, open: boolean) => void;
+    overwrite?: {
+        open: boolean;
+        onOpen: SwipeableDrawerProps["onOpen"];
+        onClose: SwipeableDrawerProps["onClose"];
+        onBackdropClick: SwipeableDrawerProps["onBackdropClick"];
+        onCloseIcon: IconButtonProps["onClick"];
+    };
 };
 
 type MarginProps = {
@@ -90,41 +100,24 @@ export const TemporaryDrawer: React.VFC<TemporaryDrawerProps> = ({
     defaultOpen = false,
     margin,
     showCloseButton = false,
+    overwrite,
 }) => {
-    const [state, setState] = React.useState({
-        top: defaultOpen,
-        left: defaultOpen,
-        bottom: defaultOpen,
-        right: defaultOpen,
-    });
+    // const [state, setState] = React.useState({
+    //     top: defaultOpen,
+    //     left: defaultOpen,
+    //     bottom: defaultOpen,
+    //     right: defaultOpen,
+    // });
+
+    const { state, setState, toggleDrawer } = useDrawer(defaultOpen);
 
     const theme = MUIStyles.useTheme();
     const classes = useStyles(theme, state.bottom, margin);
 
-    const toggleDrawer = React.useCallback(
-        (anchor: Anchor, open: boolean) =>
-            (event: React.KeyboardEvent | React.MouseEvent) => {
-                if (
-                    event &&
-                    event.type === "keydown" &&
-                    ((event as React.KeyboardEvent).key === "Tab" ||
-                        (event as React.KeyboardEvent).key === "Shift")
-                ) {
-                    return;
-                }
-                setState({ ...state, [anchor]: open });
-            },
-        [state]
-    );
-
-    const child = render(toggleDrawer, anchor, state);
+    const child = render?.(toggleDrawer, anchor, state);
     return (
         <React.Fragment key={anchor}>
             {child}
-            {/* <Main open={state[anchor]}>
-                <DrawerHeader />
-                {mainContent}
-            </Main> */}
             <SwipeableDrawer
                 variant="temporary"
                 // className={classes.drawer}
@@ -132,17 +125,19 @@ export const TemporaryDrawer: React.VFC<TemporaryDrawerProps> = ({
                     paper: classes.drawerPaper,
                 }}
                 anchor={anchor}
-                open={state[anchor]}
-                onOpen={toggleDrawer(anchor, true)}
-                onClose={toggleDrawer(anchor, false)}
-                onBackdropClick={toggleDrawer(anchor, false)}
+                open={overwrite?.open ?? state[anchor]}
+                onOpen={overwrite?.onOpen ?? toggleDrawer(anchor, true)}
+                onClose={overwrite?.onClose ?? toggleDrawer(anchor, false)}
+                onBackdropClick={
+                    overwrite?.onBackdropClick ?? toggleDrawer(anchor, false)
+                }
             >
                 {showCloseButton && (
                     <IconButton
                         color="inherit"
                         aria-label="IconButton"
                         edge="end"
-                        onClick={toggleDrawer(anchor, false)}
+                        onClick={overwrite?.onCloseIcon ?? toggleDrawer(anchor, false)}
                         sx={{
                             position: "fixed",
                             display: "block",
