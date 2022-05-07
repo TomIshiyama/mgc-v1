@@ -1,6 +1,9 @@
 /* eslint-disable */
 // prettier-ignore
 export const pagesPath = {
+  events: {
+    $url: (url?: { hash?: string }) => ({ pathname: '/events' as const, hash: url?.hash })
+  },
   signin: {
     $url: (url?: { hash?: string }) => ({ pathname: '/signin' as const, hash: url?.hash })
   },

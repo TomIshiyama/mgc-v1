@@ -60,7 +60,7 @@ const openMenuList = [
     {
         icon: <FlagCircleOutlinedIcon sx={{ color: COLOR.event }} />,
         label: "マイイベント",
-        link: "#",
+        link: "/events",
     },
     {
         icon: <SettingsApplicationsIcon sx={{ color: COLOR.setting }} />,
@@ -159,7 +159,7 @@ const menuDefs: SideMenuDefType[] = [
             {
                 label: "マイイベント",
                 icon: <EmojiFlagsIcon sx={iconStyle} />,
-                link: "#", // FIXME: 遷移先URL
+                link: "/events", // FIXME: 遷移先URL
             },
         ],
     },

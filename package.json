@@ -4,5 +4,8 @@
     "private": true,
     "scripts": {
         "init": "bash init.sh -x"
+    },
+    "dependencies": {
+        "moment": "^2.29.3"
     }
 }
