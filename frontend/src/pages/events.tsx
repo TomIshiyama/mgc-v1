@@ -5,6 +5,7 @@ import { momentLocalizer } from "react-big-calendar";
 import { MainLayout } from "../../layouts/MainLayout";
 import { FetchEventContext } from "../common/FetchEventProvider";
 import { Head } from "../components/common/Head";
+import { EventPageComponent } from "../components/events/EventPageComponent";
 import { useFetch } from "../hooks/request/useFetch";
 
 // モーメントを使用する
@@ -31,7 +32,7 @@ const Events = () => {
                 description="イベント画面 "
                 keyword="イベント画面"
             />
-            {/* <EventPageComponent></EventPageComponent> */}
+            <EventPageComponent></EventPageComponent>
         </>
     );
 };

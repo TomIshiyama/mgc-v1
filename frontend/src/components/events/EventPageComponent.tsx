@@ -6,7 +6,7 @@ import moment from "moment";
 import React from "react";
 import { defDateFormat, defDrawerWidth } from "../../utils/definitions";
 import { COLOR, Z_INDEX } from "../../utils/styling";
-import { EventDetailDrawer } from "../common/EventDetailDrawer";
+import { EventPageListContent } from "./EventPageListContent";
 
 const Main = styled("div", { shouldForwardProp: (prop) => prop !== "open" })<{
     open?: boolean;
@@ -45,7 +45,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 }));
 
 export type EventPageComponentProps = {
-    children: React.ReactNode;
+    // children: React.ReactNode;
 };
 
 export const EventPageComponent: React.VFC<EventPageComponentProps> = ({ children }) => {
@@ -76,6 +76,13 @@ export const EventPageComponent: React.VFC<EventPageComponentProps> = ({ childre
             >
                 {open ? <ArrowForwardIosIcon /> : <ArrowBackIosNewIcon />}
             </IconButton>
+            <EventPageListContent
+                buttonList={[]}
+                title={moment(data.day).format(defDateFormat.day)}
+                subtitle={moment(data.day).format(defDateFormat.fullDayOfWeek)}
+                description={<></>}
+                onClickIcon={handleDrawerClose}
+            />
             <Main open={open}>{children}</Main>
             <Drawer
                 sx={{
@@ -94,13 +101,13 @@ export const EventPageComponent: React.VFC<EventPageComponentProps> = ({ childre
                 open={open}
                 onClose={handleDrawerClose}
             >
-                <EventDetailDrawer
+                {/* <EventDetailDrawer
                     buttonList={[]}
                     title={moment(data.day).format(defDateFormat.day)}
                     subtitle={moment(data.day).format(defDateFormat.fullDayOfWeek)}
                     description={<></>}
                     onClickIcon={handleDrawerClose}
-                />
+                /> */}
             </Drawer>
         </>
     );
