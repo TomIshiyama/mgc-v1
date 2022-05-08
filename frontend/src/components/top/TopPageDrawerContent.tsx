@@ -2,6 +2,9 @@ import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import CloseIcon from "@mui/icons-material/Close";
 import * as MUI from "@mui/material";
 import { Alert, styled, Typography } from "@mui/material";
+import MuiAccordion from "@mui/material/Accordion";
+import MuiAccordionDetails from "@mui/material/AccordionDetails";
+import MuiAccordionSummary from "@mui/material/AccordionSummary";
 import moment from "moment";
 import dynamic from "next/dynamic";
 import React from "react";
@@ -14,7 +17,6 @@ import { Z_INDEX } from "../../utils/styling";
 import { ButtonListType } from "../common/BaseListItemButton";
 import { EventListItem, EventListItemProps } from "../common/EventListItem";
 import { ANCHOR } from "../common/TemporaryDrawer";
-
 export type TopPageDrawerContentProps = {
     title?: string;
     subtitle?: string;
@@ -141,7 +143,8 @@ export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
                 {/* イベント分布 */}
                 <DynamicEventChart />
 
-                <MUI.List>
+                {/* イベント予定 */}
+                <MUI.List sx={{ marginTop: "2em" }}>
                     {buttonList2 &&
                         // HACK: 分岐を外だし、または文言を定数化してリファクタ
                         Object.entries(buttonList2).map(([key, buttonList], idx) => {
@@ -172,7 +175,7 @@ export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
                                             >
                                                 <Typography
                                                     variant="h6"
-                                                    sx={{ padding: "1em 0" }}
+                                                    sx={{ padding: ".2em 0" }}
                                                 >
                                                     {displayWord}
                                                 </Typography>
@@ -222,7 +225,7 @@ export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
 };
 
 const Accordion = styled((props: MUI.AccordionProps) => (
-    <MUI.Accordion disableGutters elevation={0} square {...props} />
+    <MuiAccordion disableGutters elevation={0} square {...props} />
 ))(({ theme }) => ({
     // border: `1px solid ${theme.palette.divider}`,
     border: "none",
@@ -237,7 +240,7 @@ const Accordion = styled((props: MUI.AccordionProps) => (
 }));
 
 const AccordionSummary = styled((props: MUI.AccordionSummaryProps) => (
-    <MUI.AccordionSummary
+    <MuiAccordionSummary
         expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
         {...props}
     />
@@ -254,7 +257,7 @@ const AccordionSummary = styled((props: MUI.AccordionSummaryProps) => (
     },
 }));
 
-const AccordionDetails = styled(MUI.AccordionDetails)(({ theme }) => ({
+const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
     padding: theme.spacing(2),
     borderTop: "1px solid rgba(0, 0, 0, .125)",
 }));
