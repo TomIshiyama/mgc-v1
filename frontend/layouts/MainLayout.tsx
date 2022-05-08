@@ -313,14 +313,14 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
                                                 <ListItemText>
                                                     <Typography variant="body1">
                                                         {option.label}
-                                                        {/* {option.categoryId} */}
-                                                        {
+                                                        {/* カテゴリ表示は一旦不要 */}
+                                                        {/* {
                                                             category?.data?.find(
                                                                 (v) =>
                                                                     v.id ===
                                                                     option.categoryId
                                                             )?.categoryCode
-                                                        }
+                                                        } */}
                                                     </Typography>
                                                 </ListItemText>
                                                 <Box>
