@@ -16,6 +16,7 @@ export type BasicButtonType = {
     color?: MUIProps.ButtonProps["color"];
     sx?: MUIProps.ButtonProps["sx"];
     variant?: MUIProps.ButtonProps["variant"];
+    disabled?: MUIProps.ButtonProps["disabled"];
     options?: Omit<MUIProps.ButtonProps, "onClick" | "color" | "sx" | "variant">;
 };
 
