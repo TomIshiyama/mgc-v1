@@ -43,7 +43,7 @@ import { FetchEventContext } from "../src/common/FetchEventProvider";
 import { DateRangePickerModal } from "../src/components/common/DateRangePickerModal";
 import { OpenIconButton } from "../src/components/common/OpenIconButton";
 import { EventDetailDrawer } from "../src/components/event/EventDetailDrawer";
-import { useContextDetailDrawer } from "../src/hooks/contexts/useContextDrawer";
+import { useContextDetailDrawer } from "../src/hooks/contexts/useContextDetailDrawer";
 import { usePost } from "../src/hooks/request/usePost";
 import { mapAutocomplete } from "../src/pages/top";
 import { BaseEventProps } from "../src/types/connection";

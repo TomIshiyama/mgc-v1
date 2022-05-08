@@ -1,6 +1,6 @@
 import React from "react";
 import { FetchEventContext } from "../../common/FetchEventProvider";
-import { useContextDetailDrawer } from "../../hooks/contexts/useContextDrawer";
+import { useContextDetailDrawer } from "../../hooks/contexts/useContextDetailDrawer";
 import { BaseEventProps } from "../../types/connection";
 import { EventCategoryType } from "../../utils/displayData";
 import { DetailDrawerProps } from "../common/DetailDrawer";
