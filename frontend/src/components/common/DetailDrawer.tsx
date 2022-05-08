@@ -74,10 +74,11 @@ export const DetailDrawer: React.VFC<DetailDrawerProps> = ({
             typeof endDate === "string"
                 ? endDate
                 : moment(endDate).format(defDateFormat.ymd);
+
         return beginString === endString
             ? beginString
             : `${beginString ?? ""}  ${endString ? `- ${endString}` : ""}`;
-    }, []);
+    }, [beginDate, endDate]);
 
     const memoTimeString = React.useMemo(() => {
         const beginString =
@@ -92,7 +93,7 @@ export const DetailDrawer: React.VFC<DetailDrawerProps> = ({
         return beginString === endString
             ? beginString
             : `${beginString ?? ""}  ${endString ? `- ${endString}` : ""}`;
-    }, []);
+    }, [beginTime, endTime]);
 
     return (
         <>
