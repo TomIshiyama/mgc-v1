@@ -1,6 +1,7 @@
+import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import CloseIcon from "@mui/icons-material/Close";
 import * as MUI from "@mui/material";
-import { Alert, Typography } from "@mui/material";
+import { Alert, styled, Typography } from "@mui/material";
 import moment from "moment";
 import dynamic from "next/dynamic";
 import React from "react";
@@ -155,34 +156,62 @@ export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
                             return (
                                 <>
                                     {/* TODO: Accordionに変更する 件数表示する*/}
-                                    <Typography variant="h6" sx={{ padding: "1em 0" }}>
-                                        {displayWord}
-                                    </Typography>
-                                    {buttonList && buttonList.length <= 0 ? (
-                                        // TODO: デザイン修正
-                                        <Alert variant="filled" severity="info">
-                                            予定はございません👍
-                                        </Alert>
-                                    ) : (
-                                        buttonList?.map((button, idx) => {
-                                            return (
-                                                <EventListItem
-                                                    key={`${button.key!}}`}
-                                                    {...button}
-                                                    style={{
-                                                        marginBottom: "1em",
-                                                    }}
-                                                    onClick={() => {
-                                                        setKey?.(button.key);
-                                                        doToggleDrawer(
-                                                            ANCHOR.RIGHT,
-                                                            true
-                                                        );
-                                                    }}
-                                                />
-                                            );
-                                        })
-                                    )}
+                                    <Accordion defaultExpanded={key === "today"}>
+                                        <AccordionSummary
+                                            // expandIcon={<ExpandMoreIcon />}
+                                            aria-controls="panel1a-content"
+                                            id="panel1a-header"
+                                        >
+                                            <MUI.Box
+                                                sx={{
+                                                    display: "flex",
+                                                    justifyContent: "space-between",
+                                                    alignItems: "center",
+                                                    width: "100%",
+                                                }}
+                                            >
+                                                <Typography
+                                                    variant="h6"
+                                                    sx={{ padding: "1em 0" }}
+                                                >
+                                                    {displayWord}
+                                                </Typography>
+                                                <Typography>
+                                                    {`${
+                                                        buttonList?.length.toString() ??
+                                                        ""
+                                                    } 件`}
+                                                </Typography>
+                                            </MUI.Box>
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            {buttonList && buttonList.length <= 0 ? (
+                                                // TODO: デザイン修正
+                                                <Alert variant="filled" severity="info">
+                                                    予定はございません👍
+                                                </Alert>
+                                            ) : (
+                                                buttonList?.map((button, idx) => {
+                                                    return (
+                                                        <EventListItem
+                                                            key={`${button.key!}}`}
+                                                            {...button}
+                                                            style={{
+                                                                marginBottom: "1em",
+                                                            }}
+                                                            onClick={() => {
+                                                                setKey?.(button.key);
+                                                                doToggleDrawer(
+                                                                    ANCHOR.RIGHT,
+                                                                    true
+                                                                );
+                                                            }}
+                                                        />
+                                                    );
+                                                })
+                                            )}
+                                        </AccordionDetails>
+                                    </Accordion>
                                 </>
                             );
                         })}
@@ -191,3 +220,41 @@ export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
         </>
     );
 };
+
+const Accordion = styled((props: MUI.AccordionProps) => (
+    <MUI.Accordion disableGutters elevation={0} square {...props} />
+))(({ theme }) => ({
+    // border: `1px solid ${theme.palette.divider}`,
+    border: "none",
+    background: "transparent",
+
+    "&:not(:last-child)": {
+        borderBottom: 0,
+    },
+    "&:before": {
+        display: "none",
+    },
+}));
+
+const AccordionSummary = styled((props: MUI.AccordionSummaryProps) => (
+    <MUI.AccordionSummary
+        expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+        {...props}
+    />
+))(({ theme }) => ({
+    // borderRadius: "1em",
+    backgroundColor:
+        theme.palette.mode === "dark" ? "rgba(255, 255, 255, .05)" : "rgba(0, 0, 0, .03)",
+    flexDirection: "row-reverse",
+    "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
+        transform: "rotate(90deg)",
+    },
+    "& .MuiAccordionSummary-content": {
+        marginLeft: theme.spacing(1),
+    },
+}));
+
+const AccordionDetails = styled(MUI.AccordionDetails)(({ theme }) => ({
+    padding: theme.spacing(2),
+    borderTop: "1px solid rgba(0, 0, 0, .125)",
+}));
