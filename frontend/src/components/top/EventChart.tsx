@@ -93,10 +93,10 @@ export const EventChart = React.memo(() => {
                 ))}
             </BarChart>
             {/* Legend部分 */}
-            <MUI.Box sx={{ position: "absolute" }}>
+            <MUI.Box sx={{ position: "absolute", bottom: "-1em" }}>
                 {Object.values(categorizedEventList ?? []).map((datum, idx) => (
                     <MUI.Typography key={`${idx}`} variant="caption">
-                        {`${datum.name} : ${datum.count ?? 0} `}
+                        {`${datum.name} : ${datum.count ?? 0}, `}
                     </MUI.Typography>
                 ))}
             </MUI.Box>
