@@ -6,6 +6,7 @@ import { MainLayout } from "../../layouts/MainLayout";
 import { FetchEventContext } from "../common/FetchEventProvider";
 import { Head } from "../components/common/Head";
 import { TopPageComponent } from "../components/top/TopPageComponent";
+import { useContextDetailDrawer } from "../hooks/contexts/useContextDetailDrawer";
 import { useFetch } from "../hooks/request/useFetch";
 // import { eventListMock } from "../mock/eventList";
 import { BaseEventProps } from "../types/connection";
@@ -27,6 +28,7 @@ const Top = () => {
 
     // TODO: 移す
     const { event } = React.useContext(FetchEventContext);
+    const { doToggleDrawer, setKey } = useContextDetailDrawer();
 
     return (
         <>
@@ -42,6 +44,13 @@ const Top = () => {
                     startAccessor="start"
                     endAccessor="end"
                     style={{ minHeight: 500, height: "80vh" }}
+                    selectable
+                    onSelectEvent={(e: Event) => {
+                        const resource = e.resource as BaseEventProps;
+                        doToggleDrawer?.("right", true);
+                        setKey?.(resource.id);
+                    }}
+
                     // defaultDate={new Date(2022, 7, 10)} TODO: Autocompleteのイベント時に表示月を変更するべきか？
                 />
             </TopPageComponent>
@@ -62,6 +71,9 @@ export const mapCalender = (data: BaseEventProps[]): Event[] =>
         title: datum.name,
         start: moment(datum.begin).toDate(),
         end: moment(datum.end).toDate(),
+        resource: {
+            ...datum,
+        },
     }));
 
 export const mapAutocomplete = (data: BaseEventProps[]) =>
