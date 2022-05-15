@@ -15,6 +15,7 @@ export const COLOR = {
         caption: "dimgray",
         bgcolor: "white", //
         sideBgcolor: "SeaShell", // 他候補 OldLace,Line,SeaShell, LavenderBlush
+        userBgcolor: "WhiteSmoke",
     },
 } as const;
 
