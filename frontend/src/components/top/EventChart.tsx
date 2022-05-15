@@ -29,7 +29,7 @@ export const data: EventCategoryObjectType[] = [
 export const EventChart = React.memo(() => {
     const { event, category } = React.useContext(FetchEventContext);
 
-    const categorizedEventList = React.useMemo(
+    const categorizedEventList: CategorizedEventListType[] = React.useMemo(
         () =>
             // カテゴリIDごとにカウントアップし分配する
             event?.data?.reduce((acc: Record<number, CategorizedEventListType>, cur) => {
@@ -48,9 +48,9 @@ export const EventChart = React.memo(() => {
                           },
                       }
                     : { ...cur };
-            }, {}),
+            }, {} as CategorizedEventListType),
         [event?.data]
-    );
+    ) as CategorizedEventListType[];
 
     return (
         <MUI.Box margin="3em 0" position="relative">
@@ -93,10 +93,10 @@ export const EventChart = React.memo(() => {
                 ))}
             </BarChart>
             {/* Legend部分 */}
-            <MUI.Box sx={{ position: "absolute" }}>
+            <MUI.Box sx={{ position: "absolute", bottom: "-1em" }}>
                 {Object.values(categorizedEventList ?? []).map((datum, idx) => (
                     <MUI.Typography key={`${idx}`} variant="caption">
-                        {`${datum.name} : ${datum.count ?? 0} `}
+                        {`${datum?.name} : ${datum?.count ?? 0}, `}
                     </MUI.Typography>
                 ))}
             </MUI.Box>

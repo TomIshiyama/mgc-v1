@@ -32,7 +32,7 @@ export type BaseUserProps = {
 };
 
 export type BaseCategoryProps = {
-    id?: number;
+    id: number;
     categoryCode: string;
     name: string;
 };
