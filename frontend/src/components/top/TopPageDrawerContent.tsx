@@ -5,12 +5,14 @@ import moment from "moment";
 import dynamic from "next/dynamic";
 import React from "react";
 import { FetchEventContext } from "../../common/FetchEventProvider";
+import { useContextDetailDrawer } from "../../hooks/contexts/useContextDetailDrawer";
 import { BaseEventProps } from "../../types/connection";
 import { defDateFormat } from "../../utils/definitions";
 import { EventCategoryType } from "../../utils/displayData";
 import { Z_INDEX } from "../../utils/styling";
 import { ButtonListType } from "../common/BaseListItemButton";
 import { EventListItem, EventListItemProps } from "../common/EventListItem";
+import { ANCHOR } from "../common/TemporaryDrawer";
 
 export type TopPageDrawerContentProps = {
     title?: string;
@@ -33,9 +35,12 @@ export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
     onClickIcon,
 }) => {
     const { event, category } = React.useContext(FetchEventContext);
+    const { doToggleDrawer, setKey } = useContextDetailDrawer();
 
+    // HACK: 宣言場所
     const mapEventListItem = React.useCallback(
         (datum: BaseEventProps): EventListItemProps => ({
+            key: datum.id,
             itemTitle: datum.name,
             itemText: `${moment(datum.begin).format(defDateFormat.time24)} - ${moment(
                 datum.end
@@ -159,13 +164,24 @@ export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
                                             予定はございません👍
                                         </Alert>
                                     ) : (
-                                        buttonList?.map((datum, idx) => (
-                                            <EventListItem
-                                                key={`${idx}`}
-                                                {...datum}
-                                                style={{ marginBottom: "1em" }}
-                                            />
-                                        ))
+                                        buttonList?.map((button, idx) => {
+                                            return (
+                                                <EventListItem
+                                                    key={`${button.key!}}`}
+                                                    {...button}
+                                                    style={{
+                                                        marginBottom: "1em",
+                                                    }}
+                                                    onClick={() => {
+                                                        setKey?.(button.key);
+                                                        doToggleDrawer(
+                                                            ANCHOR.RIGHT,
+                                                            true
+                                                        );
+                                                    }}
+                                                />
+                                            );
+                                        })
                                     )}
                                 </>
                             );

@@ -42,6 +42,8 @@ import * as React from "react";
 import { FetchEventContext } from "../src/common/FetchEventProvider";
 import { DateRangePickerModal } from "../src/components/common/DateRangePickerModal";
 import { OpenIconButton } from "../src/components/common/OpenIconButton";
+import { EventDetailDrawer } from "../src/components/event/EventDetailDrawer";
+import { useContextDetailDrawer } from "../src/hooks/contexts/useContextDetailDrawer";
 import { usePost } from "../src/hooks/request/usePost";
 import { mapAutocomplete } from "../src/pages/top";
 import { BaseEventProps } from "../src/types/connection";
@@ -236,6 +238,8 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
     >({
         url: `${process.env.NEXT_PUBLIC_API_ENDPOINT!}events`,
     });
+
+    const { mode } = useContextDetailDrawer();
 
     return (
         <Box sx={{ display: "flex" }}>
@@ -527,10 +531,14 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
                     </Box>
                 </Container>
             </Drawer>
+            {/* メインコンテンツ */}
             <Main open={open}>
                 <DrawerHeader />
                 {children}
             </Main>
+
+            {/* イベントのDrawer */}
+            <EventDetailDrawer mode={mode ?? "top"} />
         </Box>
     );
 };
