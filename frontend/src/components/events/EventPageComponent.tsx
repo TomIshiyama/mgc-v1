@@ -6,6 +6,7 @@ import moment from "moment";
 import React from "react";
 import { defDateFormat, defDrawerWidth } from "../../utils/definitions";
 import { COLOR, Z_INDEX } from "../../utils/styling";
+import { EventDetailDrawer } from "../event/EventDetailDrawer";
 import { EventPageListContent } from "./EventPageListContent";
 
 const Main = styled("div", { shouldForwardProp: (prop) => prop !== "open" })<{
@@ -101,13 +102,15 @@ export const EventPageComponent: React.VFC<EventPageComponentProps> = ({ childre
                 open={open}
                 onClose={handleDrawerClose}
             >
-                {/* <EventDetailDrawer
-                    buttonList={[]}
-                    title={moment(data.day).format(defDateFormat.day)}
-                    subtitle={moment(data.day).format(defDateFormat.fullDayOfWeek)}
-                    description={<></>}
-                    onClickIcon={handleDrawerClose}
-                /> */}
+                <EventDetailDrawer
+                    key={"abc"}
+                    mode="temporary"
+                    // buttonList={[]}
+                    // title={moment(data.day).format(defDateFormat.day)}
+                    // subtitle={moment(data.day).format(defDateFormat.fullDayOfWeek)}
+                    // description={<></>}
+                    // onClickIcon={handleDrawerClose}
+                />
             </Drawer>
         </>
     );

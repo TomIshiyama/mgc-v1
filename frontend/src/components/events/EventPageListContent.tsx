@@ -41,8 +41,26 @@ export const EventPageListContent: React.VFC<EventPageListContentProps> = ({
     );
 
     // ただ単に表示するだけのやつは一旦不要なのでコメントアウト
-    // const buttonList: EventListItemProps[] =
-    //     event?.data?.map((datum) => mapEventListItem(datum)) ?? [];
+    const buttonList: EventListItemProps[] =
+        event?.data?.map((datum) => mapEventListItem(datum)) ?? [];
+
+    //------------------------------Niko-------------------------
+    //FIXME: keyとして日付を使われているオブジェクトにeventsを纏めたいですが、タイプで引っかかっています。
+    console.log("event?.data? ", event?.data);
+
+    interface LooseObject {
+        [key: string]: any;
+    }
+    const buttonList3: {
+        [key: string]: any;
+    };
+    event?.data?.map((item) => {
+        const date = item.begin.toString().substring(1, 10);
+        buttonList3[date].push(item);
+    }, {});
+
+    console.log(buttonList3);
+    //------------------------------Niko-------------------------
 
     // 当日、1週間以内、１ヶ月以内、それ以降にイベントを振り分け
     const buttonList2:
@@ -51,6 +69,8 @@ export const EventPageListContent: React.VFC<EventPageListContentProps> = ({
               week: EventListItemProps[] | undefined;
               month: EventListItemProps[] | undefined;
               future: EventListItemProps[] | undefined;
+
+              // date: EventListItemProps[] | undefined;
           }
         | undefined = React.useMemo(
         () =>
@@ -95,6 +115,11 @@ export const EventPageListContent: React.VFC<EventPageListContentProps> = ({
             ),
         [event?.data, category?.data]
     );
+
+    console.log("buttonList2: ", buttonList2);
+    console.log("buttonList: ", buttonList);
+    // const buttonList2:
+
     return (
         <>
             <MUI.Container sx={{ position: "absolute", width: "20%" }}>

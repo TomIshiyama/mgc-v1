@@ -28,9 +28,9 @@ const Events = () => {
     return (
         <>
             <Head
-                title="イベント画面"
-                description="イベント画面 "
-                keyword="イベント画面"
+                title="マイイベント"
+                description="マイイベント "
+                keyword="マイイベント"
             />
             <EventPageComponent></EventPageComponent>
         </>
