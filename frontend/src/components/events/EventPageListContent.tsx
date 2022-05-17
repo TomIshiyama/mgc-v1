@@ -54,9 +54,7 @@ export const EventPageListContent: React.VFC<EventPageListContentProps> = ({
             ...acc,
             [begin as keyof typeof acc]: [
                 ...(acc[begin as keyof typeof acc] || []),
-                id,
-                categoryId,
-                name,
+                { id, categoryId, name },
             ],
         };
     }, {});
