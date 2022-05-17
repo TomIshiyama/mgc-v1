@@ -48,18 +48,20 @@ export const EventPageListContent: React.VFC<EventPageListContentProps> = ({
     //FIXME: keyとして日付を使われているオブジェクトにeventsを纏めたいですが、タイプで引っかかっています。
     console.log("event?.data? ", event?.data);
 
-    interface LooseObject {
-        [key: string]: any;
-    }
-    const buttonList3: {
-        [key: string]: any;
-    };
-    event?.data?.map((item) => {
-        const date = item.begin.toString().substring(1, 10);
-        buttonList3[date].push(item);
+    const testData = event?.data?.reduce((acc, event) => {
+        const { begin, id, categoryId, name } = event;
+        return {
+            ...acc,
+            [begin as keyof typeof acc]: [
+                ...(acc[begin as keyof typeof acc] || []),
+                id,
+                categoryId,
+                name,
+            ],
+        };
     }, {});
 
-    console.log(buttonList3);
+    console.log("testData: ", testData);
     //------------------------------Niko-------------------------
 
     // 当日、1週間以内、１ヶ月以内、それ以降にイベントを振り分け
@@ -69,8 +71,6 @@ export const EventPageListContent: React.VFC<EventPageListContentProps> = ({
               week: EventListItemProps[] | undefined;
               month: EventListItemProps[] | undefined;
               future: EventListItemProps[] | undefined;
-
-              // date: EventListItemProps[] | undefined;
           }
         | undefined = React.useMemo(
         () =>
