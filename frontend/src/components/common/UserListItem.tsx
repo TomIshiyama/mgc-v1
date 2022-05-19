@@ -12,28 +12,43 @@ import * as ListItemButton_1 from "@mui/material/ListItemButton/ListItemButton";
 import React from "react";
 import { COLOR } from "../../utils/styling";
 
+export type Record = {
+    key?: React.Key;
+    title: string;
+    text: string;
+};
+
 export type UserListItemProps = {
     key?: React.Key;
-    itemTitle: string;
-    itemText: string;
+    rowKey?: React.Key;
+    title: string;
+    text: string;
     // noStyle?: boolean;
     selected?: ListItemButton_1.ListItemButtonProps["selected"];
     onClick?: ListItemButton_1.ListItemButtonProps["onClick"];
+    onSelect?: (record: Record, key?: React.Key) => void;
     style?: ListItemButton_1.ListItemButtonProps["sx"];
     src?: AvatarProps.AvatarProps["src"];
     alt?: AvatarProps.AvatarProps["alt"];
 };
 
 export const UserListItem: React.VFC<UserListItemProps> = ({
-    itemTitle,
-    itemText,
+    key,
+    rowKey,
+    title,
+    text,
     // noStyle,
     selected,
     onClick,
     style,
     src,
     alt,
+    onSelect,
 }) => {
+    const onClickHandler: ListItemButton_1.ListItemButtonProps["onClick"] = (e) => {
+        onClick?.(e);
+        onSelect?.({ title, text, key: rowKey }, key);
+    };
     return (
         <>
             <Box>
@@ -49,7 +64,7 @@ export const UserListItem: React.VFC<UserListItemProps> = ({
                         ...style,
                     }}
                     selected={selected}
-                    onClick={onClick}
+                    onClick={onClickHandler}
                     color="primary"
                 >
                     <ListItemIcon>
@@ -57,8 +72,8 @@ export const UserListItem: React.VFC<UserListItemProps> = ({
                     </ListItemIcon>
                     <ListItemText>
                         <Box>
-                            <Typography variant="subtitle1">{itemTitle}</Typography>
-                            <Typography variant="caption">{itemText}</Typography>
+                            <Typography variant="subtitle1">{title}</Typography>
+                            <Typography variant="caption">{text}</Typography>
                         </Box>
                     </ListItemText>
 
