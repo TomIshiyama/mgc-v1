@@ -5,8 +5,7 @@ import { momentLocalizer } from "react-big-calendar";
 import { MainLayout } from "../../layouts/MainLayout";
 import { FetchEventContext } from "../common/FetchEventProvider";
 import { Head } from "../components/common/Head";
-import { EventPageComponent } from "../components/events/EventPageComponent";
-import { useFetch } from "../hooks/request/useFetch";
+import { EventPageComponent } from "../components/event/EventPageComponent";
 
 // モーメントを使用する
 const mLocalizer = momentLocalizer(moment);
@@ -17,11 +16,6 @@ const mLocalizer = momentLocalizer(moment);
 // TODO: 削除時に確認ダイアログ出す
 const Events = () => {
     // 疎通の動作確認のためだけに書いた
-    const { data, loading, error } = useFetch({
-        initialUrl: `${process.env.NEXT_PUBLIC_API_ENDPOINT!}users`,
-        headers: {},
-    });
-
     // TODO: 移す
     const { event } = React.useContext(FetchEventContext);
 

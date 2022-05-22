@@ -161,7 +161,7 @@ const menuDefs: SideMenuDefType[] = [
             {
                 label: "マイイベント",
                 icon: <EmojiFlagsIcon sx={iconStyle} />,
-                link: "/events", // FIXME: 遷移先URL
+                link: pagesPath.events.$url(),
             },
         ],
     },

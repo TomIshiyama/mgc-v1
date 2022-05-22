@@ -2,11 +2,10 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { Drawer, IconButton } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import moment from "moment";
 import React from "react";
-import { defDateFormat, defDrawerWidth } from "../../utils/definitions";
+import { defDrawerWidth } from "../../utils/definitions";
 import { COLOR, Z_INDEX } from "../../utils/styling";
-import { EventDetailDrawer } from "../event/EventDetailDrawer";
+import { EventDetailDrawer } from "./EventDetailDrawer";
 import { EventPageListContent } from "./EventPageListContent";
 
 const Main = styled("div", { shouldForwardProp: (prop) => prop !== "open" })<{
@@ -46,7 +45,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 }));
 
 export type EventPageComponentProps = {
-    // children: React.ReactNode;
+    children: React.ReactNode;
 };
 
 export const EventPageComponent: React.VFC<EventPageComponentProps> = ({ children }) => {
@@ -79,8 +78,6 @@ export const EventPageComponent: React.VFC<EventPageComponentProps> = ({ childre
             </IconButton>
             <EventPageListContent
                 buttonList={[]}
-                title={moment(data.day).format(defDateFormat.day)}
-                subtitle={moment(data.day).format(defDateFormat.fullDayOfWeek)}
                 description={<></>}
                 onClickIcon={handleDrawerClose}
             />
@@ -102,15 +99,7 @@ export const EventPageComponent: React.VFC<EventPageComponentProps> = ({ childre
                 open={open}
                 onClose={handleDrawerClose}
             >
-                <EventDetailDrawer
-                    key={"abc"}
-                    mode="temporary"
-                    // buttonList={[]}
-                    // title={moment(data.day).format(defDateFormat.day)}
-                    // subtitle={moment(data.day).format(defDateFormat.fullDayOfWeek)}
-                    // description={<></>}
-                    // onClickIcon={handleDrawerClose}
-                />
+                <EventDetailDrawer mode="temporary" />
             </Drawer>
         </>
     );
