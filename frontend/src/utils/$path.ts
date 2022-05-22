@@ -1,6 +1,16 @@
 /* eslint-disable */
 // prettier-ignore
 export const pagesPath = {
+  manage: {
+    user: {
+      _userId: (userId: string | number) => ({
+        $url: (url?: { hash?: string }) => ({ pathname: '/manage/user/[userId]' as const, query: { userId }, hash: url?.hash })
+      }),
+      list: {
+        $url: (url?: { hash?: string }) => ({ pathname: '/manage/user/list' as const, hash: url?.hash })
+      }
+    }
+  },
   signin: {
     $url: (url?: { hash?: string }) => ({ pathname: '/signin' as const, hash: url?.hash })
   },
