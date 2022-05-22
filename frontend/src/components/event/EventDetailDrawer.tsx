@@ -1,3 +1,4 @@
+import moment from "moment";
 import React from "react";
 import { FetchEventContext } from "../../common/FetchEventProvider";
 import { useContextDetailDrawer } from "../../hooks/contexts/useContextDetailDrawer";
@@ -35,10 +36,10 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
             max: 5,
             anchor: "right",
             location: datum?.location,
-            beginDate: datum?.begin,
-            endDate: datum?.end,
-            beginTime: datum?.begin,
-            endTime: datum?.end,
+            beginDate: moment(datum?.begin).toDate(),
+            endDate: moment(datum?.end).toDate(),
+            beginTime: moment(datum?.begin).toDate(),
+            endTime: moment(datum?.end).toDate(),
             margin: { top: "5em" },
             description: datum?.detail,
             avatarList: [
@@ -74,7 +75,7 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
 
     const matched = React.useMemo(
         () => event?.data?.find((v) => v.id === key),
-        [event, key, state, mode]
+        [event, key]
     );
 
     return (

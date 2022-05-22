@@ -1,6 +1,10 @@
+import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import CloseIcon from "@mui/icons-material/Close";
 import * as MUI from "@mui/material";
-import { Alert, Typography } from "@mui/material";
+import { Alert, styled, Typography } from "@mui/material";
+import MuiAccordion from "@mui/material/Accordion";
+import MuiAccordionDetails from "@mui/material/AccordionDetails";
+import MuiAccordionSummary from "@mui/material/AccordionSummary";
 import moment from "moment";
 import dynamic from "next/dynamic";
 import React from "react";
@@ -13,7 +17,6 @@ import { Z_INDEX } from "../../utils/styling";
 import { ButtonListType } from "../common/BaseListItemButton";
 import { EventListItem, EventListItemProps } from "../common/EventListItem";
 import { ANCHOR } from "../common/TemporaryDrawer";
-
 export type TopPageDrawerContentProps = {
     title?: string;
     subtitle?: string;
@@ -140,7 +143,8 @@ export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
                 {/* イベント分布 */}
                 <DynamicEventChart />
 
-                <MUI.List>
+                {/* イベント予定 */}
+                <MUI.List sx={{ marginTop: "2em" }}>
                     {buttonList2 &&
                         // HACK: 分岐を外だし、または文言を定数化してリファクタ
                         Object.entries(buttonList2).map(([key, buttonList], idx) => {
@@ -155,34 +159,62 @@ export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
                             return (
                                 <>
                                     {/* TODO: Accordionに変更する 件数表示する*/}
-                                    <Typography variant="h6" sx={{ padding: "1em 0" }}>
-                                        {displayWord}
-                                    </Typography>
-                                    {buttonList && buttonList.length <= 0 ? (
-                                        // TODO: デザイン修正
-                                        <Alert variant="filled" severity="info">
-                                            予定はございません👍
-                                        </Alert>
-                                    ) : (
-                                        buttonList?.map((button, idx) => {
-                                            return (
-                                                <EventListItem
-                                                    key={`${button.key!}}`}
-                                                    {...button}
-                                                    style={{
-                                                        marginBottom: "1em",
-                                                    }}
-                                                    onClick={() => {
-                                                        setKey?.(button.key);
-                                                        doToggleDrawer(
-                                                            ANCHOR.RIGHT,
-                                                            true
-                                                        );
-                                                    }}
-                                                />
-                                            );
-                                        })
-                                    )}
+                                    <Accordion defaultExpanded={key === "today"}>
+                                        <AccordionSummary
+                                            // expandIcon={<ExpandMoreIcon />}
+                                            aria-controls="panel1a-content"
+                                            id="panel1a-header"
+                                        >
+                                            <MUI.Box
+                                                sx={{
+                                                    display: "flex",
+                                                    justifyContent: "space-between",
+                                                    alignItems: "center",
+                                                    width: "100%",
+                                                }}
+                                            >
+                                                <Typography
+                                                    variant="h6"
+                                                    sx={{ padding: ".2em 0" }}
+                                                >
+                                                    {displayWord}
+                                                </Typography>
+                                                <Typography>
+                                                    {`${
+                                                        buttonList?.length.toString() ??
+                                                        ""
+                                                    } 件`}
+                                                </Typography>
+                                            </MUI.Box>
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            {buttonList && buttonList.length <= 0 ? (
+                                                // TODO: デザイン修正
+                                                <Alert variant="filled" severity="info">
+                                                    予定はございません👍
+                                                </Alert>
+                                            ) : (
+                                                buttonList?.map((button, idx) => {
+                                                    return (
+                                                        <EventListItem
+                                                            key={`${button.key!}}`}
+                                                            {...button}
+                                                            style={{
+                                                                marginBottom: "1em",
+                                                            }}
+                                                            onClick={() => {
+                                                                setKey?.(button.key);
+                                                                doToggleDrawer(
+                                                                    ANCHOR.RIGHT,
+                                                                    true
+                                                                );
+                                                            }}
+                                                        />
+                                                    );
+                                                })
+                                            )}
+                                        </AccordionDetails>
+                                    </Accordion>
                                 </>
                             );
                         })}
@@ -191,3 +223,41 @@ export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
         </>
     );
 };
+
+const Accordion = styled((props: MUI.AccordionProps) => (
+    <MuiAccordion disableGutters elevation={0} square {...props} />
+))(({ theme }) => ({
+    // border: `1px solid ${theme.palette.divider}`,
+    border: "none",
+    background: "transparent",
+
+    "&:not(:last-child)": {
+        borderBottom: 0,
+    },
+    "&:before": {
+        display: "none",
+    },
+}));
+
+const AccordionSummary = styled((props: MUI.AccordionSummaryProps) => (
+    <MuiAccordionSummary
+        expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+        {...props}
+    />
+))(({ theme }) => ({
+    // borderRadius: "1em",
+    backgroundColor:
+        theme.palette.mode === "dark" ? "rgba(255, 255, 255, .05)" : "rgba(0, 0, 0, .03)",
+    flexDirection: "row-reverse",
+    "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
+        transform: "rotate(90deg)",
+    },
+    "& .MuiAccordionSummary-content": {
+        marginLeft: theme.spacing(1),
+    },
+}));
+
+const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
+    padding: theme.spacing(2),
+    borderTop: "1px solid rgba(0, 0, 0, .125)",
+}));
