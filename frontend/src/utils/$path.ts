@@ -1,8 +1,18 @@
 /* eslint-disable */
 // prettier-ignore
 export const pagesPath = {
-  events: {
-    $url: (url?: { hash?: string }) => ({ pathname: '/events' as const, hash: url?.hash })
+  event: {
+    $url: (url?: { hash?: string }) => ({ pathname: '/event' as const, hash: url?.hash })
+  },
+  manage: {
+    user: {
+      _userId: (userId: string | number) => ({
+        $url: (url?: { hash?: string }) => ({ pathname: '/manage/user/[userId]' as const, query: { userId }, hash: url?.hash })
+      }),
+      list: {
+        $url: (url?: { hash?: string }) => ({ pathname: '/manage/user/list' as const, hash: url?.hash })
+      }
+    }
   },
   signin: {
     $url: (url?: { hash?: string }) => ({ pathname: '/signin' as const, hash: url?.hash })

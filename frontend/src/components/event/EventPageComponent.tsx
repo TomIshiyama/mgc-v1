@@ -1,48 +1,11 @@
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import { Drawer, IconButton } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { IconButton } from "@mui/material";
 import React from "react";
-import { defDrawerWidth } from "../../utils/definitions";
-import { COLOR, Z_INDEX } from "../../utils/styling";
-import { EventDetailDrawer } from "./EventDetailDrawer";
 import { EventPageListContent } from "./EventPageListContent";
-
-const Main = styled("div", { shouldForwardProp: (prop) => prop !== "open" })<{
-    open?: boolean;
-}>(({ theme, open }) => ({
-    flexGrow: 1,
-    padding: theme.spacing(3),
-    transition: theme.transitions.create(["margin", "width"], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-    }),
-    marginRight: `-${defDrawerWidth.subMain}px`,
-    width: "100%",
-    ...(open && {
-        transition: theme.transitions.create(["margin", "width"], {
-            easing: theme.transitions.easing.easeOut,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-        width: `calc(100% - ${defDrawerWidth.subMain}px)`,
-        marginRight: 0,
-    }),
-}));
 
 // FIXME: MOCK 後で消す
 const data = {
     day: new Date(),
 };
-
-// HACK: 不要と判断できたら削除
-const DrawerHeader = styled("div")(({ theme }) => ({
-    display: "flex",
-    alignItems: "center",
-    padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
-    justifyContent: "flex-start",
-}));
 
 export type EventPageComponentProps = {
     children: React.ReactNode;
@@ -73,34 +36,12 @@ export const EventPageComponent: React.VFC<EventPageComponentProps> = ({ childre
                     left: "100%",
                     transform: `translateY(-50%) translateX(-40px)`, //HACK : MAGIC NUMBER撲滅
                 }}
-            >
-                {open ? <ArrowForwardIosIcon /> : <ArrowBackIosNewIcon />}
-            </IconButton>
+            ></IconButton>
             <EventPageListContent
                 buttonList={[]}
                 description={<></>}
                 onClickIcon={handleDrawerClose}
             />
-            <Main open={open}>{children}</Main>
-            <Drawer
-                sx={{
-                    width: defDrawerWidth.subMain,
-                    flexShrink: 0,
-                    "& .MuiDrawer-paper": {
-                        zIndex: Z_INDEX.subDrawer,
-                        width: defDrawerWidth.subMain,
-                        // height: "calc(100% - 60px)",
-                        // top: 60,
-                        background: COLOR.normal.sideBgcolor,
-                    },
-                }}
-                variant="persistent"
-                anchor="right"
-                open={open}
-                onClose={handleDrawerClose}
-            >
-                <EventDetailDrawer mode="temporary" />
-            </Drawer>
         </>
     );
 };

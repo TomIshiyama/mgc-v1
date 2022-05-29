@@ -78,9 +78,10 @@ export const drawerWidth = 240;
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 export const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
     open?: boolean;
-}>(({ theme, open }) => ({
+    bgcolor?: HTMLElement["style"]["backgroundColor"];
+}>(({ theme, open, bgcolor }) => ({
     flexGrow: 1,
-
+    ...(bgcolor ? { backgroundColor: bgcolor } : undefined),
     padding: theme.spacing(3),
     transition: theme.transitions.create("margin", {
         easing: theme.transitions.easing.sharp,
@@ -161,7 +162,7 @@ const menuDefs: SideMenuDefType[] = [
             {
                 label: "マイイベント",
                 icon: <EmojiFlagsIcon sx={iconStyle} />,
-                link: pagesPath.events.$url(),
+                link: pagesPath.event.$url(),
             },
         ],
     },
@@ -219,7 +220,10 @@ export const MenuItems: React.VFC<MenuItemsProps> = ({ defs }) => {
     );
 };
 
-export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const MainLayout: React.FC<{
+    children: React.ReactNode;
+    bgcolor?: HTMLElement["style"]["backgroundColor"];
+}> = ({ children, bgcolor }) => {
     const theme = useTheme();
     const [open, setOpen] = React.useState<boolean>(true);
 
@@ -532,7 +536,7 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
                 </Container>
             </Drawer>
             {/* メインコンテンツ */}
-            <Main open={open}>
+            <Main open={open} bgcolor={bgcolor}>
                 <DrawerHeader />
                 {children}
             </Main>
