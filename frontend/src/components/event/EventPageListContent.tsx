@@ -85,7 +85,7 @@ export const EventPageListContent: React.VFC<EventPageListContentProps> = ({
                                             borderLeft: 1,
                                             borderColor: "grey.500",
                                             borderWidth: "medium",
-                                            paddingBottom: "10px",
+                                            paddingBottom: "30px",
                                             "&:last-child": {
                                                 borderLeft: 0,
                                                 marginTop: "-26px",
@@ -110,7 +110,7 @@ export const EventPageListContent: React.VFC<EventPageListContentProps> = ({
                                                     bgcolor: "#ffd6c9",
                                                     display: "flex",
                                                     alignItems: "center",
-                                                    flexWrap: "wrap",
+                                                    flexWrap: "nowrap",
                                                     paddingLeft: "14px",
                                                     marginLeft: "-53px",
                                                     marginRight: "10px",
@@ -126,17 +126,18 @@ export const EventPageListContent: React.VFC<EventPageListContentProps> = ({
                                                         color: "white",
                                                     }}
                                                 />
+                                                <Typography
+                                                    variant="h6"
+                                                    style={{}}
+                                                    sx={{
+                                                        padding: "1em 0",
+                                                        marginLeft: "28px",
+                                                    }}
+                                                >
+                                                    <p>{displayDate}</p>
+                                                    <p>{displayWeekDay}</p>
+                                                </Typography>
                                             </Box>
-                                            <Typography
-                                                variant="h6"
-                                                style={{}}
-                                                sx={{
-                                                    padding: "1em 0",
-                                                }}
-                                            >
-                                                <p>{displayDate}</p>
-                                                <p>{displayWeekDay}</p>
-                                            </Typography>
                                         </Box>
                                         {eventDetail &&
                                         Object.entries(events).length <= 0 ? (
