@@ -1,5 +1,6 @@
-import { IconButton } from "@mui/material";
+import { Box } from "@mui/system";
 import React from "react";
+import { COLOR } from "../../utils/styling";
 import { EventPageListContent } from "./EventPageListContent";
 
 // FIXME: MOCK 後で消す
@@ -7,11 +8,7 @@ const data = {
     day: new Date(),
 };
 
-export type EventPageComponentProps = {
-    children: React.ReactNode;
-};
-
-export const EventPageComponent: React.VFC<EventPageComponentProps> = ({ children }) => {
+export const EventPageComponent: React.VFC<{ children: React.ReactNode }> = () => {
     const [open, setOpen] = React.useState(true);
 
     const handleDrawerOpen = React.useCallback(() => {
@@ -23,25 +20,23 @@ export const EventPageComponent: React.VFC<EventPageComponentProps> = ({ childre
     }, []);
 
     return (
-        <>
-            <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                edge="end"
-                onClick={open ? handleDrawerClose : handleDrawerOpen}
-                // 画面中央右寄せ
-                sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "100%",
-                    transform: `translateY(-50%) translateX(-40px)`, //HACK : MAGIC NUMBER撲滅
-                }}
-            ></IconButton>
+        <Box
+            sx={{
+                backgroundColor: COLOR.normal.userBgcolor,
+                marginTop: "20px",
+                // borderLeft: 1,
+                // borderColor: "grey.500",
+                // borderWidth: "medium",
+                // "&:last-child": {
+                //     borderLeft: 0,
+                // },
+            }}
+        >
             <EventPageListContent
                 buttonList={[]}
                 description={<></>}
                 onClickIcon={handleDrawerClose}
             />
-        </>
+        </Box>
     );
 };

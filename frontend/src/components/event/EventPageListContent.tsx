@@ -1,5 +1,6 @@
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import * as MUI from "@mui/material";
-import { Alert, Typography } from "@mui/material";
+import { Alert, Box, Typography } from "@mui/material";
 import moment from "moment";
 import React from "react";
 import { FetchEventContext } from "../../common/FetchEventProvider";
@@ -60,42 +61,114 @@ export const EventPageListContent: React.VFC<EventPageListContentProps> = ({
 
     return (
         <>
-            <MUI.Container sx={{ position: "absolute", width: "20%" }}>
+            <MUI.Box
+                sx={{
+                    width: "400px",
+                    marginLeft: "20px",
+                }}
+            >
                 <MUI.List>
                     {events &&
                         // HACK: 分岐を外だし、または文言を定数化してリファクタ
                         Object.entries(events).map(([date, eventDetail], idx) => {
-                            const displayWord = date;
+                            const displayDate = date;
+                            const displayWeekDay = moment(new Date(date)).format(
+                                defDateFormat.fullDayOfWeek
+                            );
                             // console.log("eventInfo: ", eventInfo);
                             return (
                                 <>
-                                    {/* TODO: Accordionに変更する 件数表示する*/}
-                                    <Typography variant="h6" sx={{ padding: "1em 0" }}>
-                                        {displayWord}
-                                    </Typography>
-                                    {eventDetail && Object.entries(events).length <= 0 ? (
-                                        // TODO: デザイン修正
-                                        <Alert variant="filled" severity="info">
-                                            予定はございません👍
-                                        </Alert>
-                                    ) : (
-                                        eventDetail?.map((datum, idx) => (
-                                            <EventListItem
-                                                key={`${idx}`}
-                                                {...datum}
-                                                style={{ marginBottom: "1em" }}
-                                                onClick={() => {
-                                                    setKey?.(datum.key);
-                                                    doToggleDrawer(ANCHOR.RIGHT, true);
+                                    <Box
+                                        sx={{
+                                            marginTop: "-16px",
+                                            paddingLeft: "20px",
+                                            borderLeft: 1,
+                                            borderColor: "grey.500",
+                                            borderWidth: "medium",
+                                            paddingBottom: "10px",
+                                            "&:last-child": {
+                                                borderLeft: 0,
+                                                marginTop: "-26px",
+                                                paddingLeft: "22px",
+                                            },
+                                        }}
+                                    >
+                                        {/* TODO: Accordionに変更する 件数表示する*/}
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                flexWrap: "wrap",
+                                            }}
+                                        >
+                                            <Box
+                                                sx={{
+                                                    border: 0,
+                                                    borderRadius: "50%",
+                                                    width: "4em",
+                                                    height: "4em",
+                                                    bgcolor: "#ffd6c9",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    flexWrap: "wrap",
+                                                    paddingLeft: "14px",
+                                                    marginLeft: "-53px",
+                                                    marginRight: "10px",
+                                                    // "&:first-child": {
+                                                    //     marginTop: "-8px",
+                                                    // },
                                                 }}
-                                            />
-                                        ))
-                                    )}
+                                            >
+                                                <CalendarMonthIcon
+                                                    sx={{
+                                                        width: "1.5em",
+                                                        height: "1.5em",
+                                                        color: "white",
+                                                    }}
+                                                />
+                                            </Box>
+                                            <Typography
+                                                variant="h6"
+                                                style={{}}
+                                                sx={{
+                                                    padding: "1em 0",
+                                                }}
+                                            >
+                                                <p>{displayDate}</p>
+                                                <p>{displayWeekDay}</p>
+                                            </Typography>
+                                        </Box>
+                                        {eventDetail &&
+                                        Object.entries(events).length <= 0 ? (
+                                            // TODO: デザイン修正
+                                            <Alert variant="filled" severity="info">
+                                                予定はございません👍
+                                            </Alert>
+                                        ) : (
+                                            eventDetail?.map((datum, idx) => (
+                                                <EventListItem
+                                                    key={`${idx}`}
+                                                    {...datum}
+                                                    style={{
+                                                        marginBottom: "1em",
+                                                        marginLeft: "20px",
+                                                    }}
+                                                    onClick={() => {
+                                                        setKey?.(datum.key);
+                                                        doToggleDrawer(
+                                                            ANCHOR.RIGHT,
+                                                            true
+                                                        );
+                                                    }}
+                                                />
+                                            ))
+                                        )}
+                                    </Box>
                                 </>
                             );
                         })}
                 </MUI.List>
-            </MUI.Container>
+            </MUI.Box>
         </>
     );
 };

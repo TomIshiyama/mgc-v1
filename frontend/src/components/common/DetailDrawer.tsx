@@ -104,6 +104,8 @@ export const DetailDrawer: React.VFC<DetailDrawerProps> = ({
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "space-between",
+                        maxWidth: "600px", //FIXME: 固定値に変えました、必要に応じて他の値に変更する (Niko)
+                        minWidth: "600px", //FIXME: 固定値に変えました、必要に応じて他の値に変更する (Niko)
                     }}
                     className="event-detail-drawer__wrapper"
                 >
