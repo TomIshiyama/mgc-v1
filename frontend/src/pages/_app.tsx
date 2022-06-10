@@ -31,7 +31,7 @@ function MyApp({
     Component,
     pageProps: { session, ...pageProps },
 }: AppPropsWithLayout): JSX.Element {
-    const { push } = useRouter();
+    const { push, pathname } = useRouter();
     // HACK: カスタムフックきりわけ
     // FIXME: ローダー実装
     const [loading, setLoading] = React.useState<boolean | undefined>(false);
@@ -50,31 +50,50 @@ function MyApp({
     //     router.events.on("routeChangeError", handleComplete);
     // }, [router]);
     // useRedirectAuth();
+
+    /** trueならリダイレクトする 判定チェック */
+    const checkRedirect = React.useCallback(() => {
+        return (
+            !session &&
+            !(
+                pathname === pagesPath.signin.$url().pathname ||
+                pathname === pagesPath.signup.$url().pathname
+            )
+        );
+    }, [session, pathname]);
+
     React.useEffect(() => {
-        if (!session) {
+        if (checkRedirect()) {
             void push(pagesPath.signin.$url().pathname);
         }
     }, []);
 
+    // レイアウト 表示設定
     // ページごとに定義されたレイアウトがある場合はそれを使用する
     const getLayout = Component.getLayout ?? ((page) => page);
-    // FIXME:  Loadingコンポーネント 実装
-    return loading === true ? (
-        <Typography variant="h1">Loading...（仮実装）</Typography>
-    ) : (
-        <>
-            <SessionProvider session={session as Session}>
-                <MaterialThemeProvider>
-                    <MediaQueryProvider>
-                        <FetchEventProvider>
-                            <DetailDrawerProvider>
-                                {getLayout(<Component {...pageProps} />)}
-                            </DetailDrawerProvider>
-                        </FetchEventProvider>
-                    </MediaQueryProvider>
-                </MaterialThemeProvider>
-            </SessionProvider>
-        </>
+
+    // コンポーネント表示
+    if (loading === true) {
+        // FIXME:  Loadingコンポーネント 実装
+        return <Typography variant="h1">Loading...（仮実装）</Typography>;
+    }
+
+    if (checkRedirect()) {
+        return <Typography variant="h1">リダイレクトします...（仮実装）</Typography>;
+    }
+
+    return (
+        <SessionProvider session={session as Session}>
+            <MaterialThemeProvider>
+                <MediaQueryProvider>
+                    <FetchEventProvider>
+                        <DetailDrawerProvider>
+                            {getLayout(<Component {...pageProps} />)}
+                        </DetailDrawerProvider>
+                    </FetchEventProvider>
+                </MediaQueryProvider>
+            </MaterialThemeProvider>
+        </SessionProvider>
     );
 }
 
