@@ -15,6 +15,7 @@ import { DetailDrawerProvider } from "../common/DetailDrawerProvider";
 import { FetchEventProvider } from "../common/FetchEventProvider";
 import { MaterialThemeProvider } from "../common/MaterialThemeProvider";
 import { MediaQueryProvider } from "../common/MediaQueryProvider";
+import { pagesPath } from "../utils/$path";
 
 moment.locale("ja");
 type NextPageWithLayout = NextPage & {
@@ -49,6 +50,11 @@ function MyApp({
     //     router.events.on("routeChangeError", handleComplete);
     // }, [router]);
     // useRedirectAuth();
+    React.useEffect(() => {
+        if (!session) {
+            void push(pagesPath.signin.$url().pathname);
+        }
+    }, []);
 
     // ページごとに定義されたレイアウトがある場合はそれを使用する
     const getLayout = Component.getLayout ?? ((page) => page);
