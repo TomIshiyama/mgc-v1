@@ -1,4 +1,5 @@
 import {
+    Alert,
     Box,
     Button,
     Checkbox,
@@ -6,48 +7,80 @@ import {
     CssBaseline,
     FormControlLabel,
     Grid,
-    Link,
+    Link as MLink,
     TextField,
     Typography,
 } from "@mui/material";
+import { CtxOrReq } from "next-auth/client/_utils";
+import { getCsrfToken, signIn } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
+import { Controller, ControllerProps, useForm } from "react-hook-form";
 import { SignInLayout } from "../../layouts/SignInLayout";
+import { pagesPath } from "../utils/$path";
+import { REGEX } from "../utils/regex";
 
-type InputFormValue = {
+type FormInputList = {
     email: string;
     password: string;
 };
 
-const SignIn = () => {
+// 3. 検証ルール。
+const validationRules: {
+    [key: string]: ControllerProps["rules"];
+} = {
+    email: {
+        required: "入力必須です。",
+        pattern: {
+            value: REGEX.email,
+            message: "正しいフォーマットで入力してください。",
+        },
+    },
+    password: {
+        required: "入力必須です。",
+        minLength: { value: 4, message: "4文字以上で入力してください。" },
+    },
+};
+
+// POSTリクエスト（サインイン・サインアウトなど）に必要なCSRFトークンを返却する
+export const getServerSideProps = async (ctx: CtxOrReq | undefined) => {
+    return {
+        props: {
+            title: "login",
+            csrfToken: await getCsrfToken(ctx),
+        },
+    };
+};
+
+const SignIn = ({ csrfToken }: { csrfToken: string | undefined }) => {
     const router = useRouter();
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get("email"),
-            password: data.get("password"),
-        });
+    const [isError, setIsError] = React.useState(false);
+    const { handleSubmit, setError, control } = useForm<FormInputList>({
+        mode: "onChange",
+    });
 
-        //FIXME: usePost params, body
-        // const { doPost } = usePost({
-        //     method: "post",
-        //     url: "/api/user",
-        // });
-        // doPost({
-        //     url: "/api/user",
-        //     params: {
-        //         email: data.get("email"),
-        //         password: data.get("password"),
-        //     },
-        //     onSuccess: (familyName) => {
-        //         console.log(`create ${familyName}  success!`);
-        //     },
-        //     onError: (err) => {
-        //         console.log(err.message);
-        //     },
-        // });
+    const signInUser = async (data: FormInputList) => {
+        // TODO: any撲滅
+        try {
+            const res = await signIn<any>("credentials", {
+                redirect: false,
+                email: data.email,
+                password: data.password,
+                // callbackUrl: `${window.location.origin}`,
+                // callbackUrl: referer ?? void pagesPath.top.$url(),
+            });
+            // ログイン後に飛ぶページ
+            // TODO: ログイン成功時に表示するSnackbar
+            if (res?.error) {
+                throw new Error(`Unauthorized : ${res?.error}`);
+            }
+            setIsError(false);
+            void router.push(pagesPath.top.$url().pathname);
+        } catch (e) {
+            setIsError(true);
+        }
     };
 
     return (
@@ -56,7 +89,7 @@ const SignIn = () => {
                 <CssBaseline />
                 <Box
                     component="form"
-                    onSubmit={handleSubmit}
+                    onSubmit={handleSubmit(signInUser)}
                     sx={{
                         marginTop: 8,
                         display: "flex",
@@ -70,26 +103,48 @@ const SignIn = () => {
                         サインイン
                     </Typography>
                     <Box component="form" noValidate sx={{ mt: 8 }}></Box>
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="email"
-                        label="メール"
+                    <Controller
                         name="email"
-                        autoComplete="email"
-                        autoFocus
+                        control={control}
+                        rules={validationRules.name}
+                        render={({ field, fieldState }) => (
+                            <TextField
+                                {...field}
+                                type="text"
+                                label="E-mail"
+                                autoComplete={field.name}
+                                fullWidth
+                                error={fieldState.invalid}
+                                helperText={fieldState.error?.message}
+                            />
+                        )}
                     />
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
+                    <Controller
                         name="password"
-                        label="パスワード"
-                        type="password"
-                        id="password"
-                        autoComplete="current-password"
+                        control={control}
+                        rules={validationRules.password}
+                        render={({ field, fieldState }) => (
+                            <TextField
+                                {...field}
+                                margin="normal"
+                                label="パスワード"
+                                type="password"
+                                fullWidth
+                                error={fieldState.invalid}
+                                helperText={fieldState.error?.message}
+                            />
+                        )}
                     />
+                    {isError && (
+                        <Alert
+                            variant="standard"
+                            severity="error"
+                            onClose={() => setIsError(false)}
+                        >
+                            認証に失敗しました。 <br />
+                            email,passwordを正しく入力してください。
+                        </Alert>
+                    )}
                     <FormControlLabel
                         control={<Checkbox value="remember" color="primary" />}
                         label="ログイン情報保存"
@@ -104,13 +159,17 @@ const SignIn = () => {
                     </Button>
                     <Grid container>
                         <Grid item xs>
-                            <Link href="#" variant="body2">
-                                パスワード失望
+                            <Link href="#">
+                                <MLink component="button" underline="hover">
+                                    パスワード失望
+                                </MLink>
                             </Link>
                         </Grid>
                         <Grid item>
-                            <Link href="/signup" variant="body2">
-                                {"新規登録"}
+                            <Link href="/signup">
+                                <MLink component="button" underline="hover">
+                                    新規登録
+                                </MLink>
                             </Link>
                         </Grid>
                     </Grid>
