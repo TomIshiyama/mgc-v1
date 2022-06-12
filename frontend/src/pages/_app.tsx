@@ -63,9 +63,11 @@ function MyApp({
     }, [session, pathname]);
 
     React.useEffect(() => {
-        if (checkRedirect()) {
-            void push(pagesPath.signin.$url().pathname);
+        // 特定のページのみ処理を除く
+        if (!checkRedirect()) {
+            return;
         }
+        void push(pagesPath.signin.$url().pathname);
     }, []);
 
     // レイアウト 表示設定
@@ -78,9 +80,10 @@ function MyApp({
         return <Typography variant="h1">Loading...（仮実装）</Typography>;
     }
 
-    if (checkRedirect()) {
-        return <Typography variant="h1">リダイレクトします...（仮実装）</Typography>;
-    }
+    // FIXME: リダイレクト中のページを表示する
+    // if (checkRedirect()) {
+    //     return <Typography variant="h1">リダイレクトします...（仮実装）</Typography>;
+    // }
 
     return (
         <SessionProvider session={session as Session}>
