@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model attendees {
+  user_id      Int
+  event_id     Int
+  last_update  DateTime? @default(now()) @db.Timestamp(0)
+  created_date DateTime? @default(now()) @db.Timestamp(0)
+  events       events    @relation(fields: [event_id], references: [id], onDelete: Cascade, map: "attendees_ibfk_2")
+  users        users     @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "attendees_ibfk_1")
+
+  @@id([user_id, event_id])
+  @@index([event_id], map: "event_id")
+}
+
+model categories {
+  id                   Int                  @id @default(autoincrement()) @db.TinyInt
+  category_code        String               @db.VarChar(30)
+  name                 String               @db.VarChar(255)
+  category_code_master category_code_master @relation(fields: [category_code], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "fk_category_code")
+  events               events[]
+
+  @@index([category_code], map: "fk_category_code")
+}
+
+model category_code_master {
+  code       String       @id @db.VarChar(30)
+  categories categories[]
+}
+
+model events {
+  id           Int         @id @default(autoincrement())
+  user_id      Int
+  category_id  Int?        @db.TinyInt
+  name         String      @db.VarChar(255)
+  location     String?     @db.VarChar(255)
+  detail       String?     @db.Text
+  begin        DateTime    @db.Timestamp(0)
+  end          DateTime    @db.Timestamp(0)
+  is_temporary Int         @db.TinyInt
+  last_update  DateTime    @default(now()) @db.Timestamp(0)
+  created_date DateTime    @default(now()) @db.Timestamp(0)
+  categories   categories? @relation(fields: [category_id], references: [id], map: "fk_category_id")
+  users        users       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_id")
+  attendees    attendees[]
+
+  @@index([category_id], map: "fk_category_id")
+  @@index([user_id], map: "fk_user_id")
+}
+
+model users {
+  id          Int         @id @default(autoincrement())
+  given_name  String      @db.VarChar(255)
+  family_name String      @db.VarChar(255)
+  given_kana  String?     @db.VarChar(255)
+  family_kana String?     @db.VarChar(255)
+  email       String      @unique(map: "email") @db.VarChar(255)
+  password    String      @db.VarChar(255)
+  division    String      @db.VarChar(255)
+  position    String      @db.VarChar(255)
+  icon_path   String?     @db.VarChar(255)
+  icon_name   String?     @db.VarChar(255)
+  description String?     @db.Text
+  theme       String      @db.VarChar(255)
+  is_admin    Int         @db.TinyInt
+  is_stop     Int         @db.TinyInt
+  last_update DateTime    @default(now()) @db.Timestamp(0)
+  attendees   attendees[]
+  events      events[]
+}

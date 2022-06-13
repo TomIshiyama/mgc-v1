@@ -1,0 +1,28 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  id: ID!
+  givenName: String!
+  familyName: String!
+  givenKana: String!
+  familyKana: String!
+  email: String!
+  password: String!
+  division: String!
+  position: String!
+  iconPath: String!
+  iconName: String!
+  description: String!
+  theme: String!
+  isAdmin: String!
+  isStop: String!
+  lastUpdate: String!
+  attendees: String!
+  events: String!
+}
+
+type Query {
+  getUser(id: Int!): User!
+}
