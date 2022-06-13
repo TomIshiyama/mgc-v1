@@ -13,6 +13,7 @@ import { EventListItem, EventListItemProps } from "../common/EventListItem";
 import { ANCHOR } from "../common/TemporaryDrawer";
 
 export type EventPageListContentProps = {
+    isOrganizer: boolean;
     description?: React.ReactNode;
     buttonList: ButtonListType[];
     onClickIcon?: MUI.IconButtonProps["onClick"];
@@ -26,9 +27,13 @@ type EventListItemObjectProps = {
 
 export const EventPageListContent: React.VFC<EventPageListContentProps> = ({
     onClickIcon,
+    isOrganizer,
 }) => {
-    const { event, category } = React.useContext(FetchEventContext);
+    const { event, category, attendee } = React.useContext(FetchEventContext);
     const { doToggleDrawer, setKey } = useContextDetailDrawer();
+
+    console.log("isOrganizerChangesInContent: ", isOrganizer);
+    console.log("attendeeEvents: ", attendee?.data);
 
     const mapEventListItem = React.useCallback(
         (datum: BaseEventProps): EventListItemProps => ({
@@ -41,14 +46,22 @@ export const EventPageListContent: React.VFC<EventPageListContentProps> = ({
                 ?.categoryCode as EventCategoryType,
             chipLabel: category?.data?.find((v) => v.id === datum.categoryId)?.name,
         }),
-        [category?.data, event?.data]
+        [category?.data, event?.data, attendee?.data]
     );
 
-    //------------------------------Niko-------------------------
     //FIXME: keyとして日付を使われているオブジェクトにeventsを纏めたいですが、タイプで引っかかっています。
+    // const eventAttendeeData = isOrganizer ? event?.data : attendee?.data
+    // const dataOrigin = isOrganizer ? event : attendee
+    const attendeeEventIds = attendee?.data?.map((event) => event.eventId);
+    const eventData = isOrganizer
+        ? event?.data
+        : event?.data?.filter((event) => attendeeEventIds?.includes(event.id as number));
+
+    // let eventData =  isOrganizer ? event?.data :
+
     const events = React.useMemo(
         () =>
-            event?.data?.reduce((acc, event) => {
+            eventData?.reduce((acc, event) => {
                 const { begin } = event;
                 const dateStr = `${moment(begin).format(defDateFormat.ymd)}`;
                 return {
@@ -71,6 +84,7 @@ export const EventPageListContent: React.VFC<EventPageListContentProps> = ({
                     {events &&
                         // HACK: 分岐を外だし、または文言を定数化してリファクタ
                         Object.entries(events).map(([date, eventDetail], idx) => {
+                            console.log("events: ", events);
                             const displayDate = date;
                             const displayWeekDay = moment(new Date(date)).format(
                                 defDateFormat.fullDayOfWeek
@@ -128,14 +142,12 @@ export const EventPageListContent: React.VFC<EventPageListContentProps> = ({
                                                 />
                                                 <Typography
                                                     variant="h6"
-                                                    style={{}}
-                                                    sx={{
-                                                        padding: "1em 0",
-                                                        marginLeft: "28px",
-                                                    }}
+                                                    component="p"
+                                                    padding="1em 0"
+                                                    marginLeft="28px"
                                                 >
-                                                    <p>{displayDate}</p>
-                                                    <p>{displayWeekDay}</p>
+                                                    {displayDate}
+                                                    {displayWeekDay}
                                                 </Typography>
                                             </Box>
                                         </Box>

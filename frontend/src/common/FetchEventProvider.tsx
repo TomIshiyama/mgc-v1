@@ -1,11 +1,18 @@
 import React, { createContext } from "react";
 import { useFetch, UseFetchResponse } from "../hooks/request/useFetch";
-import { BaseCategoryProps, BaseEventProps } from "../types/connection";
+import {
+    BaseAttendeeProps,
+    BaseCategoryProps,
+    BaseEventProps,
+} from "../types/connection";
+
+const userId = 1;
 
 export const FetchEventContext = createContext<{
     event: UseFetchResponse<BaseEventProps[]> | undefined;
     category: UseFetchResponse<BaseCategoryProps[]> | undefined;
-}>({ event: undefined, category: undefined });
+    attendee: UseFetchResponse<BaseAttendeeProps[]> | undefined;
+}>({ event: undefined, category: undefined, attendee: undefined });
 
 export const FetchEventProvider: React.FC<{
     children: React.ReactNode;
@@ -20,8 +27,13 @@ export const FetchEventProvider: React.FC<{
         headers: {},
     });
 
+    const attendee = useFetch<BaseAttendeeProps[]>({
+        initialUrl: `${process.env.NEXT_PUBLIC_API_ENDPOINT!}attendees?user_id=${userId}`,
+        headers: {},
+    });
+
     return (
-        <FetchEventContext.Provider value={{ event, category }}>
+        <FetchEventContext.Provider value={{ event, category, attendee }}>
             {children}
         </FetchEventContext.Provider>
     );
