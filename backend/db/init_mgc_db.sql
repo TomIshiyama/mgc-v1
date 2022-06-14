@@ -5,6 +5,16 @@ use mgc;
 DROP TABLE IF EXISTS events,attendees,users;
 DROP TABLE IF EXISTS category_code_master,categories;
 
+CREATE TABLE IF NOT EXISTS category_code_master (
+    code VARCHAR(30) NOT NULL,
+    PRIMARY KEY (code)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS division_code_master (
+    code VARCHAR(255) NOT NULL,
+    PRIMARY KEY (code)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
 create table IF NOT EXISTS users (
     id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
     given_name VARCHAR(255) NOT NULL,
@@ -21,12 +31,10 @@ create table IF NOT EXISTS users (
     theme VARCHAR(255) NOT NULL,
     is_admin TINYINT NOT NULL,
     is_stop TINYINT NOT NULL,
-    last_update TIMESTAMP NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP)
-ENGINE=INNODB DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS category_code_master (
-    code VARCHAR(30) NOT NULL,
-    PRIMARY KEY (code)
+    last_update TIMESTAMP NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    CONSTRAINT fk_division_code
+        FOREIGN KEY (division)
+        REFERENCES division_code_master (code)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS categories (
@@ -81,19 +89,42 @@ ENGINE=INNODB DEFAULT CHARSET=utf8;
 INSERT IGNORE INTO USERS
 (id, given_name, family_name, given_kana, family_kana, email, password, division, position, icon_path, icon_name, description, theme, is_admin, is_stop, last_update)
 VALUES
-('1', 'Satori', 'Sato', 'Satori', 'Sato', 'satou@test.com', '123456', 'Yokohama Div', 'GD', 'dummmypath/path/icon', 'dummyIcon', 'just a discription', 'blue', '0', '0', '2022-07-04 10:32:20 '),
-('2', 'Yumi', 'Nishimoto', 'Yumi', 'Nishimoto', 'nishimoto@test.com', '123456', 'Yokohama Div', 'YR1', 'dummmypath/path/icon2', 'dummyIcon2', 'just a discription 2', 'yellow', '0', '0', '2022-07-04 10:32:20 '),
-('3', 'Kana', 'Yoko', 'Kana', 'Yoko', 'kano@test.com', '123456', 'Yokohama Div', 'YR2', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
-('4', 'Tom', 'Stone', 'Tom', 'Stone', 'tom@test.com', '123456', 'Yokohama Div', 'YR2', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
-('5', 'てすと', 'まん', 'テスト', 'マン', 'testman@test.com', '123456', 'Yokohama Div', 'YR1', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
-('6', '承太郎', '空条', 'ジョウタロウ', 'クウジョウ', 'tester1@test.com', '123456', 'Yokohama Div', 'YR3', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
-('7', 'Joseph', 'Joestar', 'ジョウタロウ', 'クウジョウ', 'tester2@test.com', '123456', 'Yokohama Div', 'YR3', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
-('8', 'Muhammad', 'Avdol', 'ムハンマド', 'アブドゥル', 'tester3@test.com', '123456', 'Yokohama Div', 'YR3', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
-('9', '典明', '花京院', 'ノリアキ', 'カキョウイン', 'tester4@test.com', '123456', 'Yokohama Div', 'YR3', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
-('10', 'Jean', 'Polnareff', 'ジャン', 'ポルナレフ', 'tester5@test.com', '123456', 'Yokohama Div', 'YR3', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 ');
+('1', 'Satori', 'Sato', 'Satori', 'Sato', 'satou@test.com', '123456', 'yokohama', 'GD', 'dummmypath/path/icon', 'dummyIcon', 'just a discription', 'blue', '0', '0', '2022-07-04 10:32:20 '),
+('2', 'Yumi', 'Nishimoto', 'Yumi', 'Nishimoto', 'nishimoto@test.com', '123456', 'yokohama', 'YR1', 'dummmypath/path/icon2', 'dummyIcon2', 'just a discription 2', 'yellow', '0', '0', '2022-07-04 10:32:20 '),
+('3', 'Kana', 'Yoko', 'Kana', 'Yoko', 'kano@test.com', '123456', 'yokohama', 'YR2', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('4', 'Tom', 'Stone', 'Tom', 'Stone', 'tom@test.com', '123456', 'yokohama', 'YR2', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('5', 'てすと', 'まん', 'テスト', 'マン', 'testman@test.com', '123456', 'yokohama', 'YR1', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('6', '承太郎', '空条', 'ジョウタロウ', 'クウジョウ', 'tester1@test.com', '123456', 'yokohama', 'YR2', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('7', 'Joseph', 'Joestar', 'ジョウタロウ', 'クウジョウ', 'tester2@test.com', '123456', 'yokohama', 'YR2', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('8', 'Muhammad', 'Avdol', 'ムハンマド', 'アブドゥル', 'tester3@test.com', '123456', 'yokohama', 'YR2', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('9', '典明', '花京院', 'ノリアキ', 'カキョウイン', 'tester4@test.com', '123456', 'yokohama', 'YR2', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('10', 'Jean', 'Polnareff', 'ジャン', 'ポルナレフ2世', 'tester5@test.com', '123456', 'tokyo', 'VOE', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('11', 'Jean', 'Polnareff', 'ジャン', 'ポルナレフ3世', 'tester6@test.com', '123456', 'tokyo', 'VOE', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('12', 'Jean', 'Polnareff', 'ジャン', 'ポルナレフ4世', 'tester7@test.com', '123456', 'tokyo', 'VOE', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('13', 'Jean', 'Polnareff', 'ジャン', 'ポルナレフ5世', 'tester8@test.com', '123456', 'tokyo', 'XXX', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('14', 'Jean', 'Polnareff', 'ジャン', 'ポルナレフ6世', 'tester9@test.com', '123456', 'tokyo', 'XXX', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('15', 'Jean', 'Polnareff', 'ジャン', 'ポルナレフ7世', 'tester10@test.com', '123456', 'tokyo', 'XXX', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('16', 'Jean', 'Polnareff', 'ジャン', 'ポルナレフ8世', 'tester11@test.com', '123456', 'tokyo', 'AAA', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('17', 'Jean', 'Polnareff', 'ジャン', 'ポルナレフ9世', 'tester12@test.com', '123456', 'tokyo', 'AAA', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('18', 'Jean', 'Polnareff', 'ジャン', 'ポルナレフ10世', 'tester13@test.com', '123456', 'tokyo', 'AAA', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('19', 'Jean', 'Polnareff', 'ジャン', 'ポルナレフ11世', 'tester14@test.com', '123456', 'nagoya', 'AAA', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('20', 'Jean', 'Polnareff', 'ジャン', 'ポルナレフ12世', 'tester15@test.com', '123456', 'nagoya', 'AAA', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('21', 'Jean', 'Polnareff', 'ジャン', 'ポルナレフ13世', 'tester16@test.com', '123456', 'nagoya', 'AAA', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('22', 'Jean', 'Polnareff', 'ジャン', 'ポルナレフ14世', 'tester17@test.com', '123456', 'yokohama', 'YR3', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('23', 'Jean', 'Polnareff', 'ジャン', 'ポルナレフ15世', 'tester18@test.com', '123456', 'yokohama', 'YR3', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('24', 'Jean', 'Polnareff', '1郎', '田中', 'tester19@test.com', '123456', 'yokohama', 'YR3', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('25', 'Jean', 'Polnareff', '2郎', '田中2', 'tester20@test.com', '123456', 'yokohama', 'YR3', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('26', 'Jean', 'Polnareff', '3郎', '田中3', 'tester21@test.com', '123456', 'yokohama', 'YR3', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('27', 'Jean', 'Polnareff', '4郎', '田中4', 'tester22@test.com', '123456', 'yokohama', 'YR3', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('28', 'Jean', 'Polnareff', '5郎', '田中5', 'tester23@test.com', '123456', 'yokohama', 'YR3', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('29', 'Jean', 'Polnareff', '6郎', '田中6', 'tester24@test.com', '123456', 'yokohama', 'YR3', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('30', 'Jean', 'Polnareff', '7郎', '田中7', 'tester25@test.com', '123456', 'yokohama', 'YR3', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 '),
+('31', 'Jean', 'Polnareff', '8郎', '田中8', 'tester26@test.com', '123456', 'yokohama', 'YR3', 'dummmypath/path/icon3', 'dummyIcon3', 'just a discription 3', 'pink', '0', '0', '2022-07-04 10:32:20 ');
 
 -- category_code_master insert
 INSERT IGNORE INTO category_code_master (code) VALUES ("fff"),("meeting"),("tech"),("meetup"),("primary"),("anniversary"),("etc"),("temporary");
+
+INSERT IGNORE INTO division_code_master (code) VALUES ("tokyo"),("yokohama"),("nagoya"),("fukuoka"),("hokkaido");
 
 -- categories insert
 INSERT IGNORE INTO categories (id,category_code,name) VALUES (1,"fff","FFF"),(2,"meeting","会議"),(3,"tech","技術"),(4,"meetup","交流"),(5,"primary","重要"),(6,"anniversary","設立記念日"),(7,"etc","その他"),(8,"temporary","仮登録");
