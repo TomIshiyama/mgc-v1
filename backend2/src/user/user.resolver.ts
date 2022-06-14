@@ -13,4 +13,10 @@ export class UserResolver {
     const data = this.userRepository.findUnique(id);
     return data;
   }
+
+  @Query(() => [[User]])
+  async getUserListGroup(): Promise<User[][]> {
+    const data = await this.userRepository.findManyroupBy();
+    return data;
+  }
 }
