@@ -50,7 +50,7 @@ import { usePost } from "../src/hooks/request/usePost";
 import { mapAutocomplete } from "../src/pages/top";
 import { BaseEventProps } from "../src/types/connection";
 import { pagesPath } from "../src/utils/$path";
-import { mapDateString } from "../src/utils/collection";
+import { excludeNullish, mapDateString } from "../src/utils/collection";
 import { EventCategoryType } from "../src/utils/displayData";
 import { COLOR } from "../src/utils/styling";
 import { Serialized } from "../src/utils/types";
@@ -152,36 +152,6 @@ const iconStyle: SxProps = {
     color: "whitesmoke",
 };
 
-const menuDefs: SideMenuDefType[] = [
-    {
-        title: "メニュー",
-        menuList: [
-            {
-                label: "カレンダー",
-                icon: <DateRangeOutlinedIcon sx={iconStyle} />,
-                link: pagesPath.top.$url(),
-            },
-            {
-                label: "マイイベント",
-                icon: <EmojiFlagsIcon sx={iconStyle} />,
-                link: "#", // FIXME: 遷移先URL
-            },
-        ],
-    },
-    // FIXME: 疎通 管理者メニューを権限ユーザーよって表示切り替え
-    {
-        title: "管理",
-        menuList: [
-            {
-                label: "ユーザー",
-                icon: <GroupIcon sx={iconStyle} />,
-                link: "#", // FIXME: 遷移先URL
-            },
-            { label: "イベント", icon: <EmojiFlagsIcon sx={iconStyle} />, link: "#" },
-        ],
-    },
-];
-
 export type MenuItemsProps = {
     defs: SideMenuDefType[];
 };
@@ -254,6 +224,41 @@ export const MainLayout: React.FC<{
         await signOut();
         await push(pagesPath.signin.$url().pathname);
     };
+    const menuDefs: SideMenuDefType[] = excludeNullish([
+        {
+            title: "メニュー",
+            menuList: [
+                {
+                    label: "カレンダー",
+                    icon: <DateRangeOutlinedIcon sx={iconStyle} />,
+                    link: pagesPath.top.$url(),
+                },
+                {
+                    label: "マイイベント",
+                    icon: <EmojiFlagsIcon sx={iconStyle} />,
+                    link: "#", // FIXME: 遷移先URL
+                },
+            ],
+        },
+        // FIXME: 疎通 管理者メニューを権限ユーザーよって表示切り替
+        session?.user?.admin
+            ? {
+                  title: "管理",
+                  menuList: [
+                      {
+                          label: "ユーザー",
+                          icon: <GroupIcon sx={iconStyle} />,
+                          link: pagesPath.manage.user.list.$url().pathname,
+                      },
+                      {
+                          label: "イベント",
+                          icon: <EmojiFlagsIcon sx={iconStyle} />,
+                          link: "#",
+                      },
+                  ],
+              }
+            : undefined,
+    ]);
 
     return (
         <Box sx={{ display: "flex" }}>
