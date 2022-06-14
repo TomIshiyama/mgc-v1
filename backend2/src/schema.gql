@@ -19,10 +19,11 @@ type User {
   isAdmin: String!
   isStop: String!
   lastUpdate: String!
-  attendees: String!
-  events: String!
+  attendees: String
+  events: String
 }
 
 type Query {
   getUser(id: Int!): User!
+  getUserListGroup: [[User!]!]!
 }
