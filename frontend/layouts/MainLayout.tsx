@@ -240,7 +240,7 @@ export const MainLayout: React.FC<{
                 },
             ],
         },
-        // FIXME: 疎通 管理者メニューを権限ユーザーよって表示切り替
+        // FIXME: 型エラーどうしたらなおせる問題
         session?.user?.admin
             ? {
                   title: "管理",
