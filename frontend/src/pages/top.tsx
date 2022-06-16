@@ -7,7 +7,6 @@ import { FetchEventContext } from "../common/FetchEventProvider";
 import { Head } from "../components/common/Head";
 import { TopPageComponent } from "../components/top/TopPageComponent";
 import { useContextDetailDrawer } from "../hooks/contexts/useContextDetailDrawer";
-import { useFetch } from "../hooks/request/useFetch";
 // import { eventListMock } from "../mock/eventList";
 import { BaseEventProps } from "../types/connection";
 import { defDateFormat } from "../utils/definitions";
@@ -20,12 +19,6 @@ const mLocalizer = momentLocalizer(moment);
 // TODO: 登録完了時にはメッセージをだす
 // TODO: 削除時に確認ダイアログ出す
 const Top = () => {
-    // 疎通の動作確認のためだけに書いた
-    const { data, loading, error } = useFetch({
-        initialUrl: `${process.env.NEXT_PUBLIC_API_ENDPOINT!}users`,
-        headers: {},
-    });
-
     // TODO: 移す
     const { event } = React.useContext(FetchEventContext);
     const { doToggleDrawer, setKey } = useContextDetailDrawer();

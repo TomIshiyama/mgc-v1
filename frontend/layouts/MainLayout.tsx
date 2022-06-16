@@ -37,7 +37,9 @@ import { styled, SxProps, useTheme } from "@mui/material/styles/";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import moment from "moment";
+import { signOut, useSession } from "next-auth/react";
 import Link, { LinkProps } from "next/link";
+import { useRouter } from "next/router";
 import * as React from "react";
 import { FetchEventContext } from "../src/common/FetchEventProvider";
 import { DateRangePickerModal } from "../src/components/common/DateRangePickerModal";
@@ -224,8 +226,11 @@ export const MainLayout: React.FC<{
     children: React.ReactNode;
     bgcolor?: HTMLElement["style"]["backgroundColor"];
 }> = ({ children, bgcolor }) => {
+    const { push } = useRouter();
     const theme = useTheme();
     const [open, setOpen] = React.useState<boolean>(true);
+
+    const { data: session } = useSession();
 
     const handleDrawerOpen = React.useCallback(() => {
         setOpen(true);
@@ -244,6 +249,11 @@ export const MainLayout: React.FC<{
     });
 
     const { mode } = useContextDetailDrawer();
+
+    const onClickLogout = async () => {
+        await signOut();
+        await push(pagesPath.signin.$url().pathname);
+    };
 
     return (
         <Box sx={{ display: "flex" }}>
@@ -468,6 +478,7 @@ export const MainLayout: React.FC<{
                                             color="warning"
                                             variant="contained"
                                             endIcon={<LogoutIcon />}
+                                            onClick={onClickLogout}
                                         >
                                             ログアウト
                                         </Button>
