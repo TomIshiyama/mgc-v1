@@ -49,7 +49,6 @@ export const EventPageComponent: React.VFC<{ children: React.ReactNode }> = () =
                 direction="row"
                 spacing={10}
                 alignItems="center"
-                // color="#ffd6c9"
                 sx={{ marginBottom: "10px" }}
             >
                 <ButtonBase disableRipple>

@@ -19,21 +19,12 @@ export type EventPageListContentProps = {
     onClickIcon?: MUI.IconButtonProps["onClick"];
 };
 
-type EventListItemObjectProps = {
-    [key: string]: string;
-};
-// Recharts - Warning: Prop id did not match. Server: を解消するためSSR無効化
-// see -> https://github.com/vercel/next.js/issues/12863
-
 export const EventPageListContent: React.VFC<EventPageListContentProps> = ({
     onClickIcon,
     isOrganizer,
 }) => {
     const { event, category, attendee } = React.useContext(FetchEventContext);
     const { doToggleDrawer, setKey } = useContextDetailDrawer();
-
-    console.log("isOrganizerChangesInContent: ", isOrganizer);
-    console.log("attendeeEvents: ", attendee?.data);
 
     const mapEventListItem = React.useCallback(
         (datum: BaseEventProps): EventListItemProps => ({
@@ -49,15 +40,10 @@ export const EventPageListContent: React.VFC<EventPageListContentProps> = ({
         [category?.data, event?.data, attendee?.data]
     );
 
-    //FIXME: keyとして日付を使われているオブジェクトにeventsを纏めたいですが、タイプで引っかかっています。
-    // const eventAttendeeData = isOrganizer ? event?.data : attendee?.data
-    // const dataOrigin = isOrganizer ? event : attendee
     const attendeeEventIds = attendee?.data?.map((event) => event.eventId);
     const eventData = isOrganizer
         ? event?.data
         : event?.data?.filter((event) => attendeeEventIds?.includes(event.id as number));
-
-    // let eventData =  isOrganizer ? event?.data :
 
     const events = React.useMemo(
         () =>
@@ -82,14 +68,11 @@ export const EventPageListContent: React.VFC<EventPageListContentProps> = ({
             >
                 <MUI.List>
                     {events &&
-                        // HACK: 分岐を外だし、または文言を定数化してリファクタ
                         Object.entries(events).map(([date, eventDetail], idx) => {
-                            console.log("events: ", events);
                             const displayDate = date;
                             const displayWeekDay = moment(new Date(date)).format(
                                 defDateFormat.fullDayOfWeek
                             );
-                            // console.log("eventInfo: ", eventInfo);
                             return (
                                 <>
                                     <Box
@@ -107,7 +90,6 @@ export const EventPageListContent: React.VFC<EventPageListContentProps> = ({
                                             },
                                         }}
                                     >
-                                        {/* TODO: Accordionに変更する 件数表示する*/}
                                         <Box
                                             sx={{
                                                 display: "flex",
@@ -128,9 +110,6 @@ export const EventPageListContent: React.VFC<EventPageListContentProps> = ({
                                                     paddingLeft: "14px",
                                                     marginLeft: "-53px",
                                                     marginRight: "10px",
-                                                    // "&:first-child": {
-                                                    //     marginTop: "-8px",
-                                                    // },
                                                 }}
                                             >
                                                 <CalendarMonthIcon

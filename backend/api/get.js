@@ -2,8 +2,6 @@ const pool = require("./connectionPool");
 const util = require("../utils/utils");
 
 module.exports = function (req) {
-    console.log("req: ", req.query, "req.url: ", req.url);
-
     const _apiName = util.getApiName(req);
     const queryEntries =
         JSON.stringify(req.query) === "{}"
