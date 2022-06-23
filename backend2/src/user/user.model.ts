@@ -16,9 +16,14 @@ registerEnumType(ChangePasswordStatusDef, {
 });
 
 @ObjectType()
-export class User {
+// @InputType()
+export class UserKey {
   @Field(() => ID)
   id: number;
+}
+@ObjectType()
+@InputType('UserInput')
+export class User extends UserKey {
   givenName: string;
   familyName: string;
   givenKana: string;

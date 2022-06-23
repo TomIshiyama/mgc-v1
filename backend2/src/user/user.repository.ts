@@ -8,6 +8,7 @@ import {
   ChangePasswordStatusDef,
   User,
   UserGroupByDivision,
+  UserKey,
   UserLoginInput,
   UserLoginResponse,
 } from './user.model';
@@ -47,7 +48,7 @@ export class UserRepository {
   /**
    * ユーザー登録・編集
    */
-  async upsert(userInput: User) {
+  async upsert(userInput: User): Promise<UserKey> {
     const columnMapping = {
       given_name: userInput.givenName,
       family_name: userInput.familyName,
@@ -76,7 +77,7 @@ export class UserRepository {
       },
     });
 
-    return { userId: data.id };
+    return { id: data.id };
   }
 
   /** ユーザーログイン */
