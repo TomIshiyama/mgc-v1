@@ -3,17 +3,14 @@ import * as MUI from "@mui/material";
 import { Alert, Box, Typography } from "@mui/material";
 import moment from "moment";
 import React from "react";
-import { FetchEventContext } from "../../common/FetchEventProvider";
 import { useContextDetailDrawer } from "../../hooks/contexts/useContextDetailDrawer";
-import { BaseEventProps } from "../../types/connection";
 import { defDateFormat } from "../../utils/definitions";
-import { EventCategoryType } from "../../utils/displayData";
 import { ButtonListType } from "../common/BaseListItemButton";
 import { EventListItem, EventListItemProps } from "../common/EventListItem";
 import { ANCHOR } from "../common/TemporaryDrawer";
 
 export type EventPageListContentProps = {
-    isOrganizer: boolean;
+    events: { [dateStr: string]: EventListItemProps[] | undefined } | undefined;
     description?: React.ReactNode;
     buttonList: ButtonListType[];
     onClickIcon?: MUI.IconButtonProps["onClick"];
@@ -21,42 +18,9 @@ export type EventPageListContentProps = {
 
 export const EventPageListContent: React.VFC<EventPageListContentProps> = ({
     onClickIcon,
-    isOrganizer,
+    events,
 }) => {
-    const { event, category, attendee } = React.useContext(FetchEventContext);
     const { doToggleDrawer, setKey } = useContextDetailDrawer();
-
-    const mapEventListItem = React.useCallback(
-        (datum: BaseEventProps): EventListItemProps => ({
-            key: datum.id,
-            itemTitle: datum.name,
-            itemText: `${moment(datum.begin).format(defDateFormat.time24)} - ${moment(
-                datum.end
-            ).format(defDateFormat.time24)}`,
-            category: category?.data?.find((v) => v.id === datum.categoryId)
-                ?.categoryCode as EventCategoryType,
-            chipLabel: category?.data?.find((v) => v.id === datum.categoryId)?.name,
-        }),
-        [category?.data, event?.data, attendee?.data]
-    );
-
-    const attendeeEventIds = attendee?.data?.map((event) => event.eventId);
-    const eventData = isOrganizer
-        ? event?.data
-        : event?.data?.filter((event) => attendeeEventIds?.includes(event.id as number));
-
-    const events = React.useMemo(
-        () =>
-            eventData?.reduce((acc, event) => {
-                const { begin } = event;
-                const dateStr = `${moment(begin).format(defDateFormat.ymd)}`;
-                return {
-                    ...acc,
-                    [dateStr]: [...(acc[dateStr] || []), mapEventListItem(event)],
-                };
-            }, {} as { [dateStr: string]: EventListItemProps[] | undefined }),
-        [event?.data, category?.data]
-    );
 
     return (
         <>
@@ -146,6 +110,9 @@ export const EventPageListContent: React.VFC<EventPageListContentProps> = ({
                                                         marginLeft: "20px",
                                                     }}
                                                     onClick={() => {
+                                                        // {
+                                                        //     events;
+                                                        // }
                                                         setKey?.(datum.key);
                                                         doToggleDrawer(
                                                             ANCHOR.RIGHT,
