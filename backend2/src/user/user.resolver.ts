@@ -3,9 +3,10 @@ import {
   ChangePasswordInput,
   ChangePasswordResponse,
   User,
-  UserKey,
   UserLoginInput,
   UserLoginResponse,
+  UserUpsert,
+  UserUpsertResponse,
 } from './user.model';
 import { UserRepository } from './user.repository';
 
@@ -27,15 +28,15 @@ export class UserResolver {
     return data;
   }
 
-  @Mutation(() => UserKey)
+  @Mutation(() => UserUpsertResponse)
   async upsertUser(
-    @Args('params', { type: () => User }) params: User,
-  ): Promise<UserKey> {
+    @Args('params', { type: () => UserUpsert }) params: UserUpsert,
+  ): Promise<UserUpsertResponse> {
     const data = await this.userRepository.upsert(params);
     return data;
   }
 
-  @Query(() => UserLoginResponse)
+  @Mutation(() => UserLoginResponse)
   async login(
     @Args('params', { type: () => UserLoginInput }) params: UserLoginInput,
   ): Promise<UserLoginResponse> {
