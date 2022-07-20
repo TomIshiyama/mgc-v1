@@ -60,6 +60,9 @@ export const validationRules: {
         maxLength: { value: 60, message: "60文字以下で入力してください。" },
     },
     position: { required: message.required },
+    division: {
+        required: message.required,
+    },
 };
 
 // POSTリクエスト（サインイン・サインアウトなど）に必要なCSRFトークンを返却する
