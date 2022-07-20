@@ -31,6 +31,10 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type UserKey {
+  id: ID!
+}
+
 type User {
   id: ID!
   position: PositionDef!
@@ -101,6 +105,10 @@ input EventInput {
   createdDate: DateTime!
 }
 
+input UserKeyInput {
+  id: ID!
+}
+
 input UserInput {
   id: ID!
   position: PositionDef!
@@ -132,6 +140,7 @@ type Query {
 
 type Mutation {
   upsertUser(params: UserUpsert!): UserUpsertResponse!
+  createUser(params: UserUpsert!): UserKey!
   login(params: UserLoginInput!): UserLoginResponse!
   changePassword(params: ChangePasswordInput!): ChangePasswordResponse!
 }
