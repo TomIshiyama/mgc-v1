@@ -2,23 +2,122 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type DecoderItem {
+  code: String!
+  name: String
+}
+
+type Decoder {
+  category: [DecoderItem!]!
+  divisionCode: [DecoderItem!]!
+}
+
+type Event {
+  userId: Int!
+  id: Int!
+  categoryId: Float
+  name: String!
+  location: String
+  detail: String
+  begin: DateTime!
+  end: DateTime!
+  isTemporary: Boolean!
+  lastUpdate: DateTime!
+  createdDate: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type User {
   id: ID!
+  position: PositionDef!
+  theme: ThemeDef!
   givenName: String!
   familyName: String!
-  givenKana: String!
-  familyKana: String!
+  givenKana: String
+  familyKana: String
   email: String!
   password: String!
   division: String!
-  position: String!
-  iconPath: String!
-  iconName: String!
-  description: String!
-  theme: String!
-  isAdmin: String!
-  isStop: String!
-  lastUpdate: String!
+  iconPath: String
+  iconName: String
+  description: String
+  isAdmin: Boolean!
+  isStop: Boolean!
+  lastUpdate: DateTime!
+  attendees: String
+  events: String
+}
+
+enum PositionDef {
+  division
+  unit
+  gd
+  member
+}
+
+enum ThemeDef {
+  normal
+  dark
+}
+
+type UserUpsertResponse {
+  id: ID!
+  email: String!
+  password: String!
+}
+
+type UserLoginResponse {
+  name: String
+  userId: Float!
+  email: String!
+  isAdmin: Boolean!
+}
+
+type ChangePasswordResponse {
+  userId: ID!
+  status: ChangePasswordStatusDef!
+}
+
+enum ChangePasswordStatusDef {
+  ng
+  ok
+}
+
+input EventInput {
+  userId: Int!
+  id: Int!
+  categoryId: Float
+  name: String!
+  location: String
+  detail: String
+  begin: DateTime!
+  end: DateTime!
+  isTemporary: Boolean!
+  lastUpdate: DateTime!
+  createdDate: DateTime!
+}
+
+input UserInput {
+  id: ID!
+  position: PositionDef!
+  theme: ThemeDef!
+  givenName: String!
+  familyName: String!
+  givenKana: String
+  familyKana: String
+  email: String!
+  password: String!
+  division: String!
+  iconPath: String
+  iconName: String
+  description: String
+  isAdmin: Boolean!
+  isStop: Boolean!
+  lastUpdate: DateTime!
   attendees: String
   events: String
 }
@@ -26,4 +125,45 @@ type User {
 type Query {
   getUser(id: Int!): User!
   getUserListGroup: [[User!]!]!
+  getEventAll: [Event!]!
+  getEvent(eventId: Int!): Event!
+  decoder: Decoder!
+}
+
+type Mutation {
+  upsertUser(params: UserUpsert!): UserUpsertResponse!
+  login(params: UserLoginInput!): UserLoginResponse!
+  changePassword(params: ChangePasswordInput!): ChangePasswordResponse!
+}
+
+input UserUpsert {
+  id: ID
+  position: PositionDef
+  theme: ThemeDef
+  givenName: String
+  familyName: String
+  givenKana: String
+  familyKana: String
+  email: String
+  password: String
+  division: String
+  iconPath: String
+  iconName: String
+  description: String
+  isAdmin: Boolean
+  isStop: Boolean
+  lastUpdate: DateTime
+  attendees: String
+  events: String
+}
+
+input UserLoginInput {
+  email: String!
+  password: String!
+}
+
+input ChangePasswordInput {
+  email: String!
+  currentPassword: String!
+  newPassword: String!
 }
