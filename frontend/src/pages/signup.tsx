@@ -1,4 +1,5 @@
 import {
+    Alert,
     Box,
     Button,
     Container,
@@ -19,11 +20,11 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { SignUpLayout } from "../../layouts/SignUpLayout";
 import {
+    CreateUserMutationVariables,
     PositionDef,
     ThemeDef,
-    UpsertUserMutationVariables,
+    useCreateUserMutation,
     useDecoderQuery,
-    useUpsertUserMutation,
 } from "../generated/graphql";
 import { pagesPath } from "../utils/$path";
 import { validationRules } from "./signin";
@@ -44,47 +45,51 @@ const SignUp = () => {
 
     const { data } = useDecoderQuery();
 
-    const [isError, setIsError] = React.useState(false);
+    const [isError, setIsError] = React.useState<Error | null>(null);
     const { handleSubmit, setError, control } = useForm<FormInputList>({
         mode: "onChange",
     });
 
-    const [upsertUser] = useUpsertUserMutation();
+    const [createUser] = useCreateUserMutation();
 
     //サインアップのPOST処理
     const signUpUser = async (data: FormInputList) => {
         try {
-            const params: UpsertUserMutationVariables["params"] = {
+            const params: CreateUserMutationVariables["params"] = {
                 ...data,
                 isAdmin: false,
                 isStop: false,
                 theme: ThemeDef.Normal,
             };
-            const { data: signupRes } = await upsertUser({
+
+            const { data: signupRes } = await createUser({
                 variables: {
                     params,
+                },
+                onError: (error) => {
+                    setIsError(error);
                 },
             });
 
             if (!signupRes) {
-                throw new Error("ユーザー登録に失敗しました。");
+                throw new Error("すでに使用されているメールアドレスです。");
             }
 
             // ユーザー新規登録の情報でログイン処理
             const res = await signIn<any>("credentials", {
                 redirect: false,
-                email: signupRes.upsertUser.email,
-                password: signupRes.upsertUser.password,
+                email: data.email,
+                password: data.password,
             });
             // TODO: ログイン成功時に表示するSnackbar
             if (res?.error) {
                 throw new Error(`Unauthorized : ${res?.error}`);
             }
-            setIsError(false);
+            setIsError(null);
             // ログイン後はトップページへ
             void router.push(pagesPath.top.$url().pathname);
         } catch (e) {
-            setIsError(true);
+            setIsError(e);
         }
     };
 
@@ -275,7 +280,16 @@ const SignUp = () => {
                             />
                         )}
                     />
-
+                    {isError && (
+                        <Alert
+                            variant="standard"
+                            severity="error"
+                            onClose={() => setIsError(null)}
+                        >
+                            認証に失敗しました。 <br />
+                            {isError.message}
+                        </Alert>
+                    )}
                     <Button
                         type="submit"
                         fullWidth
