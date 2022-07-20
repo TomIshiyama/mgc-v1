@@ -3,6 +3,7 @@ import {
   ChangePasswordInput,
   ChangePasswordResponse,
   User,
+  UserKey,
   UserLoginInput,
   UserLoginResponse,
   UserUpsert,
@@ -33,6 +34,14 @@ export class UserResolver {
     @Args('params', { type: () => UserUpsert }) params: UserUpsert,
   ): Promise<UserUpsertResponse> {
     const data = await this.userRepository.upsert(params);
+    return data;
+  }
+
+  @Mutation(() => UserKey)
+  async createUser(
+    @Args('params', { type: () => UserUpsert }) params: UserUpsert,
+  ): Promise<UserKey> {
+    const data = await this.userRepository.create(params);
     return data;
   }
 

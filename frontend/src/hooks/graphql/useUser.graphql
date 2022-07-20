@@ -15,6 +15,12 @@ mutation UpsertUser($params: UserUpsert!) {
     }
 }
 
+mutation CreateUser($params: UserUpsert!) {
+    createUser(params: $params) {
+        id
+    }
+}
+
 mutation Login($params: UserLoginInput!) {
     login(params: $params) {
         userId
