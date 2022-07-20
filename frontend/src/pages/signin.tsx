@@ -26,21 +26,40 @@ type FormInputList = {
     password: string;
 };
 
+const message = {
+    required: "入力必須です。",
+};
+
 // 3. 検証ルール。
-const validationRules: {
+export const validationRules: {
     [key: string]: ControllerProps["rules"];
 } = {
     email: {
-        required: "入力必須です。",
+        required: message.required,
         pattern: {
             value: REGEX.email,
             message: "正しいフォーマットで入力してください。",
         },
     },
     password: {
-        required: "入力必須です。",
+        required: message.required,
         minLength: { value: 4, message: "4文字以上で入力してください。" },
     },
+    familyName: {
+        required: message.required,
+        maxLength: { value: 30, message: "30文字以下で入力してください。" },
+    },
+    givenName: {
+        required: message.required,
+        maxLength: { value: 30, message: "30文字以下で入力してください。" },
+    },
+    familyKana: {
+        maxLength: { value: 60, message: "60文字以下で入力してください。" },
+    },
+    givenKana: {
+        maxLength: { value: 60, message: "60文字以下で入力してください。" },
+    },
+    position: { required: message.required },
 };
 
 // POSTリクエスト（サインイン・サインアウトなど）に必要なCSRFトークンを返却する
