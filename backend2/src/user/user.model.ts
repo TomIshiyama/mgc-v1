@@ -1,22 +1,9 @@
-import {
-  Field,
-  ID,
-  InputType,
-  ObjectType,
-  registerEnumType,
-} from '@nestjs/graphql';
+import { Field, ID, InputType, ObjectType, PartialType } from '@nestjs/graphql';
+import { ChangePasswordStatusDef, ThemeDef } from 'src/utils/const';
+import { PositionDef } from '../utils/const';
 
-export const ChangePasswordStatusDef = {
-  ng: 'ng',
-  ok: 'ok',
-} as const;
-
-registerEnumType(ChangePasswordStatusDef, {
-  name: 'ChangePasswordStatusDef',
-});
-
-@ObjectType()
-// @InputType()
+@ObjectType('UserKey')
+@InputType('UserKeyInput')
 export class UserKey {
   @Field(() => ID)
   id: number;
@@ -26,22 +13,37 @@ export class UserKey {
 export class User extends UserKey {
   givenName: string;
   familyName: string;
-  givenKana: string;
-  familyKana: string;
+  givenKana?: string;
+  familyKana?: string;
   email: string;
   password: string;
   division: string;
-  position: string;
-  iconPath: string;
-  iconName: string;
-  description: string;
-  theme: string;
+  @Field(() => PositionDef)
+  position: typeof PositionDef[keyof typeof PositionDef];
+  iconPath?: string;
+  iconName?: string;
+  description?: string;
+  @Field(() => ThemeDef)
+  theme: typeof ThemeDef[keyof typeof ThemeDef];
   isAdmin: boolean;
   isStop: boolean;
-  lastUpdate: string;
+  lastUpdate: Date;
   attendees?: string;
   events?: string;
 }
+
+@ObjectType()
+export class UserUpsertResponse {
+  @Field(() => ID)
+  id: number;
+  email: string;
+  password: string;
+}
+
+/** ユーザー入力用モデル */
+@ObjectType()
+@InputType()
+export class UserUpsert extends PartialType(User, InputType) {}
 
 @ObjectType()
 export class UserGroupByDivision {
@@ -57,6 +59,7 @@ export class UserLoginInput {
 
 @ObjectType()
 export class UserLoginResponse {
+  name?: string;
   userId: number;
   email: string;
   isAdmin: boolean;
