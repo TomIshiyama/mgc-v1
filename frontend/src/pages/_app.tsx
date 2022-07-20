@@ -1,3 +1,4 @@
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { Typography } from "@mui/material";
 import "modern-css-reset/dist/reset.min.css"; // CSSのリセット
 import moment from "moment";
@@ -25,6 +26,11 @@ type NextPageWithLayout = NextPage & {
 type AppPropsWithLayout = AppProps & {
     Component: NextPageWithLayout;
 };
+
+const client = new ApolloClient({
+    uri: process.env.NEXT_PUBLIC_GQL_API_ENDPOINT,
+    cache: new InMemoryCache(),
+});
 
 // TS の場合はAppPropsを拡張しないとうまくLayoutの型エラーが解決できない
 function MyApp({
@@ -87,15 +93,17 @@ function MyApp({
 
     return (
         <SessionProvider session={session as Session}>
-            <MaterialThemeProvider>
-                <MediaQueryProvider>
-                    <FetchEventProvider>
-                        <DetailDrawerProvider>
-                            {getLayout(<Component {...pageProps} />)}
-                        </DetailDrawerProvider>
-                    </FetchEventProvider>
-                </MediaQueryProvider>
-            </MaterialThemeProvider>
+            <ApolloProvider client={client}>
+                <MaterialThemeProvider>
+                    <MediaQueryProvider>
+                        <FetchEventProvider>
+                            <DetailDrawerProvider>
+                                {getLayout(<Component {...pageProps} />)}
+                            </DetailDrawerProvider>
+                        </FetchEventProvider>
+                    </MediaQueryProvider>
+                </MaterialThemeProvider>
+            </ApolloProvider>
         </SessionProvider>
     );
 }

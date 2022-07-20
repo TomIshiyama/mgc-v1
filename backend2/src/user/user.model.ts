@@ -19,6 +19,11 @@ export class User {
   isAdmin: string;
   isStop: string;
   lastUpdate: string;
-  attendees: string;
-  events: string;
+  attendees?: string;
+  events?: string;
+}
+
+@ObjectType()
+export class UserGroupByDivision {
+  [key: string]: User[];
 }

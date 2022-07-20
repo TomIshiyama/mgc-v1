@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "init": "bash init.sh -x"
+        "init": "bash init.sh -x",
+        "init2": "bash init2.sh -x"
     }
 }
