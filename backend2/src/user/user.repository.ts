@@ -2,15 +2,16 @@ import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import * as humps from 'humps';
 import { PrismaService } from 'src/prisma.service';
+import { ChangePasswordStatusDef } from 'src/utils/const';
 import {
   ChangePasswordInput,
   ChangePasswordResponse,
-  ChangePasswordStatusDef,
   User,
   UserGroupByDivision,
-  UserKey,
   UserLoginInput,
   UserLoginResponse,
+  UserUpsert,
+  UserUpsertResponse,
 } from './user.model';
 
 const SALT_ROUNDS = 10;
@@ -48,14 +49,18 @@ export class UserRepository {
   /**
    * ユーザー登録・編集
    */
-  async upsert(userInput: User): Promise<UserKey> {
+  async upsert(userInput: UserUpsert): Promise<UserUpsertResponse> {
+    // パスワード生成
+    const salt = bcrypt.genSaltSync(SALT_ROUNDS);
+    const hash = bcrypt.hashSync(userInput.password, salt);
+
     const columnMapping = {
       given_name: userInput.givenName,
       family_name: userInput.familyName,
       given_kana: userInput.givenKana,
       family_kana: userInput.familyKana,
       email: userInput.email,
-      password: userInput.password,
+      password: hash,
       division: userInput.division,
       position: userInput.position,
       icon_path: userInput.iconPath,
@@ -64,12 +69,13 @@ export class UserRepository {
       theme: userInput.theme,
       is_admin: userInput.isAdmin === true ? 1 : 0,
       is_stop: userInput.isStop === true ? 1 : 0,
-      last_update: userInput.lastUpdate,
+      last_update: new Date(),
     };
 
     const data = await this.prisma.users.upsert({
       where: {
         id: userInput.id,
+        email: userInput.email,
       },
       create: { ...columnMapping },
       update: {
@@ -77,7 +83,7 @@ export class UserRepository {
       },
     });
 
-    return { id: data.id };
+    return { id: data.id, email: data.email, password: data.password };
   }
 
   /** ユーザーログイン */
