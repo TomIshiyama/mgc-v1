@@ -1,0 +1,11 @@
+query decoder {
+    decoder {
+        category {
+            code
+            name
+        }
+        divisionCode {
+            code
+        }
+    }
+}
