@@ -8,7 +8,7 @@ import MuiAccordionSummary from "@mui/material/AccordionSummary";
 import moment from "moment";
 import dynamic from "next/dynamic";
 import React from "react";
-import { FetchEventContext } from "../../common/FetchEventProvider";
+import { useDecoderQuery, useGetEventAllQuery } from "../../generated/graphql";
 import { useContextDetailDrawer } from "../../hooks/contexts/useContextDetailDrawer";
 import { BaseEventProps } from "../../types/connection";
 import { defDateFormat } from "../../utils/definitions";
@@ -37,7 +37,10 @@ export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
     subtitle,
     onClickIcon,
 }) => {
-    const { event, category } = React.useContext(FetchEventContext);
+    const { data: eventData, loading: eventLoading } = useGetEventAllQuery();
+    const { data: decoderData } = useDecoderQuery();
+    const category = decoderData?.decoder.category;
+
     const { doToggleDrawer, setKey } = useContextDetailDrawer();
 
     // HACK: 宣言場所
@@ -48,11 +51,11 @@ export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
             itemText: `${moment(datum.begin).format(defDateFormat.time24)} - ${moment(
                 datum.end
             ).format(defDateFormat.time24)}`,
-            category: category?.data?.find((v) => v.id === datum.categoryId)
-                ?.categoryCode as EventCategoryType,
-            chipLabel: category?.data?.find((v) => v.id === datum.categoryId)?.name,
+            category: category?.find((v) => v.id === datum.categoryId)
+                ?.code as EventCategoryType,
+            chipLabel: category?.find((v) => v.id === datum.categoryId)?.name ?? "",
         }),
-        [category?.data, event?.data]
+        []
     );
 
     // ただ単に表示するだけのやつは一旦不要なのでコメントアウト
@@ -69,7 +72,7 @@ export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
           }
         | undefined = React.useMemo(
         () =>
-            event?.data?.reduce(
+            eventData?.getEventAll.reduce(
                 (acc, cur) => {
                     if (
                         moment(cur.begin).diff(moment(), "days") < 0 && // 開始日 - 本日
@@ -80,12 +83,18 @@ export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
                         moment(cur.begin).diff(moment(), "days") === 0 ||
                         moment(cur.end).diff(moment(), "days") === 0
                     ) {
-                        return { ...acc, today: [...acc?.today, mapEventListItem(cur)] };
+                        return {
+                            ...acc,
+                            today: [...acc?.today, mapEventListItem(cur)],
+                        };
                     } else if (
                         moment(cur.begin).isBetween(moment(), moment().add(7, "days")) ||
                         moment(cur.end).isBetween(moment(), moment().add(7, "days"))
                     ) {
-                        return { ...acc, week: [...acc?.week, mapEventListItem(cur)] };
+                        return {
+                            ...acc,
+                            week: [...acc?.week, mapEventListItem(cur)],
+                        };
                     } else if (
                         moment(cur.begin).isBetween(
                             moment(),
@@ -93,7 +102,10 @@ export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
                         ) ||
                         moment(cur.end).isBetween(moment(), moment().add(1, "months"))
                     ) {
-                        return { ...acc, month: [...acc?.month, mapEventListItem(cur)] };
+                        return {
+                            ...acc,
+                            month: [...acc?.month, mapEventListItem(cur)],
+                        };
                     } else {
                         return {
                             ...acc,
@@ -108,7 +120,7 @@ export const TopPageDrawerContent: React.VFC<TopPageDrawerContentProps> = ({
                     future: [] as EventListItemProps[],
                 }
             ),
-        [event?.data, category?.data]
+        [eventData]
     );
     return (
         <>

@@ -36,24 +36,25 @@ import ListItemText from "@mui/material/ListItemText";
 import { styled, SxProps, useTheme } from "@mui/material/styles/";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import moment from "moment";
 import { signOut, useSession } from "next-auth/react";
 import Link, { LinkProps } from "next/link";
 import { useRouter } from "next/router";
 import * as React from "react";
-import { FetchEventContext } from "../src/common/FetchEventProvider";
 import { DateRangePickerModal } from "../src/components/common/DateRangePickerModal";
 import { OpenIconButton } from "../src/components/common/OpenIconButton";
 import { EventDetailDrawer } from "../src/components/event/EventDetailDrawer";
+import {
+    UpsertEventMutationVariables,
+    useDecoderQuery,
+    useGetEventAllQuery,
+    useUpsertEventMutation,
+} from "../src/generated/graphql";
 import { useContextDetailDrawer } from "../src/hooks/contexts/useContextDetailDrawer";
-import { usePost } from "../src/hooks/request/usePost";
 import { mapAutocomplete } from "../src/pages/top";
-import { BaseEventProps } from "../src/types/connection";
 import { pagesPath } from "../src/utils/$path";
-import { excludeNullish, mapDateString } from "../src/utils/collection";
+import { excludeNullish } from "../src/utils/collection";
 import { EventCategoryType } from "../src/utils/displayData";
 import { COLOR } from "../src/utils/styling";
-import { Serialized } from "../src/utils/types";
 
 const openMenuList = [
     {
@@ -196,7 +197,11 @@ export const MainLayout: React.FC<{
     children: React.ReactNode;
     bgcolor?: HTMLElement["style"]["backgroundColor"];
 }> = ({ children, bgcolor }) => {
+    const { data: eventData, loading: eventLoading } = useGetEventAllQuery();
+    const { data: decoderData } = useDecoderQuery();
+    const [upsertEvent] = useUpsertEventMutation();
     const { push } = useRouter();
+
     const theme = useTheme();
     const [open, setOpen] = React.useState<boolean>(true);
 
@@ -209,14 +214,6 @@ export const MainLayout: React.FC<{
     const handleDrawerClose = React.useCallback(() => {
         setOpen(false);
     }, []);
-
-    const { event, category } = React.useContext(FetchEventContext);
-    const { doPost, loading } = usePost<
-        Partial<BaseEventProps>,
-        Serialized<BaseEventProps>
-    >({
-        url: `${process.env.NEXT_PUBLIC_API_ENDPOINT!}events`,
-    });
 
     const { mode } = useContextDetailDrawer();
 
@@ -282,11 +279,11 @@ export const MainLayout: React.FC<{
                             {/* FIXME: コンポーネント切り分け */}
 
                             <Autocomplete
-                                loading={event?.loading ?? true}
+                                loading={eventLoading ?? true}
                                 freeSolo
                                 disableClearable
                                 fullWidth
-                                options={mapAutocomplete(event?.data ?? [])}
+                                options={mapAutocomplete(eventData?.getEventAll ?? [])}
                                 // options={top100Films.map((option) => option.title)}
 
                                 filterOptions={createFilterOptions({
@@ -319,12 +316,12 @@ export const MainLayout: React.FC<{
                                                             width: ".5em",
                                                             height: ".5em",
                                                             color: COLOR[
-                                                                category?.data?.find(
+                                                                decoderData?.decoder.category.find(
                                                                     (v) =>
                                                                         v.id ===
                                                                         option.categoryId
                                                                 )
-                                                                    ?.categoryCode as EventCategoryType
+                                                                    ?.code as unknown as EventCategoryType
                                                             ],
                                                         }}
                                                     />
@@ -447,20 +444,22 @@ export const MainLayout: React.FC<{
                                     buttonLabel="仮登録"
                                     onSubmit={async (formValues) => {
                                         // FIXME: validation 実装
-                                        const data = mapDateString({
-                                            userId: 1, // FIXME: Login 機能を実装する
-                                            name: formValues.eventTitle,
-                                            begin: formValues.startDate!,
-                                            end: formValues.endDate!,
-                                            isTemporary: 1, // HACK: これENUM使いたいな・・・
-                                            categoryId: category?.data?.find(
-                                                (v) => v.categoryCode === "temporary"
-                                            )?.id,
-                                            lastUpdate: moment().toDate(),
-                                            createdDate: moment().toDate(),
-                                        });
-                                        await doPost({
-                                            params: data,
+                                        const params: UpsertEventMutationVariables["params"] =
+                                            {
+                                                userId: 1, // FIXME: Login 機能を実装する
+                                                name: formValues.eventTitle,
+                                                begin: formValues.startDate!,
+                                                end: formValues.endDate!,
+                                                isTemporary: true, // HACK: これENUM使いたいな・・・
+                                                categoryId: 8, // 仮登録,
+                                                // categoryId: decoderData?.decoder.category.
+                                            };
+                                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                                        await upsertEvent({
+                                            variables: {
+                                                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                                                params: params,
+                                            },
                                         });
                                     }}
                                 />
