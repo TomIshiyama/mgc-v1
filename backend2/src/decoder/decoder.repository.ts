@@ -16,6 +16,7 @@ export class DecoderCategoryRepository {
     });
     // return humps.camelizeKeys(data) as DecoderItem;
     return data.map((datum) => ({
+      id: datum.id,
       code: datum.category_code,
       name: datum.name,
     }));
