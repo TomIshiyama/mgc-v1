@@ -18,7 +18,7 @@ export const FetchEventProvider: React.FC<{
     children: React.ReactNode;
 }> = ({ children }: { children: React.ReactNode }) => {
     const event = useFetch<BaseEventProps[]>({
-        initialUrl: `${process.env.NEXT_PUBLIC_API_ENDPOINT!}events`,
+        initialUrl: `${process.env.NEXT_PUBLIC_API_ENDPOINT!}events?user_id=${userId}`,
         headers: {},
     });
 

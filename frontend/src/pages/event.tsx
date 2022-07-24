@@ -22,7 +22,11 @@ const Event = () => {
 };
 
 Event.getLayout = (page: React.ReactNode) => {
-    return <MainLayout bgcolor={COLOR.normal.userBgcolor}>{page}</MainLayout>;
+    return (
+        <MainLayout bgcolor={COLOR.normal.userBgcolor} frontMode="temporary">
+            {page}
+        </MainLayout>
+    );
 };
 
 export default Event;

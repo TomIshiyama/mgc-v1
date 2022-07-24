@@ -92,9 +92,34 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
                     ]}
                 />
             ) : mode === CONTENT_MODE.view ? (
-                <EventDetailDrawerView {...mapEventDetail(matched)} />
+                <EventDetailDrawerView
+                    {...mapEventDetail(matched)}
+                    buttonList={[
+                        {
+                            label: "イベント参加", // FIXME: 参加状態の場合、参加取り消しに変更
+                            color: "primary",
+                            // disabled: isJoin(user.id)
+                        },
+                    ]}
+                />
             ) : mode === CONTENT_MODE.temporary ? (
-                <EventDetailDrawerView {...mapEventDetail(matched)} /> //FIXME: 実装
+                <EventDetailDrawerView
+                    {...mapEventDetail(matched)}
+                    buttonList={[
+                        {
+                            label: "本登録",
+                            color: "primary",
+                        },
+                        {
+                            label: "編集",
+                            color: "success",
+                        },
+                        {
+                            label: "削除",
+                            color: "error",
+                        },
+                    ]}
+                /> //FIXME: 実装
             ) : (
                 <EventDetailDrawerEdit />
             )}

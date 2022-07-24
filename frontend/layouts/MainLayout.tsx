@@ -223,9 +223,10 @@ export const MenuItems: React.VFC<MenuItemsProps> = ({ defs }) => {
 };
 
 export const MainLayout: React.FC<{
+    frontMode: string | undefined;
     children: React.ReactNode;
     bgcolor?: HTMLElement["style"]["backgroundColor"];
-}> = ({ children, bgcolor }) => {
+}> = ({ children, bgcolor, frontMode }) => {
     const { push } = useRouter();
     const theme = useTheme();
     const [open, setOpen] = React.useState<boolean>(true);
@@ -248,7 +249,8 @@ export const MainLayout: React.FC<{
         url: `${process.env.NEXT_PUBLIC_API_ENDPOINT!}events`,
     });
 
-    const { mode } = useContextDetailDrawer();
+    //DetailDrawerProviderにはmodeがいつもtopで、その書き換えが分からなかったため一旦こちらでモード変更を追加しました。モード設定がpagesからMainLayoutのオプショナルpropsの一つとして追加しました。
+    const { mode } = { mode: frontMode } ?? useContextDetailDrawer();
 
     const onClickLogout = async () => {
         await signOut();
