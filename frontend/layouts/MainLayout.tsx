@@ -44,7 +44,9 @@ import { DateRangePickerModal } from "../src/components/common/DateRangePickerMo
 import { OpenIconButton } from "../src/components/common/OpenIconButton";
 import { EventDetailDrawer } from "../src/components/event/EventDetailDrawer";
 import {
-    UpsertEventMutationVariables,
+    CreateEventMutationVariables,
+    GetEventAllDocument,
+    useCreateEventMutation,
     useDecoderQuery,
     useGetEventAllQuery,
     useUpsertEventMutation,
@@ -199,13 +201,14 @@ export const MainLayout: React.FC<{
 }> = ({ children, bgcolor }) => {
     const { data: eventData, loading: eventLoading } = useGetEventAllQuery();
     const { data: decoderData } = useDecoderQuery();
+    const { data: session } = useSession();
     const [upsertEvent] = useUpsertEventMutation();
+    const [createEvent] = useCreateEventMutation();
+
     const { push } = useRouter();
 
     const theme = useTheme();
     const [open, setOpen] = React.useState<boolean>(true);
-
-    const { data: session } = useSession();
 
     const handleDrawerOpen = React.useCallback(() => {
         setOpen(true);
@@ -362,36 +365,6 @@ export const MainLayout: React.FC<{
                                         </Box>
                                         <Divider />
                                     </>
-                                    // <ListItemButton
-                                    //     // CSSプロパティは差分更新する
-                                    //     sx={{
-                                    //         ...style,
-                                    //     }}
-                                    //     // selected={selected}
-                                    //     // onClick={onClick}
-                                    //     color="primary"
-                                    //     {...props}
-                                    // >
-                                    //     <ListItemIcon>
-                                    //         <CircleIcon
-                                    //             sx={{
-                                    //                 width: ".5em",
-                                    //                 height: ".5em",
-                                    //                 // color: COLOR[category],
-                                    //             }}
-                                    //         />
-                                    //     </ListItemIcon>
-                                    //     <ListItemText>
-                                    //         <Box>
-                                    //             <Typography variant="subtitle1">
-                                    //                 {option.label}
-                                    //             </Typography>
-                                    //             <Typography variant="caption">
-                                    //                 {option.from}-{option.to}
-                                    //             </Typography>
-                                    //         </Box>
-                                    //     </ListItemText>
-                                    // </ListItemButton>
                                 )}
                                 renderInput={(params) => (
                                     <>
@@ -443,23 +416,22 @@ export const MainLayout: React.FC<{
                                 <DateRangePickerModal
                                     buttonLabel="仮登録"
                                     onSubmit={async (formValues) => {
-                                        // FIXME: validation 実装
-                                        const params: UpsertEventMutationVariables["params"] =
+                                        const params: CreateEventMutationVariables["params"] =
                                             {
-                                                userId: 1, // FIXME: Login 機能を実装する
+                                                id: undefined,
+                                                userId: session?.user
+                                                    .userId as unknown as number, // FIXME: Login 機能を実装する
                                                 name: formValues.eventTitle,
                                                 begin: formValues.startDate!,
                                                 end: formValues.endDate!,
                                                 isTemporary: true, // HACK: これENUM使いたいな・・・
                                                 categoryId: 8, // 仮登録,
-                                                // categoryId: decoderData?.decoder.category.
                                             };
-                                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                                        await upsertEvent({
+                                        await createEvent({
                                             variables: {
-                                                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                                                 params: params,
                                             },
+                                            refetchQueries: [GetEventAllDocument],
                                         });
                                     }}
                                 />
