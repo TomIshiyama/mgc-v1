@@ -12,7 +12,7 @@ export class EventResolver {
 
   @Query(() => [Event])
   async getEventAll(): Promise<Event[]> {
-    const data = this.eventRepository.findAll();
+    const data = await this.eventRepository.findAll();
     return data;
   }
 
@@ -20,23 +20,31 @@ export class EventResolver {
   async getEvent(
     @Args('eventId', { type: () => Int }) id: number,
   ): Promise<Event> {
-    const data = this.eventRepository.findUnique(id);
+    const data = await this.eventRepository.findUnique(id);
     return data;
   }
 
   @Query(() => AttendEventList)
-  getEventListByUserId(
+  async getEventListByUserId(
     @Args('eventId', { type: () => Int }) id: number,
   ): Promise<AttendEventList> {
-    const data = this.eventRepository.getEventListByUserId(id);
+    const data = await this.eventRepository.getEventListByUserId(id);
     return data;
   }
 
   @Mutation(() => EventUpsertResponse)
-  upsertEvent(
+  async upsertEvent(
     @Args('params', { type: () => EventUpsert }) params: EventUpsert,
   ): Promise<EventUpsertResponse> {
-    const data = this.eventRepository.upsertEvent(params);
+    const data = await this.eventRepository.upsertEvent(params);
+    return data;
+  }
+
+  @Mutation(() => EventUpsertResponse)
+  async createEvent(
+    @Args('params', { type: () => EventUpsert }) params: EventUpsert,
+  ): Promise<EventUpsertResponse> {
+    const data = await this.eventRepository.createEvent(params);
     return data;
   }
 }
