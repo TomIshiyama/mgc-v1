@@ -1,5 +1,11 @@
+import { ApolloClient, InMemoryCache } from "@apollo/client";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import {
+    LoginDocument,
+    LoginMutation,
+    LoginMutationVariables,
+} from "../../../generated/graphql";
 import { pagesPath } from "../../../utils/$path";
 import { getPagePath } from "../../../utils/routing";
 
@@ -23,47 +29,59 @@ export default NextAuth({
             authorize: async (credentials, req) => {
                 // FIXME: apollo client 導入後実装
                 // ここで Server sideと疎通
-                // const { data } = await apolloClient.mutate<
-                //     LoginMutation,
-                //     LoginMutationVariables
-                // >({
-                //     mutation: LoginDocument,
-                //     variables: {
-                //         userId: credentials?.userId,
-                //         password: credentials?.password,
-                //     },
-                // });
-                // // 突合したステータスと照合
-                // if (data?.login?.status === loginResult.Ok) {
-                //     const { login } = data;
-                //     // ログイン成功後、ユーザー情報を返却する。値はsessionに格納される。
-                //     return Promise.resolve({
-                //         name: "fixme_man",
-                //         userId: "fixme",
-                //         admin: true,
-                //     });
-                // } else {
-                //     // ログイン失敗 認証を拒否
-                //     // エラーメッセージを返却する。
-                //     throw new Error(data?.login?.status);
-                // }
+
+                if (!credentials?.email || !credentials?.password) {
+                    throw new Error("あかんやつやで");
+                }
+
+                const apolloClient = new ApolloClient({
+                    uri: process.env.NEXT_PUBLIC_GQL_API_ENDPOINT,
+                    cache: new InMemoryCache(),
+                });
+                const { data } = await apolloClient.mutate<
+                    LoginMutation,
+                    LoginMutationVariables
+                >({
+                    mutation: LoginDocument,
+                    variables: {
+                        params: {
+                            email: credentials.email,
+                            password: credentials.password,
+                        },
+                    },
+                });
+                // 突合したステータスと照合
+                if (data?.login.userId) {
+                    const { login } = data;
+                    // ログイン成功後、ユーザー情報を返却する。値はsessionに格納される。
+                    return Promise.resolve({
+                        // name: "fixme_man",
+                        userId: login.userId,
+                        email: login.email,
+                        admin: login.isAdmin,
+                    });
+                } else {
+                    // ログイン失敗 認証を拒否
+                    // エラーメッセージを返却する。
+                    throw new Error("あかんやつやで");
+                }
 
                 // FIXME: 実装 APIのpostにて、ユーザーテーブルからログインユーザデータを取得してくる
                 // 暫定的に環境変数の固定値でログインできるようにする
-                if (
-                    process.env.USER_EMAIL === credentials?.email &&
-                    process.env.USER_PASSWORD === credentials?.password
-                ) {
-                    return {
-                        name: "fixme_man",
-                        userId: "fixme",
-                        email: credentials?.email,
-                        admin: true,
-                    };
-                } else {
-                    // null を返却することでsignIn 関数でErrorが返却される。
-                    return null;
-                }
+                // if (
+                //     process.env.USER_EMAIL === credentials?.email &&
+                //     process.env.USER_PASSWORD === credentials?.password
+                // ) {
+                //     return {
+                //         name: "fixme_man",
+                //         userId: "fixme",
+                //         email: credentials?.email,
+                //         admin: true,
+                //     };
+                // } else {
+                //     // null を返却することでsignIn 関数でErrorが返却される。
+                //     return null;
+                // }
             },
         }),
     ],

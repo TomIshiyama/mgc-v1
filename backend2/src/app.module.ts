@@ -4,6 +4,8 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { DecoderModule } from './decoder/decoder.module';
+import { EventModule } from './events/event.module';
 import { PrismaService } from './prisma.service';
 import { UserModule } from './user/user.module';
 
@@ -14,6 +16,8 @@ import { UserModule } from './user/user.module';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
     UserModule,
+    EventModule,
+    DecoderModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
