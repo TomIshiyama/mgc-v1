@@ -3,6 +3,7 @@
 # ------------------------------------------------------
 
 type DecoderItem {
+  id: Int
   code: String!
   name: String
 }
@@ -30,6 +31,15 @@ type Event {
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type EventUpsertResponse {
+  id: Int!
+}
+
+type AttendEventList {
+  userId: Int!
+  eventList: [Event!]!
+}
 
 type UserKey {
   id: ID!
@@ -135,6 +145,7 @@ type Query {
   getUserListGroup: [[User!]!]!
   getEventAll: [Event!]!
   getEvent(eventId: Int!): Event!
+  getEventListByUserId(eventId: Int!): AttendEventList!
   decoder: Decoder!
 }
 
@@ -143,6 +154,8 @@ type Mutation {
   createUser(params: UserUpsert!): UserKey!
   login(params: UserLoginInput!): UserLoginResponse!
   changePassword(params: ChangePasswordInput!): ChangePasswordResponse!
+  upsertEvent(params: EventUpsert!): EventUpsertResponse!
+  createEvent(params: EventUpsert!): EventUpsertResponse!
 }
 
 input UserUpsert {
@@ -175,4 +188,18 @@ input ChangePasswordInput {
   email: String!
   currentPassword: String!
   newPassword: String!
+}
+
+input EventUpsert {
+  userId: Int
+  id: Int
+  categoryId: Float
+  name: String
+  location: String
+  detail: String
+  begin: DateTime
+  end: DateTime
+  isTemporary: Boolean
+  lastUpdate: DateTime
+  createdDate: DateTime
 }

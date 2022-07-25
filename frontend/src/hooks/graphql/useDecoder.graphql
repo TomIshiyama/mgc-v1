@@ -3,6 +3,7 @@ query decoder {
         category {
             code
             name
+            id
         }
         divisionCode {
             code

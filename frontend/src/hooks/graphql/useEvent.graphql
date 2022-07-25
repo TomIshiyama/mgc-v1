@@ -1,0 +1,62 @@
+query GetEventAll {
+    getEventAll {
+        userId
+        id
+        categoryId
+        name
+        location
+        detail
+        begin
+        end
+        isTemporary
+        lastUpdate
+        createdDate
+    }
+}
+
+query GetEvent($eventId: Int!) {
+    getEvent(eventId: $eventId) {
+        userId
+        id
+        categoryId
+        name
+        location
+        detail
+        begin
+        end
+        isTemporary
+        lastUpdate
+        createdDate
+    }
+}
+
+query GetEventListByUserId($eventId: Int!) {
+    getEventListByUserId(eventId: $eventId) {
+        userId
+        eventList {
+            userId
+            id
+            categoryId
+            name
+            location
+            detail
+            begin
+            end
+            isTemporary
+            lastUpdate
+            createdDate
+        }
+    }
+}
+
+mutation UpsertEvent($params: EventUpsert!) {
+    upsertEvent(params: $params) {
+        id
+    }
+}
+
+mutation CreateEvent($params: EventUpsert!) {
+    createEvent(params: $params) {
+        id
+    }
+}

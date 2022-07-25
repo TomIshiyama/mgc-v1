@@ -1,4 +1,11 @@
-import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
+import {
+  Field,
+  InputType,
+  Int,
+  ObjectType,
+  PartialType,
+  PickType,
+} from '@nestjs/graphql';
 
 @ObjectType()
 @InputType('EventInput')
@@ -17,6 +24,13 @@ export class Event {
   lastUpdate: Date;
   createdDate: Date;
 }
+
+@ObjectType()
+@InputType()
+export class EventUpsert extends PartialType(Event, InputType) {}
+
+@ObjectType()
+export class EventUpsertResponse extends PickType(Event, ['id']) {}
 
 @ObjectType()
 export class AttendEventList {

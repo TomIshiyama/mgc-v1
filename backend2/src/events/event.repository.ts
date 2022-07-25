@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import humps from 'humps';
+import * as humps from 'humps';
 import { PrismaService } from '../prisma.service';
-import { AttendEventList, Event } from './event.model';
+import { AttendEventList, Event, EventUpsert } from './event.model';
 
 @Injectable()
 export class EventRepository {
@@ -49,5 +49,46 @@ export class EventRepository {
         createdDate: datum.events.created_date,
       })),
     };
+  }
+
+  private columnMap(params: EventUpsert) {
+    return {
+      user_id: params.userId,
+      name: params.name,
+      begin: new Date(params.begin),
+      end: new Date(params.end),
+      location: params.location,
+      detail: params.detail,
+      is_temporary: Number(params.isTemporary), // 0 or 1が来る想定
+      category_id: params.categoryId,
+      last_update: new Date(),
+    };
+  }
+  /**  仮登録、本登録で兼用で使う */
+  async upsertEvent(params: EventUpsert) {
+    const columnMapping = this.columnMap(params);
+    const data = await this.prisma.events.upsert({
+      where: {
+        id: params.id,
+      },
+      update: columnMapping,
+      create: {
+        ...columnMapping,
+        created_date: new Date(),
+      },
+    });
+
+    return { id: data.id };
+  }
+
+  async createEvent(params: EventUpsert) {
+    const columnMapping = this.columnMap(params);
+    const data = await this.prisma.events.create({
+      data: {
+        ...columnMapping,
+        created_date: new Date(),
+      },
+    });
+    return { id: data.id };
   }
 }

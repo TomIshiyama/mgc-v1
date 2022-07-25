@@ -1,7 +1,7 @@
 import * as MUI from "@mui/material";
 import React from "react";
 import { Bar, BarChart, XAxis, YAxis } from "recharts";
-import { FetchEventContext } from "../../common/FetchEventProvider";
+import { useDecoderQuery, useGetEventAllQuery } from "../../generated/graphql";
 import { BaseCategoryProps } from "../../types/connection";
 import { defDrawerWidth } from "../../utils/definitions";
 import {
@@ -27,29 +27,34 @@ export const data: EventCategoryObjectType[] = [
 // TODO: 細かい表示調整
 /**右サブDrawerに表示されるイベント分布のbar chartコンポーネント*/
 export const EventChart = React.memo(() => {
-    const { event, category } = React.useContext(FetchEventContext);
+    const { data: eventData, loading: eventLoading } = useGetEventAllQuery();
+    const { data: decoderData } = useDecoderQuery();
+    const category = decoderData?.decoder.category;
 
     const categorizedEventList: CategorizedEventListType[] = React.useMemo(
         () =>
             // カテゴリIDごとにカウントアップし分配する
-            event?.data?.reduce((acc: Record<number, CategorizedEventListType>, cur) => {
-                const tmp: BaseCategoryProps | undefined = category?.data?.find(
-                    (v) => cur.categoryId === v.id
-                );
-                return tmp
-                    ? {
-                          ...acc,
-                          [tmp.id]: {
-                              name: tmp.name,
-                              code: tmp.categoryCode,
-                              count: acc?.[tmp.id]?.count
-                                  ? Number(acc?.[tmp.id]?.count) + 1
-                                  : 1,
-                          },
-                      }
-                    : { ...cur };
-            }, {} as CategorizedEventListType),
-        [event?.data]
+            eventData?.getEventAll.reduce(
+                (acc: Record<number, CategorizedEventListType>, cur) => {
+                    const tmp: BaseCategoryProps | undefined = category?.find(
+                        (v) => cur.categoryId === v.id
+                    );
+                    return tmp
+                        ? {
+                              ...acc,
+                              [tmp.id]: {
+                                  name: tmp.name,
+                                  code: tmp.categoryCode,
+                                  count: acc?.[tmp.id]?.count
+                                      ? Number(acc?.[tmp.id]?.count) + 1
+                                      : 1,
+                              },
+                          }
+                        : { ...cur };
+                },
+                {} as CategorizedEventListType
+            ),
+        [eventData]
     ) as CategorizedEventListType[];
 
     return (
@@ -84,11 +89,11 @@ export const EventChart = React.memo(() => {
                     tickMargin={0}
                 />
                 {/* Bar Chart を生成 */}
-                {category?.data?.map((datum, idx) => (
+                {category?.map((datum, idx) => (
                     <Bar
                         dataKey={eventCategoryCode.meeting}
                         stackId="userEventId"
-                        fill={COLOR[datum.categoryCode as EventCategoryType]}
+                        fill={COLOR[datum.code as EventCategoryType]}
                     />
                 ))}
             </BarChart>

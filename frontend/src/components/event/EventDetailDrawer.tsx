@@ -1,6 +1,6 @@
 import moment from "moment";
 import React from "react";
-import { FetchEventContext } from "../../common/FetchEventProvider";
+import { useDecoderQuery, useGetEventQuery } from "../../generated/graphql";
 import { useContextDetailDrawer } from "../../hooks/contexts/useContextDetailDrawer";
 import { BaseEventProps } from "../../types/connection";
 import { EventCategoryType } from "../../utils/displayData";
@@ -26,7 +26,13 @@ export type ContentModeType = typeof CONTENT_MODE[keyof typeof CONTENT_MODE];
 export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) => {
     const { state, toggleDrawer, key } = useContextDetailDrawer();
 
-    const { event, category } = React.useContext(FetchEventContext); // HACK: カスタムフックに内包
+    const { data: eventData, loading: eventLoading } = useGetEventQuery({
+        variables: {
+            eventId: Number(key),
+        },
+    });
+    const { data: decoderData } = useDecoderQuery();
+    const category = decoderData?.decoder.category;
 
     // HACK:resourceから値を渡せばFindの必要がなくなる
     const mapEventDetail = React.useCallback(
@@ -35,13 +41,13 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
             subTitle: "イベント詳細",
             max: 5,
             anchor: "right",
-            location: datum?.location,
+            location: datum?.location ?? "",
             beginDate: moment(datum?.begin).toDate(),
             endDate: moment(datum?.end).toDate(),
             beginTime: moment(datum?.begin).toDate(),
             endTime: moment(datum?.end).toDate(),
             margin: { top: "5em" },
-            description: datum?.detail,
+            description: datum?.detail ?? "",
             avatarList: [
                 // FIXME: 疎通実装
                 {
@@ -57,10 +63,9 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
                     src: "",
                 },
             ],
-            category: category?.data?.find((v) => v.id === datum?.categoryId)
-                ?.categoryCode as EventCategoryType,
-            chipLabel:
-                category?.data?.find((v) => v.id === datum?.categoryId)?.name ?? "",
+            category: category?.find((v) => v.id === datum?.categoryId)
+                ?.code as EventCategoryType,
+            chipLabel: category?.find((v) => v.id === datum?.categoryId)?.name ?? "",
             showCloseButton: true,
             overwrite: {
                 open: state[anchor],
@@ -70,19 +75,14 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
                 onOpen: toggleDrawer?.(anchor, true),
             },
         }),
-        [state, key, event, mode]
-    );
-
-    const matched = React.useMemo(
-        () => event?.data?.find((v) => v.id === key),
-        [event, key]
+        [state, key, mode]
     );
 
     return (
         <>
             {mode === CONTENT_MODE.top ? (
                 <EventDetailDrawerView
-                    {...mapEventDetail(matched)}
+                    {...mapEventDetail(eventData?.getEvent)}
                     buttonList={[
                         {
                             label: "イベント参加", // FIXME: 参加状態の場合、参加取り消しに変更
@@ -92,9 +92,9 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
                     ]}
                 />
             ) : mode === CONTENT_MODE.view ? (
-                <EventDetailDrawerView {...mapEventDetail(matched)} />
+                <EventDetailDrawerView {...mapEventDetail(eventData?.getEvent)} />
             ) : mode === CONTENT_MODE.temporary ? (
-                <EventDetailDrawerView {...mapEventDetail(matched)} /> //FIXME: 実装
+                <EventDetailDrawerView {...mapEventDetail(eventData?.getEvent)} /> //FIXME: 実装
             ) : (
                 <EventDetailDrawerEdit />
             )}
