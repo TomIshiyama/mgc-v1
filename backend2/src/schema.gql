@@ -101,6 +101,11 @@ enum ChangePasswordStatusDef {
   ok
 }
 
+type AttendeeResponse {
+  eventId: Int!
+  list: [User!]!
+}
+
 input EventInput {
   userId: Int!
   id: Int!
@@ -143,6 +148,7 @@ input UserInput {
 type Query {
   getUser(id: Int!): User!
   getUserListGroup: [[User!]!]!
+  getUserAttendeeByEvent(eventId: Int!): AttendeeResponse!
   getEventAll: [Event!]!
   getEvent(eventId: Int!): Event!
   getEventListByUserId(eventId: Int!): AttendEventList!
