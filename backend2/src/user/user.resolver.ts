@@ -1,5 +1,6 @@
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import {
+  AttendeeResponse,
   ChangePasswordInput,
   ChangePasswordResponse,
   User,
@@ -26,6 +27,14 @@ export class UserResolver {
   @Query(() => [[User]])
   async getUserListGroup(): Promise<User[][]> {
     const data = await this.userRepository.findManyroupBy();
+    return data;
+  }
+
+  @Query(() => AttendeeResponse)
+  async getUserAttendeeByEvent(
+    @Args('eventId', { type: () => Int! }) eventId: number,
+  ): Promise<AttendeeResponse> {
+    const data = await this.userRepository.findManyAttendeeByEvent(eventId);
     return data;
   }
 

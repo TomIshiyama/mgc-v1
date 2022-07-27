@@ -1,4 +1,11 @@
-import { Field, ID, InputType, ObjectType, PartialType } from '@nestjs/graphql';
+import {
+  Field,
+  ID,
+  InputType,
+  ObjectType,
+  PartialType,
+  Int,
+} from '@nestjs/graphql';
 import { ChangePasswordStatusDef, ThemeDef } from 'src/utils/const';
 import { PositionDef } from '../utils/const';
 
@@ -79,4 +86,11 @@ export class ChangePasswordResponse {
   userId: number;
   @Field(() => ChangePasswordStatusDef)
   status: keyof typeof ChangePasswordStatusDef;
+}
+
+@ObjectType()
+export class AttendeeResponse {
+  @Field(() => Int)
+  eventId: number;
+  list: User[];
 }
