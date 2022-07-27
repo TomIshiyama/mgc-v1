@@ -19,17 +19,18 @@ const Template: ComponentStory<typeof UserList> = (args) => (
 
 export const Default = Template.bind({});
 
-const groupList: UserListProps["groupList"] = [...Array<number>(5)].map((v, i) => ({
+const groupListMock: UserListProps["groupList"] = [...Array<number>(5)].map((v, i) => ({
     title: `Group ${i + 1}`,
     userList: [...Array<number>(10)].map((v, i) => ({
-        itemTitle: `田中 ${i + 1}郎`,
-        itemText: i === 0 ? "admin" : "member",
+        key: `${i}`,
+        title: `田中 ${i + 1}郎`,
+        text: i === 0 ? "admin" : "member",
     })),
 }));
 
 const props: UserListProps = {
     title: "ユーザー管理",
-    groupList: groupList,
+    groupList: groupListMock,
 };
 
 Default.args = props;
