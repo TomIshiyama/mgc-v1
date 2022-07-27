@@ -25,7 +25,7 @@ export const ManageUserList: React.VFC<ManageUserListProps> = ({ key }) => {
     return (
         <Container sx={{ bgcolor: COLOR.normal.userBgcolor }}>
             <UserList
-                {...{ title: "ユーザー管理", groupList: groupList, loading: true }}
+                {...{ title: "ユーザー管理", groupList: groupList, loading: loading }}
                 onSelect={(r, param, i) => {
                     console.log(r, param, i);
                 }}
