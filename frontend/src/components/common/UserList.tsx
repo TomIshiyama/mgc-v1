@@ -1,7 +1,7 @@
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import GroupWorkIcon from "@mui/icons-material/GroupWork";
 import * as MUI from "@mui/material";
-import { Avatar, Box, Stack, styled, Typography } from "@mui/material";
+import { Avatar, Box, Skeleton, Stack, styled, Typography } from "@mui/material";
 import React from "react";
 import { Record, UserListItem, UserListItemProps } from "./UserListItem";
 type Group = {
@@ -15,6 +15,7 @@ export type UserListProps = {
     groupList: Group[];
     allGroupIcon?: React.ReactNode;
     onSelect?: (record: Record, param: Record[][], index: number) => void;
+    loading?: boolean;
 };
 
 export const UserList: React.VFC<UserListProps> = ({
@@ -22,6 +23,7 @@ export const UserList: React.VFC<UserListProps> = ({
     allGroupIcon = <GroupWorkIcon />,
     groupList,
     onSelect,
+    loading,
 }) => {
     const userParam: Record[][] = React.useMemo(
         () =>
@@ -45,35 +47,60 @@ export const UserList: React.VFC<UserListProps> = ({
                     <Accordion>
                         <AccordionSummary>
                             <Stack direction="row" spacing={1} alignItems="center">
-                                <Avatar
-                                    sx={{
-                                        bgcolor: (theme) => theme.palette.primary.main,
-                                        width: "52px",
-                                        height: "52px",
-                                    }}
-                                >
-                                    {group.icon ?? allGroupIcon}
-                                </Avatar>
-                                <Typography variant="h6">{group.title}</Typography>
+                                {loading ? (
+                                    <Skeleton
+                                        animation="wave"
+                                        variant="circular"
+                                        width={52}
+                                        height={52}
+                                    />
+                                ) : (
+                                    <Avatar
+                                        sx={{
+                                            bgcolor: (theme) =>
+                                                theme.palette.primary.main,
+                                            width: "52px",
+                                            height: "52px",
+                                        }}
+                                    >
+                                        {group.icon ?? allGroupIcon}
+                                    </Avatar>
+                                )}
+                                {loading ? (
+                                    <Skeleton animation="wave" height={40} width="30em" />
+                                ) : (
+                                    <Typography variant="h6">{group.title}</Typography>
+                                )}
                             </Stack>
                         </AccordionSummary>
+
                         <AccordionDetails>
-                            <Stack
-                                direction="row"
-                                flexWrap="wrap"
-                                width="90%"
-                                marginLeft="2em"
-                            >
-                                {group.userList.map((user, index) => (
-                                    <UserListItem
-                                        {...user}
-                                        rowKey={user.key}
-                                        onSelect={(r, k) => {
-                                            onSelect?.(r, userParam, index);
-                                        }}
-                                    />
-                                ))}
-                            </Stack>
+                            {loading ? (
+                                <>
+                                    <Skeleton animation="wave" />
+                                    <Skeleton animation="wave" />
+                                    <Skeleton animation="wave" />
+                                    <Skeleton animation="wave" />
+                                    <Skeleton animation="wave" />
+                                </>
+                            ) : (
+                                <Stack
+                                    direction="row"
+                                    flexWrap="wrap"
+                                    width="90%"
+                                    marginLeft="2em"
+                                >
+                                    {group.userList.map((user, index) => (
+                                        <UserListItem
+                                            {...user}
+                                            rowKey={user.key}
+                                            onSelect={(r, k) => {
+                                                onSelect?.(r, userParam, index);
+                                            }}
+                                        />
+                                    ))}
+                                </Stack>
+                            )}
                         </AccordionDetails>
                     </Accordion>
                 </Box>
