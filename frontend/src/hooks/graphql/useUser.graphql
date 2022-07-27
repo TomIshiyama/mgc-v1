@@ -7,6 +7,27 @@ query GetUser($id: Int!) {
     }
 }
 
+query GetUserListGroup {
+    getUserListGroup {
+        givenName
+        familyName
+        givenKana
+        familyKana
+        email
+        password
+        division
+        position
+        iconPath
+        iconName
+        description
+        theme
+        isAdmin
+        isStop
+        lastUpdate
+        attendees
+    }
+}
+
 mutation UpsertUser($params: UserUpsert!) {
     upsertUser(params: $params) {
         id
