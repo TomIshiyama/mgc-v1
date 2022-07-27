@@ -22,6 +22,8 @@ export const EventPageListContent: React.VFC<EventPageListContentProps> = ({
 }) => {
     const { doToggleDrawer, setKey } = useContextDetailDrawer();
 
+    console.log("event: ", events);
+
     return (
         <>
             <MUI.Box

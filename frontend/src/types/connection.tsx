@@ -1,13 +1,13 @@
 export type BaseEventProps = {
-    id?: number;
+    id?: number | null;
     userId: number;
-    categoryId?: number;
+    categoryId?: number | null;
     name: string;
-    location?: string;
-    detail?: string;
+    location?: string | null;
+    detail?: string | null;
     begin: Date;
     end: Date;
-    isTemporary: number; // TODO: booleanにしたいがDBの定義修正がいる
+    isTemporary: boolean; // TODO: booleanにしたいがDBの定義修正がいる
     lastUpdate: Date;
     createdDate: Date;
 };

@@ -1,0 +1,37 @@
+query GetUser($id: Int!) {
+    getUser(id: $id) {
+        id
+        isAdmin
+        givenName
+        familyName
+    }
+}
+
+mutation UpsertUser($params: UserUpsert!) {
+    upsertUser(params: $params) {
+        id
+        email
+        password
+    }
+}
+
+mutation CreateUser($params: UserUpsert!) {
+    createUser(params: $params) {
+        id
+    }
+}
+
+mutation Login($params: UserLoginInput!) {
+    login(params: $params) {
+        userId
+        email
+        isAdmin
+    }
+}
+
+mutation ChangePassword($params: ChangePasswordInput!) {
+    changePassword(params: $params) {
+        userId
+        status
+    }
+}

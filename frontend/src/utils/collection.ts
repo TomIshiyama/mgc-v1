@@ -17,3 +17,8 @@ export const mapDateString = <T>(object: T): Serialized<T> =>
     Object.entries(object).reduce((accum, [key, val], idx) => {
         return { ...accum, [key]: parseValuesDateString(val) };
     }, {} as Serialized<T>);
+
+export const excludeNullish = <T>(array: T[]): NonNullable<T>[] => {
+    const data = array.filter((v) => v != null);
+    return data as unknown as NonNullable<T>[];
+};

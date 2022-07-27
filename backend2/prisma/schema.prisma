@@ -55,22 +55,30 @@ model events {
 }
 
 model users {
-  id          Int         @id @default(autoincrement())
-  given_name  String      @db.VarChar(255)
-  family_name String      @db.VarChar(255)
-  given_kana  String?     @db.VarChar(255)
-  family_kana String?     @db.VarChar(255)
-  email       String      @unique(map: "email") @db.VarChar(255)
-  password    String      @db.VarChar(255)
-  division    String      @db.VarChar(255)
-  position    String      @db.VarChar(255)
-  icon_path   String?     @db.VarChar(255)
-  icon_name   String?     @db.VarChar(255)
-  description String?     @db.Text
-  theme       String      @db.VarChar(255)
-  is_admin    Int         @db.TinyInt
-  is_stop     Int         @db.TinyInt
-  last_update DateTime    @default(now()) @db.Timestamp(0)
-  attendees   attendees[]
-  events      events[]
+  id                   Int                  @id @default(autoincrement())
+  given_name           String               @db.VarChar(255)
+  family_name          String               @db.VarChar(255)
+  given_kana           String?              @db.VarChar(255)
+  family_kana          String?              @db.VarChar(255)
+  email                String               @unique(map: "email") @db.VarChar(255)
+  password             String               @db.VarChar(255)
+  division             String               @db.VarChar(255)
+  position             String               @db.VarChar(255)
+  icon_path            String?              @db.VarChar(255)
+  icon_name            String?              @db.VarChar(255)
+  description          String?              @db.Text
+  theme                String               @db.VarChar(255)
+  is_admin             Int                  @db.TinyInt
+  is_stop              Int                  @db.TinyInt
+  last_update          DateTime             @default(now()) @db.Timestamp(0)
+  division_code_master division_code_master @relation(fields: [division], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "fk_division_code")
+  attendees            attendees[]
+  events               events[]
+
+  @@index([division], map: "fk_division_code")
+}
+
+model division_code_master {
+  code  String  @id @db.VarChar(255)
+  users users[]
 }

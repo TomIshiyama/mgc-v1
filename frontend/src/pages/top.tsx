@@ -3,11 +3,10 @@ import React from "react";
 // eslint-disable-next-line import/named
 import { Calendar, Event, momentLocalizer } from "react-big-calendar";
 import { MainLayout } from "../../layouts/MainLayout";
-import { FetchEventContext } from "../common/FetchEventProvider";
 import { Head } from "../components/common/Head";
 import { TopPageComponent } from "../components/top/TopPageComponent";
+import { GetEventAllQuery, useGetEventAllQuery } from "../generated/graphql";
 import { useContextDetailDrawer } from "../hooks/contexts/useContextDetailDrawer";
-// import { eventListMock } from "../mock/eventList";
 import { BaseEventProps } from "../types/connection";
 import { defDateFormat } from "../utils/definitions";
 
@@ -20,8 +19,8 @@ const mLocalizer = momentLocalizer(moment);
 // TODO: 削除時に確認ダイアログ出す
 const Top = () => {
     // TODO: 移す
-    const { event } = React.useContext(FetchEventContext);
     const { doToggleDrawer, setKey } = useContextDetailDrawer();
+    const { data: eventData } = useGetEventAllQuery();
 
     return (
         <>
@@ -33,7 +32,7 @@ const Top = () => {
             <TopPageComponent>
                 <Calendar
                     localizer={mLocalizer}
-                    events={mapCalender(event?.data ?? [])}
+                    events={mapCalender(eventData?.getEventAll ?? [])}
                     startAccessor="start"
                     endAccessor="end"
                     style={{ minHeight: 500, height: "80vh" }}
@@ -41,10 +40,8 @@ const Top = () => {
                     onSelectEvent={(e: Event) => {
                         const resource = e.resource as BaseEventProps;
                         doToggleDrawer?.("right", true);
-                        setKey?.(resource.id);
+                        setKey?.(resource.id!);
                     }}
-
-                    // defaultDate={new Date(2022, 7, 10)} TODO: Autocompleteのイベント時に表示月を変更するべきか？
                 />
             </TopPageComponent>
         </>
@@ -58,7 +55,7 @@ Top.getLayout = (page: React.ReactNode) => {
 export default Top;
 
 // HACK: 関数の居場所
-export const mapCalender = (data: BaseEventProps[]): Event[] =>
+export const mapCalender = (data: GetEventAllQuery["getEventAll"]): Event[] =>
     data.map((datum) => ({
         id: datum.id,
         title: datum.name,
@@ -69,7 +66,7 @@ export const mapCalender = (data: BaseEventProps[]): Event[] =>
         },
     }));
 
-export const mapAutocomplete = (data: BaseEventProps[]) =>
+export const mapAutocomplete = (data: GetEventAllQuery["getEventAll"]) =>
     data.map((datum) => ({
         id: datum.id,
         label: datum.name,

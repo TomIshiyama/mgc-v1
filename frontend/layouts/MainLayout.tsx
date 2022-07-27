@@ -36,24 +36,26 @@ import ListItemText from "@mui/material/ListItemText";
 import { styled, SxProps, useTheme } from "@mui/material/styles/";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import moment from "moment";
 import { signOut, useSession } from "next-auth/react";
 import Link, { LinkProps } from "next/link";
 import { useRouter } from "next/router";
 import * as React from "react";
-import { FetchEventContext } from "../src/common/FetchEventProvider";
 import { DateRangePickerModal } from "../src/components/common/DateRangePickerModal";
 import { OpenIconButton } from "../src/components/common/OpenIconButton";
 import { EventDetailDrawer } from "../src/components/event/EventDetailDrawer";
+import {
+    GetEventAllDocument,
+    useCreateUserMutation,
+    useDecoderQuery,
+    useGetEventAllQuery,
+    useUpsertEventMutation,
+} from "../src/generated/graphql";
 import { useContextDetailDrawer } from "../src/hooks/contexts/useContextDetailDrawer";
-import { usePost } from "../src/hooks/request/usePost";
 import { mapAutocomplete } from "../src/pages/top";
-import { BaseEventProps } from "../src/types/connection";
 import { pagesPath } from "../src/utils/$path";
-import { mapDateString } from "../src/utils/collection";
+import { excludeNullish } from "../src/utils/collection";
 import { EventCategoryType } from "../src/utils/displayData";
 import { COLOR } from "../src/utils/styling";
-import { Serialized } from "../src/utils/types";
 
 const openMenuList = [
     {
@@ -152,36 +154,6 @@ const iconStyle: SxProps = {
     color: "whitesmoke",
 };
 
-const menuDefs: SideMenuDefType[] = [
-    {
-        title: "メニュー",
-        menuList: [
-            {
-                label: "カレンダー",
-                icon: <DateRangeOutlinedIcon sx={iconStyle} />,
-                link: pagesPath.top.$url(),
-            },
-            {
-                label: "マイイベント",
-                icon: <EmojiFlagsIcon sx={iconStyle} />,
-                link: pagesPath.event.$url(),
-            },
-        ],
-    },
-    // FIXME: 疎通 管理者メニューを権限ユーザーよって表示切り替え
-    {
-        title: "管理",
-        menuList: [
-            {
-                label: "ユーザー",
-                icon: <GroupIcon sx={iconStyle} />,
-                link: "#", // FIXME: 遷移先URL
-            },
-            { label: "イベント", icon: <EmojiFlagsIcon sx={iconStyle} />, link: "#" },
-        ],
-    },
-];
-
 export type MenuItemsProps = {
     defs: SideMenuDefType[];
 };
@@ -226,12 +198,17 @@ export const MainLayout: React.FC<{
     frontMode: string | undefined;
     children: React.ReactNode;
     bgcolor?: HTMLElement["style"]["backgroundColor"];
-}> = ({ children, bgcolor, frontMode }) => {
+}> = ({ children, bgcolor }) => {
+    const { data: eventData, loading: eventLoading } = useGetEventAllQuery();
+    const { data: decoderData } = useDecoderQuery();
+    const { data: session } = useSession();
+    const [upsertEvent] = useUpsertEventMutation();
+    const [createEvent] = useCreateUserMutation();
+
     const { push } = useRouter();
+
     const theme = useTheme();
     const [open, setOpen] = React.useState<boolean>(true);
-
-    const { data: session } = useSession();
 
     const handleDrawerOpen = React.useCallback(() => {
         setOpen(true);
@@ -241,21 +218,48 @@ export const MainLayout: React.FC<{
         setOpen(false);
     }, []);
 
-    const { event, category } = React.useContext(FetchEventContext);
-    const { doPost, loading } = usePost<
-        Partial<BaseEventProps>,
-        Serialized<BaseEventProps>
-    >({
-        url: `${process.env.NEXT_PUBLIC_API_ENDPOINT!}events`,
-    });
-
-    //DetailDrawerProviderにはmodeがいつもtopで、その書き換えが分からなかったため一旦こちらでモード変更を追加しました。モード設定がpagesからMainLayoutのオプショナルpropsの一つとして追加しました。
-    const { mode } = { mode: frontMode } ?? useContextDetailDrawer();
+    const { mode } = useContextDetailDrawer();
 
     const onClickLogout = async () => {
         await signOut();
         await push(pagesPath.signin.$url().pathname);
     };
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+    const menuDefs: SideMenuDefType[] = excludeNullish([
+        {
+            title: "メニュー",
+            menuList: [
+                {
+                    label: "カレンダー",
+                    icon: <DateRangeOutlinedIcon sx={iconStyle} />,
+                    link: pagesPath.top.$url(),
+                },
+                {
+                    label: "マイイベント",
+                    icon: <EmojiFlagsIcon sx={iconStyle} />,
+                    link: "#", // FIXME: 遷移先URL
+                },
+            ],
+        },
+        // FIXME: 型エラーどうしたらなおせる問題
+        session?.user?.admin
+            ? {
+                  title: "管理",
+                  menuList: [
+                      {
+                          label: "ユーザー",
+                          icon: <GroupIcon sx={iconStyle} />,
+                          link: pagesPath.manage.user.list.$url().pathname,
+                      },
+                      {
+                          label: "イベント",
+                          icon: <EmojiFlagsIcon sx={iconStyle} />,
+                          link: "#",
+                      },
+                  ],
+              }
+            : undefined,
+    ]);
 
     return (
         <Box sx={{ display: "flex" }}>
@@ -279,11 +283,11 @@ export const MainLayout: React.FC<{
                             {/* FIXME: コンポーネント切り分け */}
 
                             <Autocomplete
-                                loading={event?.loading ?? true}
+                                loading={eventLoading ?? true}
                                 freeSolo
                                 disableClearable
                                 fullWidth
-                                options={mapAutocomplete(event?.data ?? [])}
+                                options={mapAutocomplete(eventData?.getEventAll ?? [])}
                                 // options={top100Films.map((option) => option.title)}
 
                                 filterOptions={createFilterOptions({
@@ -316,12 +320,12 @@ export const MainLayout: React.FC<{
                                                             width: ".5em",
                                                             height: ".5em",
                                                             color: COLOR[
-                                                                category?.data?.find(
+                                                                decoderData?.decoder.category.find(
                                                                     (v) =>
                                                                         v.id ===
                                                                         option.categoryId
                                                                 )
-                                                                    ?.categoryCode as EventCategoryType
+                                                                    ?.code as unknown as EventCategoryType
                                                             ],
                                                         }}
                                                     />
@@ -362,36 +366,6 @@ export const MainLayout: React.FC<{
                                         </Box>
                                         <Divider />
                                     </>
-                                    // <ListItemButton
-                                    //     // CSSプロパティは差分更新する
-                                    //     sx={{
-                                    //         ...style,
-                                    //     }}
-                                    //     // selected={selected}
-                                    //     // onClick={onClick}
-                                    //     color="primary"
-                                    //     {...props}
-                                    // >
-                                    //     <ListItemIcon>
-                                    //         <CircleIcon
-                                    //             sx={{
-                                    //                 width: ".5em",
-                                    //                 height: ".5em",
-                                    //                 // color: COLOR[category],
-                                    //             }}
-                                    //         />
-                                    //     </ListItemIcon>
-                                    //     <ListItemText>
-                                    //         <Box>
-                                    //             <Typography variant="subtitle1">
-                                    //                 {option.label}
-                                    //             </Typography>
-                                    //             <Typography variant="caption">
-                                    //                 {option.from}-{option.to}
-                                    //             </Typography>
-                                    //         </Box>
-                                    //     </ListItemText>
-                                    // </ListItemButton>
                                 )}
                                 renderInput={(params) => (
                                     <>
@@ -443,21 +417,23 @@ export const MainLayout: React.FC<{
                                 <DateRangePickerModal
                                     buttonLabel="仮登録"
                                     onSubmit={async (formValues) => {
-                                        // FIXME: validation 実装
-                                        const data = mapDateString({
-                                            userId: 1, // FIXME: Login 機能を実装する
-                                            name: formValues.eventTitle,
-                                            begin: formValues.startDate!,
-                                            end: formValues.endDate!,
-                                            isTemporary: 1, // HACK: これENUM使いたいな・・・
-                                            categoryId: category?.data?.find(
-                                                (v) => v.categoryCode === "temporary"
-                                            )?.id,
-                                            lastUpdate: moment().toDate(),
-                                            createdDate: moment().toDate(),
-                                        });
-                                        await doPost({
-                                            params: data,
+                                        const params: CreateEventMutationVariables["params"] =
+                                            {
+                                                id: undefined,
+                                                userId: session?.user
+                                                    .userId as unknown as number, // FIXME: Login 機能を実装する
+                                                name: formValues.eventTitle,
+                                                begin: formValues.startDate!,
+                                                end: formValues.endDate!,
+                                                isTemporary: true, // HACK: これENUM使いたいな・・・
+                                                categoryId: 8, // 仮登録,
+                                            };
+                                        await createEvent({
+                                            variables: {
+                                                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                                                params: params,
+                                            },
+                                            refetchQueries: [GetEventAllDocument],
                                         });
                                     }}
                                 />

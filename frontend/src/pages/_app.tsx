@@ -1,3 +1,4 @@
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { Typography } from "@mui/material";
 import "modern-css-reset/dist/reset.min.css"; // CSSのリセット
 import moment from "moment";
@@ -15,7 +16,6 @@ import { DetailDrawerProvider } from "../common/DetailDrawerProvider";
 import { FetchEventProvider } from "../common/FetchEventProvider";
 import { MaterialThemeProvider } from "../common/MaterialThemeProvider";
 import { MediaQueryProvider } from "../common/MediaQueryProvider";
-import { pagesPath } from "../utils/$path";
 
 moment.locale("ja");
 type NextPageWithLayout = NextPage & {
@@ -25,6 +25,11 @@ type NextPageWithLayout = NextPage & {
 type AppPropsWithLayout = AppProps & {
     Component: NextPageWithLayout;
 };
+
+const client = new ApolloClient({
+    uri: process.env.NEXT_PUBLIC_GQL_API_ENDPOINT,
+    cache: new InMemoryCache(),
+});
 
 // TS の場合はAppPropsを拡張しないとうまくLayoutの型エラーが解決できない
 function MyApp({
@@ -52,23 +57,23 @@ function MyApp({
     // useRedirectAuth();
 
     /** trueならリダイレクトする 判定チェック */
-    const checkRedirect = React.useCallback(() => {
-        return (
-            !session &&
-            !(
-                pathname === pagesPath.signin.$url().pathname ||
-                pathname === pagesPath.signup.$url().pathname
-            )
-        );
-    }, [session, pathname]);
+    // const checkRedirect = React.useCallback(() => {
+    //     return (
+    //         !session &&
+    //         !(
+    //             pathname === pagesPath.signin.$url().pathname ||
+    //             pathname === pagesPath.signup.$url().pathname
+    //         )
+    //     );
+    // }, [session, pathname]);
 
-    React.useEffect(() => {
-        // 特定のページのみ処理を除く
-        if (!checkRedirect()) {
-            return;
-        }
-        void push(pagesPath.signin.$url().pathname);
-    }, []);
+    // React.useEffect(() => {
+    //     // 特定のページのみ処理を除く
+    //     if (!checkRedirect()) {
+    //         return;
+    //     }
+    //     void push(pagesPath.signin.$url().pathname);
+    // }, []);
 
     // レイアウト 表示設定
     // ページごとに定義されたレイアウトがある場合はそれを使用する
@@ -87,15 +92,17 @@ function MyApp({
 
     return (
         <SessionProvider session={session as Session}>
-            <MaterialThemeProvider>
-                <MediaQueryProvider>
-                    <FetchEventProvider>
-                        <DetailDrawerProvider>
-                            {getLayout(<Component {...pageProps} />)}
-                        </DetailDrawerProvider>
-                    </FetchEventProvider>
-                </MediaQueryProvider>
-            </MaterialThemeProvider>
+            <ApolloProvider client={client}>
+                <MaterialThemeProvider>
+                    <MediaQueryProvider>
+                        <FetchEventProvider>
+                            <DetailDrawerProvider>
+                                {getLayout(<Component {...pageProps} />)}
+                            </DetailDrawerProvider>
+                        </FetchEventProvider>
+                    </MediaQueryProvider>
+                </MaterialThemeProvider>
+            </ApolloProvider>
         </SessionProvider>
     );
 }

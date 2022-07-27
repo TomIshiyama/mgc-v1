@@ -18,8 +18,8 @@ export type EventListItemProps = {
     itemTitle: string;
     itemText: string;
     category: EventCategoryType;
-    chipLabel?: string;
-    noStyle?: boolean;
+    chipLabel?: string | null;
+    noStyle?: boolean | null;
     selected?: ListItemButton_1.ListItemButtonProps["selected"];
     onClick?: ListItemButton_1.ListItemButtonProps["onClick"];
     style?: ListItemButton_1.ListItemButtonProps["sx"];

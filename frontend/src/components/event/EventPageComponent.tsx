@@ -4,6 +4,7 @@ import { Box } from "@mui/system";
 import moment from "moment";
 import React from "react";
 import { FetchEventContext } from "../../common/FetchEventProvider";
+import { useDecoderQuery, useGetEventAllQuery } from "../../generated/graphql";
 import { BaseEventProps } from "../../types/connection";
 import { defDateFormat } from "../../utils/definitions";
 import { EventCategoryType } from "../../utils/displayData";
@@ -43,27 +44,37 @@ export const EventPageComponent: React.VFC<{ children: React.ReactNode }> = () =
         setIsOrganizer(false);
     }, []);
 
-    const { event, category, attendee } = React.useContext(FetchEventContext);
+    const { data: eventData, loading: eventLoading } = useGetEventAllQuery();
+    const { data: decoderData } = useDecoderQuery();
+    const category = decoderData?.decoder.category;
+    const { attendee } = React.useContext(FetchEventContext);
+
+    console.log("event: ", eventData);
+    console.log("category: ", category);
+    console.log("attendee: ", attendee);
 
     const mapEventListItem = React.useCallback(
         (datum: BaseEventProps): EventListItemProps => ({
-            key: datum.id,
+            key: datum.id as React.Key,
             itemTitle: datum.name,
             itemText: `${moment(datum.begin).format(defDateFormat.time24)} - ${moment(
                 datum.end
             ).format(defDateFormat.time24)}`,
-            category: category?.data?.find((v) => v.id === datum.categoryId)
-                ?.categoryCode as EventCategoryType,
-            chipLabel: category?.data?.find((v) => v.id === datum.categoryId)?.name,
+            category: category?.find((v) => v.id === datum.categoryId)
+                ?.code as EventCategoryType,
+            chipLabel: category?.find((v) => v.id === datum.categoryId)?.name,
         }),
-        [category?.data, event?.data, attendee?.data]
+        []
     );
 
-    const orgData = event?.data;
+    const orgData = eventData?.getEventAll;
     const attendeeEventIds = attendee?.data?.map((event) => event.eventId);
-    const attData = event?.data?.filter((event) =>
-        attendeeEventIds?.includes(event.id as number)
+    const attData = eventData?.getEventAll.filter((event) =>
+        attendeeEventIds?.includes(event.id)
     );
+
+    console.log("orgData ", orgData);
+    console.log("attData ", attData);
 
     const reMap = (args: BaseEventProps[] | null | undefined) =>
         args?.reduce((acc, event) => {
@@ -74,6 +85,9 @@ export const EventPageComponent: React.VFC<{ children: React.ReactNode }> = () =
                 [dateStr]: [...(acc[dateStr] || []), mapEventListItem(event)],
             };
         }, {} as { [dateStr: string]: EventListItemProps[] | undefined });
+
+    console.log("reMap(attData)", reMap(attData));
+    console.log("reMap(orgData) :", reMap(orgData));
 
     return (
         <Box
