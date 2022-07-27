@@ -1,0 +1,23 @@
+query GetUserAttendeeByEvent($eventId: Int!) {
+    getUserAttendeeByEvent(eventId: $eventId) {
+        eventId
+        list {
+            givenName
+            familyName
+            givenKana
+            familyKana
+            email
+            password
+            division
+            position
+            iconPath
+            iconName
+            description
+            theme
+            isAdmin
+            isStop
+            lastUpdate
+            attendees
+        }
+    }
+}
