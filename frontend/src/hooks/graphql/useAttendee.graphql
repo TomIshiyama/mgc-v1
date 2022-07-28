@@ -1,7 +1,26 @@
-query GetUserAttendeeByEvent($eventId: Int!) {
-    getUserAttendeeByEvent(eventId: $eventId) {
+query GetAttendeeEventListByUserId($userId: Int!) {
+    getAttendeeEventListByUserId(userId: $userId) {
+        userId
+        eventList {
+            userId
+            id
+            categoryId
+            name
+            location
+            detail
+            begin
+            end
+            isTemporary
+            lastUpdate
+            createdDate
+        }
+    }
+}
+
+query GetAttendeeUserListByEventId($eventId: Int!) {
+    getAttendeeUserListByEventId(eventId: $eventId) {
         eventId
-        list {
+        userlist {
             givenName
             familyName
             givenKana
@@ -19,5 +38,19 @@ query GetUserAttendeeByEvent($eventId: Int!) {
             lastUpdate
             attendees
         }
+    }
+}
+
+mutation UpsertAttendee($params: AttendeeKeyInput!) {
+    upsertAttendee(params: $params) {
+        userId
+        eventId
+    }
+}
+
+mutation DeleteAttendee($params: AttendeeKeyInput!) {
+    deleteAttendee(params: $params) {
+        userId
+        eventId
     }
 }
