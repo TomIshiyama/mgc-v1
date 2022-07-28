@@ -36,11 +36,6 @@ type EventUpsertResponse {
   id: Int!
 }
 
-type AttendEventList {
-  userId: Int!
-  eventList: [Event!]!
-}
-
 type UserKey {
   id: ID!
 }
@@ -101,9 +96,26 @@ enum ChangePasswordStatusDef {
   ok
 }
 
-type AttendeeResponse {
+type AttendeeKey {
+  userId: ID!
+  eventId: ID!
+}
+
+type Attendee {
+  userId: ID!
+  eventId: ID!
+  lastUpdate: DateTime!
+  createdDate: DateTime!
+}
+
+type AttendeeUserList {
   eventId: Int!
-  list: [User!]!
+  userlist: [User!]!
+}
+
+type AttendEventList {
+  userId: Int!
+  eventList: [Event!]!
 }
 
 input EventInput {
@@ -145,14 +157,42 @@ input UserInput {
   events: String
 }
 
+input AttendeeKeyInput {
+  userId: ID!
+  eventId: ID!
+}
+
+input AttendeeInput {
+  userId: ID!
+  eventId: ID!
+  lastUpdate: DateTime!
+  createdDate: DateTime!
+}
+
 type Query {
   getUser(id: Int!): User!
   getUserListGroup: [[User!]!]!
-  getUserAttendeeByEvent(eventId: Int!): AttendeeResponse!
   getEventAll: [Event!]!
   getEvent(eventId: Int!): Event!
-  getEventListByUserId(eventId: Int!): AttendEventList!
+  getEventList(params: EventUpsert): [Event!]!
   decoder: Decoder!
+  getAttendee(params: AttendeeKeyInput!): Attendee!
+  getAttendeeEventListByUserId(userId: Int!): AttendEventList!
+  getAttendeeUserListByEventId(eventId: Int!): AttendeeUserList!
+}
+
+input EventUpsert {
+  userId: Int
+  id: Int
+  categoryId: Float
+  name: String
+  location: String
+  detail: String
+  begin: DateTime
+  end: DateTime
+  isTemporary: Boolean
+  lastUpdate: DateTime
+  createdDate: DateTime
 }
 
 type Mutation {
@@ -162,6 +202,8 @@ type Mutation {
   changePassword(params: ChangePasswordInput!): ChangePasswordResponse!
   upsertEvent(params: EventUpsert!): EventUpsertResponse!
   createEvent(params: EventUpsert!): EventUpsertResponse!
+  upsertAttendee(params: AttendeeKeyInput!): AttendeeKey!
+  deleteAttendee(params: AttendeeKeyInput!): AttendeeKey!
 }
 
 input UserUpsert {
@@ -194,18 +236,4 @@ input ChangePasswordInput {
   email: String!
   currentPassword: String!
   newPassword: String!
-}
-
-input EventUpsert {
-  userId: Int
-  id: Int
-  categoryId: Float
-  name: String
-  location: String
-  detail: String
-  begin: DateTime
-  end: DateTime
-  isTemporary: Boolean
-  lastUpdate: DateTime
-  createdDate: DateTime
 }
