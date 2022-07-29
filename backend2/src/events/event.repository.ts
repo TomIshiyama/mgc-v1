@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as humps from 'humps';
 import { PrismaService } from '../prisma.service';
-import { AttendEventList, Event, EventUpsert } from './event.model';
+import { Event, EventUpsert } from './event.model';
 
 @Injectable()
 export class EventRepository {
@@ -23,32 +23,22 @@ export class EventRepository {
     return humps.camelizeKeys(data) as Event;
   }
 
-  async getEventListByUserId(userId: number): Promise<AttendEventList> {
-    const data = await this.prisma.attendees.findMany({
+  async findMany(params?: Partial<Event>): Promise<Event[]> {
+    const data = await this.prisma.events.findMany({
       where: {
-        user_id: userId,
+        user_id: params?.userId,
+        name: { contains: params?.name },
+        location: { contains: params?.location },
+        detail: { contains: params?.detail },
+        is_temporary:
+          params?.isTemporary != null ? Number(params.isTemporary) : undefined, // 0 or 1が来る想定
+        category_id: params?.categoryId,
       },
-      include: {
-        events: true,
+      orderBy: {
+        id: 'asc',
       },
     });
-
-    return {
-      userId: userId,
-      eventList: data.map((datum) => ({
-        userId: datum.events.user_id,
-        id: datum.events.id,
-        categoryId: datum.events.category_id,
-        name: datum.events.name,
-        location: datum.events.location,
-        detail: datum.events.detail,
-        begin: datum.events.begin,
-        end: datum.events.end,
-        isTemporary: Boolean(datum.events.is_temporary),
-        lastUpdate: datum.events.last_update,
-        createdDate: datum.events.created_date,
-      })),
-    };
+    return data.map((datum) => humps.camelizeKeys(datum) as Event);
   }
 
   private columnMap(params: EventUpsert) {

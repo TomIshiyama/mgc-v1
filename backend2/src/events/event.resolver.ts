@@ -1,10 +1,5 @@
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
-import {
-  AttendEventList,
-  Event,
-  EventUpsert,
-  EventUpsertResponse,
-} from './event.model';
+import { Event, EventUpsert, EventUpsertResponse } from './event.model';
 import { EventRepository } from './event.repository';
 @Resolver()
 export class EventResolver {
@@ -24,11 +19,12 @@ export class EventResolver {
     return data;
   }
 
-  @Query(() => AttendEventList)
-  async getEventListByUserId(
-    @Args('eventId', { type: () => Int }) id: number,
-  ): Promise<AttendEventList> {
-    const data = await this.eventRepository.getEventListByUserId(id);
+  @Query(() => [Event])
+  async getEventList(
+    @Args('params', { type: () => EventUpsert, nullable: true })
+    params?: Partial<Event>,
+  ): Promise<Event[]> {
+    const data = await this.eventRepository.findMany(params);
     return data;
   }
 

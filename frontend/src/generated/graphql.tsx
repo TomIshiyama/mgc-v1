@@ -23,10 +23,36 @@ export type AttendEventList = {
   userId: Scalars['Int'];
 };
 
-export type AttendeeResponse = {
-  __typename?: 'AttendeeResponse';
+export type Attendee = {
+  __typename?: 'Attendee';
+  createdDate: Scalars['DateTime'];
   eventId: Scalars['Int'];
-  list: Array<User>;
+  lastUpdate: Scalars['DateTime'];
+  userId: Scalars['Int'];
+};
+
+export type AttendeeInput = {
+  createdDate: Scalars['DateTime'];
+  eventId: Scalars['Int'];
+  lastUpdate: Scalars['DateTime'];
+  userId: Scalars['Int'];
+};
+
+export type AttendeeKey = {
+  __typename?: 'AttendeeKey';
+  eventId: Scalars['Int'];
+  userId: Scalars['Int'];
+};
+
+export type AttendeeKeyInput = {
+  eventId: Scalars['Int'];
+  userId: Scalars['Int'];
+};
+
+export type AttendeeUserList = {
+  __typename?: 'AttendeeUserList';
+  eventId: Scalars['Int'];
+  userlist: Array<User>;
 };
 
 export type ChangePasswordInput = {
@@ -112,7 +138,9 @@ export type Mutation = {
   changePassword: ChangePasswordResponse;
   createEvent: EventUpsertResponse;
   createUser: UserKey;
+  deleteAttendee: AttendeeKey;
   login: UserLoginResponse;
+  upsertAttendee: AttendeeKey;
   upsertEvent: EventUpsertResponse;
   upsertUser: UserUpsertResponse;
 };
@@ -133,8 +161,18 @@ export type MutationCreateUserArgs = {
 };
 
 
+export type MutationDeleteAttendeeArgs = {
+  params: AttendeeKeyInput;
+};
+
+
 export type MutationLoginArgs = {
   params: UserLoginInput;
+};
+
+
+export type MutationUpsertAttendeeArgs = {
+  params: AttendeeKeyInput;
 };
 
 
@@ -157,12 +195,29 @@ export enum PositionDef {
 export type Query = {
   __typename?: 'Query';
   decoder: Decoder;
+  getAttendee: Attendee;
+  getAttendeeEventListByUserId: AttendEventList;
+  getAttendeeUserListByEventId: AttendeeUserList;
   getEvent: Event;
   getEventAll: Array<Event>;
-  getEventListByUserId: AttendEventList;
+  getEventList: Array<Event>;
   getUser: User;
-  getUserAttendeeByEvent: AttendeeResponse;
   getUserListGroup: Array<Array<User>>;
+};
+
+
+export type QueryGetAttendeeArgs = {
+  params: AttendeeKeyInput;
+};
+
+
+export type QueryGetAttendeeEventListByUserIdArgs = {
+  userId: Scalars['Int'];
+};
+
+
+export type QueryGetAttendeeUserListByEventIdArgs = {
+  eventId: Scalars['Int'];
 };
 
 
@@ -171,18 +226,13 @@ export type QueryGetEventArgs = {
 };
 
 
-export type QueryGetEventListByUserIdArgs = {
-  eventId: Scalars['Int'];
+export type QueryGetEventListArgs = {
+  params?: InputMaybe<EventUpsert>;
 };
 
 
 export type QueryGetUserArgs = {
   id: Scalars['Int'];
-};
-
-
-export type QueryGetUserAttendeeByEventArgs = {
-  eventId: Scalars['Int'];
 };
 
 export enum ThemeDef {
@@ -283,12 +333,33 @@ export type UserUpsertResponse = {
   password: Scalars['String'];
 };
 
-export type GetUserAttendeeByEventQueryVariables = Exact<{
+export type GetAttendeeEventListByUserIdQueryVariables = Exact<{
+  userId: Scalars['Int'];
+}>;
+
+
+export type GetAttendeeEventListByUserIdQuery = { __typename?: 'Query', getAttendeeEventListByUserId: { __typename?: 'AttendEventList', userId: number, eventList: Array<{ __typename?: 'Event', userId: number, id: number, categoryId?: number | null, name: string, location?: string | null, detail?: string | null, begin: any, end: any, isTemporary: boolean, lastUpdate: any, createdDate: any }> } };
+
+export type GetAttendeeUserListByEventIdQueryVariables = Exact<{
   eventId: Scalars['Int'];
 }>;
 
 
-export type GetUserAttendeeByEventQuery = { __typename?: 'Query', getUserAttendeeByEvent: { __typename?: 'AttendeeResponse', eventId: number, list: Array<{ __typename?: 'User', givenName: string, familyName: string, givenKana?: string | null, familyKana?: string | null, email: string, password: string, division: string, position: PositionDef, iconPath?: string | null, iconName?: string | null, description?: string | null, theme: ThemeDef, isAdmin: boolean, isStop: boolean, lastUpdate: any, attendees?: string | null }> } };
+export type GetAttendeeUserListByEventIdQuery = { __typename?: 'Query', getAttendeeUserListByEventId: { __typename?: 'AttendeeUserList', eventId: number, userlist: Array<{ __typename?: 'User', givenName: string, familyName: string, givenKana?: string | null, familyKana?: string | null, email: string, password: string, division: string, position: PositionDef, iconPath?: string | null, iconName?: string | null, description?: string | null, theme: ThemeDef, isAdmin: boolean, isStop: boolean, lastUpdate: any, attendees?: string | null }> } };
+
+export type UpsertAttendeeMutationVariables = Exact<{
+  params: AttendeeKeyInput;
+}>;
+
+
+export type UpsertAttendeeMutation = { __typename?: 'Mutation', upsertAttendee: { __typename?: 'AttendeeKey', userId: number, eventId: number } };
+
+export type DeleteAttendeeMutationVariables = Exact<{
+  params: AttendeeKeyInput;
+}>;
+
+
+export type DeleteAttendeeMutation = { __typename?: 'Mutation', deleteAttendee: { __typename?: 'AttendeeKey', userId: number, eventId: number } };
 
 export type DecoderQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -307,12 +378,12 @@ export type GetEventQueryVariables = Exact<{
 
 export type GetEventQuery = { __typename?: 'Query', getEvent: { __typename?: 'Event', userId: number, id: number, categoryId?: number | null, name: string, location?: string | null, detail?: string | null, begin: any, end: any, isTemporary: boolean, lastUpdate: any, createdDate: any } };
 
-export type GetEventListByUserIdQueryVariables = Exact<{
-  eventId: Scalars['Int'];
+export type GetEventListQueryVariables = Exact<{
+  params?: InputMaybe<EventUpsert>;
 }>;
 
 
-export type GetEventListByUserIdQuery = { __typename?: 'Query', getEventListByUserId: { __typename?: 'AttendEventList', userId: number, eventList: Array<{ __typename?: 'Event', userId: number, id: number, categoryId?: number | null, name: string, location?: string | null, detail?: string | null, begin: any, end: any, isTemporary: boolean, lastUpdate: any, createdDate: any }> } };
+export type GetEventListQuery = { __typename?: 'Query', getEventList: Array<{ __typename?: 'Event', userId: number, id: number, categoryId?: number | null, name: string, location?: string | null, detail?: string | null, begin: any, end: any, isTemporary: boolean, lastUpdate: any, createdDate: any }> };
 
 export type UpsertEventMutationVariables = Exact<{
   params: EventUpsert;
@@ -369,11 +440,59 @@ export type ChangePasswordMutationVariables = Exact<{
 export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: { __typename?: 'ChangePasswordResponse', userId: string, status: ChangePasswordStatusDef } };
 
 
-export const GetUserAttendeeByEventDocument = gql`
-    query GetUserAttendeeByEvent($eventId: Int!) {
-  getUserAttendeeByEvent(eventId: $eventId) {
+export const GetAttendeeEventListByUserIdDocument = gql`
+    query GetAttendeeEventListByUserId($userId: Int!) {
+  getAttendeeEventListByUserId(userId: $userId) {
+    userId
+    eventList {
+      userId
+      id
+      categoryId
+      name
+      location
+      detail
+      begin
+      end
+      isTemporary
+      lastUpdate
+      createdDate
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAttendeeEventListByUserIdQuery__
+ *
+ * To run a query within a React component, call `useGetAttendeeEventListByUserIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAttendeeEventListByUserIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAttendeeEventListByUserIdQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useGetAttendeeEventListByUserIdQuery(baseOptions: Apollo.QueryHookOptions<GetAttendeeEventListByUserIdQuery, GetAttendeeEventListByUserIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAttendeeEventListByUserIdQuery, GetAttendeeEventListByUserIdQueryVariables>(GetAttendeeEventListByUserIdDocument, options);
+      }
+export function useGetAttendeeEventListByUserIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAttendeeEventListByUserIdQuery, GetAttendeeEventListByUserIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAttendeeEventListByUserIdQuery, GetAttendeeEventListByUserIdQueryVariables>(GetAttendeeEventListByUserIdDocument, options);
+        }
+export type GetAttendeeEventListByUserIdQueryHookResult = ReturnType<typeof useGetAttendeeEventListByUserIdQuery>;
+export type GetAttendeeEventListByUserIdLazyQueryHookResult = ReturnType<typeof useGetAttendeeEventListByUserIdLazyQuery>;
+export type GetAttendeeEventListByUserIdQueryResult = Apollo.QueryResult<GetAttendeeEventListByUserIdQuery, GetAttendeeEventListByUserIdQueryVariables>;
+export const GetAttendeeUserListByEventIdDocument = gql`
+    query GetAttendeeUserListByEventId($eventId: Int!) {
+  getAttendeeUserListByEventId(eventId: $eventId) {
     eventId
-    list {
+    userlist {
       givenName
       familyName
       givenKana
@@ -396,32 +515,100 @@ export const GetUserAttendeeByEventDocument = gql`
     `;
 
 /**
- * __useGetUserAttendeeByEventQuery__
+ * __useGetAttendeeUserListByEventIdQuery__
  *
- * To run a query within a React component, call `useGetUserAttendeeByEventQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUserAttendeeByEventQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetAttendeeUserListByEventIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAttendeeUserListByEventIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetUserAttendeeByEventQuery({
+ * const { data, loading, error } = useGetAttendeeUserListByEventIdQuery({
  *   variables: {
  *      eventId: // value for 'eventId'
  *   },
  * });
  */
-export function useGetUserAttendeeByEventQuery(baseOptions: Apollo.QueryHookOptions<GetUserAttendeeByEventQuery, GetUserAttendeeByEventQueryVariables>) {
+export function useGetAttendeeUserListByEventIdQuery(baseOptions: Apollo.QueryHookOptions<GetAttendeeUserListByEventIdQuery, GetAttendeeUserListByEventIdQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetUserAttendeeByEventQuery, GetUserAttendeeByEventQueryVariables>(GetUserAttendeeByEventDocument, options);
+        return Apollo.useQuery<GetAttendeeUserListByEventIdQuery, GetAttendeeUserListByEventIdQueryVariables>(GetAttendeeUserListByEventIdDocument, options);
       }
-export function useGetUserAttendeeByEventLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserAttendeeByEventQuery, GetUserAttendeeByEventQueryVariables>) {
+export function useGetAttendeeUserListByEventIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAttendeeUserListByEventIdQuery, GetAttendeeUserListByEventIdQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetUserAttendeeByEventQuery, GetUserAttendeeByEventQueryVariables>(GetUserAttendeeByEventDocument, options);
+          return Apollo.useLazyQuery<GetAttendeeUserListByEventIdQuery, GetAttendeeUserListByEventIdQueryVariables>(GetAttendeeUserListByEventIdDocument, options);
         }
-export type GetUserAttendeeByEventQueryHookResult = ReturnType<typeof useGetUserAttendeeByEventQuery>;
-export type GetUserAttendeeByEventLazyQueryHookResult = ReturnType<typeof useGetUserAttendeeByEventLazyQuery>;
-export type GetUserAttendeeByEventQueryResult = Apollo.QueryResult<GetUserAttendeeByEventQuery, GetUserAttendeeByEventQueryVariables>;
+export type GetAttendeeUserListByEventIdQueryHookResult = ReturnType<typeof useGetAttendeeUserListByEventIdQuery>;
+export type GetAttendeeUserListByEventIdLazyQueryHookResult = ReturnType<typeof useGetAttendeeUserListByEventIdLazyQuery>;
+export type GetAttendeeUserListByEventIdQueryResult = Apollo.QueryResult<GetAttendeeUserListByEventIdQuery, GetAttendeeUserListByEventIdQueryVariables>;
+export const UpsertAttendeeDocument = gql`
+    mutation UpsertAttendee($params: AttendeeKeyInput!) {
+  upsertAttendee(params: $params) {
+    userId
+    eventId
+  }
+}
+    `;
+export type UpsertAttendeeMutationFn = Apollo.MutationFunction<UpsertAttendeeMutation, UpsertAttendeeMutationVariables>;
+
+/**
+ * __useUpsertAttendeeMutation__
+ *
+ * To run a mutation, you first call `useUpsertAttendeeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpsertAttendeeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [upsertAttendeeMutation, { data, loading, error }] = useUpsertAttendeeMutation({
+ *   variables: {
+ *      params: // value for 'params'
+ *   },
+ * });
+ */
+export function useUpsertAttendeeMutation(baseOptions?: Apollo.MutationHookOptions<UpsertAttendeeMutation, UpsertAttendeeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpsertAttendeeMutation, UpsertAttendeeMutationVariables>(UpsertAttendeeDocument, options);
+      }
+export type UpsertAttendeeMutationHookResult = ReturnType<typeof useUpsertAttendeeMutation>;
+export type UpsertAttendeeMutationResult = Apollo.MutationResult<UpsertAttendeeMutation>;
+export type UpsertAttendeeMutationOptions = Apollo.BaseMutationOptions<UpsertAttendeeMutation, UpsertAttendeeMutationVariables>;
+export const DeleteAttendeeDocument = gql`
+    mutation DeleteAttendee($params: AttendeeKeyInput!) {
+  deleteAttendee(params: $params) {
+    userId
+    eventId
+  }
+}
+    `;
+export type DeleteAttendeeMutationFn = Apollo.MutationFunction<DeleteAttendeeMutation, DeleteAttendeeMutationVariables>;
+
+/**
+ * __useDeleteAttendeeMutation__
+ *
+ * To run a mutation, you first call `useDeleteAttendeeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteAttendeeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteAttendeeMutation, { data, loading, error }] = useDeleteAttendeeMutation({
+ *   variables: {
+ *      params: // value for 'params'
+ *   },
+ * });
+ */
+export function useDeleteAttendeeMutation(baseOptions?: Apollo.MutationHookOptions<DeleteAttendeeMutation, DeleteAttendeeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteAttendeeMutation, DeleteAttendeeMutationVariables>(DeleteAttendeeDocument, options);
+      }
+export type DeleteAttendeeMutationHookResult = ReturnType<typeof useDeleteAttendeeMutation>;
+export type DeleteAttendeeMutationResult = Apollo.MutationResult<DeleteAttendeeMutation>;
+export type DeleteAttendeeMutationOptions = Apollo.BaseMutationOptions<DeleteAttendeeMutation, DeleteAttendeeMutationVariables>;
 export const DecoderDocument = gql`
     query decoder {
   decoder {
@@ -552,54 +739,51 @@ export function useGetEventLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetEventQueryHookResult = ReturnType<typeof useGetEventQuery>;
 export type GetEventLazyQueryHookResult = ReturnType<typeof useGetEventLazyQuery>;
 export type GetEventQueryResult = Apollo.QueryResult<GetEventQuery, GetEventQueryVariables>;
-export const GetEventListByUserIdDocument = gql`
-    query GetEventListByUserId($eventId: Int!) {
-  getEventListByUserId(eventId: $eventId) {
+export const GetEventListDocument = gql`
+    query getEventList($params: EventUpsert) {
+  getEventList(params: $params) {
     userId
-    eventList {
-      userId
-      id
-      categoryId
-      name
-      location
-      detail
-      begin
-      end
-      isTemporary
-      lastUpdate
-      createdDate
-    }
+    id
+    categoryId
+    name
+    location
+    detail
+    begin
+    end
+    isTemporary
+    lastUpdate
+    createdDate
   }
 }
     `;
 
 /**
- * __useGetEventListByUserIdQuery__
+ * __useGetEventListQuery__
  *
- * To run a query within a React component, call `useGetEventListByUserIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetEventListByUserIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetEventListQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetEventListQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetEventListByUserIdQuery({
+ * const { data, loading, error } = useGetEventListQuery({
  *   variables: {
- *      eventId: // value for 'eventId'
+ *      params: // value for 'params'
  *   },
  * });
  */
-export function useGetEventListByUserIdQuery(baseOptions: Apollo.QueryHookOptions<GetEventListByUserIdQuery, GetEventListByUserIdQueryVariables>) {
+export function useGetEventListQuery(baseOptions?: Apollo.QueryHookOptions<GetEventListQuery, GetEventListQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetEventListByUserIdQuery, GetEventListByUserIdQueryVariables>(GetEventListByUserIdDocument, options);
+        return Apollo.useQuery<GetEventListQuery, GetEventListQueryVariables>(GetEventListDocument, options);
       }
-export function useGetEventListByUserIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetEventListByUserIdQuery, GetEventListByUserIdQueryVariables>) {
+export function useGetEventListLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetEventListQuery, GetEventListQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetEventListByUserIdQuery, GetEventListByUserIdQueryVariables>(GetEventListByUserIdDocument, options);
+          return Apollo.useLazyQuery<GetEventListQuery, GetEventListQueryVariables>(GetEventListDocument, options);
         }
-export type GetEventListByUserIdQueryHookResult = ReturnType<typeof useGetEventListByUserIdQuery>;
-export type GetEventListByUserIdLazyQueryHookResult = ReturnType<typeof useGetEventListByUserIdLazyQuery>;
-export type GetEventListByUserIdQueryResult = Apollo.QueryResult<GetEventListByUserIdQuery, GetEventListByUserIdQueryVariables>;
+export type GetEventListQueryHookResult = ReturnType<typeof useGetEventListQuery>;
+export type GetEventListLazyQueryHookResult = ReturnType<typeof useGetEventListLazyQuery>;
+export type GetEventListQueryResult = Apollo.QueryResult<GetEventListQuery, GetEventListQueryVariables>;
 export const UpsertEventDocument = gql`
     mutation UpsertEvent($params: EventUpsert!) {
   upsertEvent(params: $params) {
