@@ -1,13 +1,13 @@
-import { Field, ID, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { Event } from 'src/events/event.model';
 import { User } from 'src/user/user.model';
 
 @ObjectType()
 @InputType('AttendeeKeyInput')
 export class AttendeeKey {
-  @Field(() => ID)
+  @Field(() => Int)
   userId: number;
-  @Field(() => ID)
+  @Field(() => Int)
   eventId: number;
 }
 @ObjectType()

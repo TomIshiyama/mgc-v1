@@ -97,13 +97,13 @@ enum ChangePasswordStatusDef {
 }
 
 type AttendeeKey {
-  userId: ID!
-  eventId: ID!
+  userId: Int!
+  eventId: Int!
 }
 
 type Attendee {
-  userId: ID!
-  eventId: ID!
+  userId: Int!
+  eventId: Int!
   lastUpdate: DateTime!
   createdDate: DateTime!
 }
@@ -158,13 +158,13 @@ input UserInput {
 }
 
 input AttendeeKeyInput {
-  userId: ID!
-  eventId: ID!
+  userId: Int!
+  eventId: Int!
 }
 
 input AttendeeInput {
-  userId: ID!
-  eventId: ID!
+  userId: Int!
+  eventId: Int!
   lastUpdate: DateTime!
   createdDate: DateTime!
 }

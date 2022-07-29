@@ -26,27 +26,27 @@ export type AttendEventList = {
 export type Attendee = {
   __typename?: 'Attendee';
   createdDate: Scalars['DateTime'];
-  eventId: Scalars['ID'];
+  eventId: Scalars['Int'];
   lastUpdate: Scalars['DateTime'];
-  userId: Scalars['ID'];
+  userId: Scalars['Int'];
 };
 
 export type AttendeeInput = {
   createdDate: Scalars['DateTime'];
-  eventId: Scalars['ID'];
+  eventId: Scalars['Int'];
   lastUpdate: Scalars['DateTime'];
-  userId: Scalars['ID'];
+  userId: Scalars['Int'];
 };
 
 export type AttendeeKey = {
   __typename?: 'AttendeeKey';
-  eventId: Scalars['ID'];
-  userId: Scalars['ID'];
+  eventId: Scalars['Int'];
+  userId: Scalars['Int'];
 };
 
 export type AttendeeKeyInput = {
-  eventId: Scalars['ID'];
-  userId: Scalars['ID'];
+  eventId: Scalars['Int'];
+  userId: Scalars['Int'];
 };
 
 export type AttendeeUserList = {
@@ -352,14 +352,14 @@ export type UpsertAttendeeMutationVariables = Exact<{
 }>;
 
 
-export type UpsertAttendeeMutation = { __typename?: 'Mutation', upsertAttendee: { __typename?: 'AttendeeKey', userId: string, eventId: string } };
+export type UpsertAttendeeMutation = { __typename?: 'Mutation', upsertAttendee: { __typename?: 'AttendeeKey', userId: number, eventId: number } };
 
 export type DeleteAttendeeMutationVariables = Exact<{
   params: AttendeeKeyInput;
 }>;
 
 
-export type DeleteAttendeeMutation = { __typename?: 'Mutation', deleteAttendee: { __typename?: 'AttendeeKey', userId: string, eventId: string } };
+export type DeleteAttendeeMutation = { __typename?: 'Mutation', deleteAttendee: { __typename?: 'AttendeeKey', userId: number, eventId: number } };
 
 export type DecoderQueryVariables = Exact<{ [key: string]: never; }>;
 
