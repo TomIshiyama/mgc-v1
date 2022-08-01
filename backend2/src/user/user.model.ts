@@ -1,11 +1,18 @@
-import { Field, ID, InputType, ObjectType, PartialType } from '@nestjs/graphql';
+import {
+  Field,
+  ID,
+  InputType,
+  Int,
+  ObjectType,
+  PartialType,
+} from '@nestjs/graphql';
 import { ChangePasswordStatusDef, ThemeDef } from 'src/utils/const';
 import { PositionDef } from '../utils/const';
 
 @ObjectType('UserKey')
 @InputType('UserKeyInput')
 export class UserKey {
-  @Field(() => ID)
+  @Field(() => Int)
   id: number;
 }
 @ObjectType()
@@ -34,7 +41,7 @@ export class User extends UserKey {
 
 @ObjectType()
 export class UserUpsertResponse {
-  @Field(() => ID)
+  @Field(() => Int)
   id: number;
   email: string;
   password: string;

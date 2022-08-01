@@ -30,10 +30,10 @@ export class UserResolver {
   }
 
   @Mutation(() => UserUpsertResponse)
-  async upsertUser(
+  async updateUser(
     @Args('params', { type: () => UserUpsert }) params: UserUpsert,
   ): Promise<UserUpsertResponse> {
-    const data = await this.userRepository.upsert(params);
+    const data = await this.userRepository.update(params);
     return data;
   }
 
