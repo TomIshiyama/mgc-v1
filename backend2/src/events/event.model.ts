@@ -31,11 +31,3 @@ export class EventUpsert extends PartialType(Event, InputType) {}
 
 @ObjectType()
 export class EventUpsertResponse extends PickType(Event, ['id']) {}
-
-@ObjectType()
-export class AttendEventList {
-  @Field(() => Int)
-  userId: number;
-  @Field(() => [Event])
-  eventList: Event[];
-}

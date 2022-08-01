@@ -8,6 +8,7 @@ import { DecoderModule } from './decoder/decoder.module';
 import { EventModule } from './events/event.module';
 import { PrismaService } from './prisma.service';
 import { UserModule } from './user/user.module';
+import { AttendeeModule } from './attendee/attendee.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { UserModule } from './user/user.module';
     UserModule,
     EventModule,
     DecoderModule,
+    AttendeeModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

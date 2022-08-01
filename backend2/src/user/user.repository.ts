@@ -4,7 +4,6 @@ import * as humps from 'humps';
 import { PrismaService } from 'src/prisma.service';
 import { ChangePasswordStatusDef } from 'src/utils/const';
 import {
-  AttendeeResponse,
   ChangePasswordInput,
   ChangePasswordResponse,
   User,
@@ -46,26 +45,6 @@ export class UserRepository {
       };
     }, {} as UserGroupByDivision);
     return Object.values(result);
-  }
-
-  /**  */
-  async findManyAttendeeByEvent(eventId: number): Promise<AttendeeResponse> {
-    const data = await this.prisma.attendees.findMany({
-      where: {
-        event_id: eventId,
-      },
-      include: {
-        users: true,
-      },
-    });
-
-    return {
-      eventId: eventId,
-      list:
-        data?.map((datum) => ({
-          ...(humps.camelizeKeys(datum.users) as User),
-        })) ?? [],
-    };
   }
 
   /**
