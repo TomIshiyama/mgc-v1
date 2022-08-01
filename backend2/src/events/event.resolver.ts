@@ -26,7 +26,7 @@ export class EventResolver {
 
   @Query(() => AttendEventList)
   async getEventListByUserId(
-    @Args('eventId', { type: () => Int }) id: number,
+    @Args('userId', { type: () => Int }) id: number,
   ): Promise<AttendEventList> {
     const data = await this.eventRepository.getEventListByUserId(id);
     return data;

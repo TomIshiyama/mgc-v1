@@ -52,7 +52,7 @@ export const useFetch: UseFetchType = <T,>({
     const [loading, setLoading] = React.useState<boolean>(false);
     const [error, setError] = React.useState<AxiosError | null>(null);
     const [hasError, setHasError] = React.useState<boolean>(false);
-    console.log("params: ", params);
+    // console.log("params: ", params);
 
     const url = React.useMemo(() => initialUrl, [initialUrl]);
     //   const [url, setUrl] = React.useState<string>(initialUrl);

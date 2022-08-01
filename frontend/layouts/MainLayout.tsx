@@ -237,7 +237,7 @@ export const MainLayout: React.FC<{
                 {
                     label: "マイイベント",
                     icon: <EmojiFlagsIcon sx={iconStyle} />,
-                    link: "#", // FIXME: 遷移先URL
+                    link: pagesPath.event.$url(),
                 },
             ],
         },

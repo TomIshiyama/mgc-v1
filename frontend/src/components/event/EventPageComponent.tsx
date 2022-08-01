@@ -3,8 +3,7 @@ import Stack from "@mui/material/Stack";
 import { Box } from "@mui/system";
 import moment from "moment";
 import React from "react";
-import { FetchEventContext } from "../../common/FetchEventProvider";
-import { useDecoderQuery, useGetEventAllQuery } from "../../generated/graphql";
+import { useDecoderQuery, useGetEventListByUserIdQuery } from "../../generated/graphql";
 import { BaseEventProps } from "../../types/connection";
 import { defDateFormat } from "../../utils/definitions";
 import { EventCategoryType } from "../../utils/displayData";
@@ -21,6 +20,8 @@ const buttonProps = {
     colorGrey: "grey.500",
     colorPink: "#ffd6c9",
 };
+
+const testUserId = 1;
 
 export const EventPageComponent: React.VFC<{ children: React.ReactNode }> = () => {
     const [open, setOpen] = React.useState(true);
@@ -44,14 +45,14 @@ export const EventPageComponent: React.VFC<{ children: React.ReactNode }> = () =
         setIsOrganizer(false);
     }, []);
 
-    const { data: eventData, loading: eventLoading } = useGetEventAllQuery();
     const { data: decoderData } = useDecoderQuery();
     const category = decoderData?.decoder.category;
-    const { attendee } = React.useContext(FetchEventContext);
 
-    console.log("event: ", eventData);
-    console.log("category: ", category);
-    console.log("attendee: ", attendee);
+    const { data: eventData } = useGetEventListByUserIdQuery({
+        variables: {
+            userId: testUserId,
+        },
+    });
 
     const mapEventListItem = React.useCallback(
         (datum: BaseEventProps): EventListItemProps => ({
@@ -67,14 +68,12 @@ export const EventPageComponent: React.VFC<{ children: React.ReactNode }> = () =
         []
     );
 
-    const orgData = eventData?.getEventAll;
-    const attendeeEventIds = attendee?.data?.map((event) => event.eventId);
-    const attData = eventData?.getEventAll.filter((event) =>
-        attendeeEventIds?.includes(event.id)
+    const attendeeEventList = eventData?.getEventListByUserId?.eventList?.filter(
+        (event) => event.userId != testUserId
     );
-
-    console.log("orgData ", orgData);
-    console.log("attData ", attData);
+    const organizeEventList = eventData?.getEventListByUserId?.eventList?.filter(
+        (event) => event.userId === testUserId
+    );
 
     const reMap = (args: BaseEventProps[] | null | undefined) =>
         args?.reduce((acc, event) => {
@@ -86,15 +85,12 @@ export const EventPageComponent: React.VFC<{ children: React.ReactNode }> = () =
             };
         }, {} as { [dateStr: string]: EventListItemProps[] | undefined });
 
-    console.log("reMap(attData)", reMap(attData));
-    console.log("reMap(orgData) :", reMap(orgData));
-
     return (
         <Box
             sx={{
                 backgroundColor: COLOR.normal.userBgcolor,
                 marginTop: "20px",
-                width: "600px",
+                display: "inherit",
                 height: "805px",
             }}
         >
@@ -133,7 +129,7 @@ export const EventPageComponent: React.VFC<{ children: React.ReactNode }> = () =
                 </ButtonBase>
             </Stack>
             <EventPageListContent
-                events={isOrganizer ? reMap(orgData) : reMap(attData)}
+                events={isOrganizer ? reMap(organizeEventList) : reMap(attendeeEventList)}
                 buttonList={[]}
                 description={<></>}
                 onClickIcon={handleDrawerClose}

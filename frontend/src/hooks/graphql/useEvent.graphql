@@ -30,8 +30,8 @@ query GetEvent($eventId: Int!) {
     }
 }
 
-query GetEventListByUserId($eventId: Int!) {
-    getEventListByUserId(eventId: $eventId) {
+query GetEventListByUserId($userId: Int!) {
+    getEventListByUserId(userId: $userId) {
         userId
         eventList {
             userId
