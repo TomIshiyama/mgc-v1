@@ -49,7 +49,7 @@ import {
     useCreateEventMutation,
     useDecoderQuery,
     useGetEventAllQuery,
-    useUpsertEventMutation,
+    useGetUserQuery,
 } from "../src/generated/graphql";
 import { useContextDetailDrawer } from "../src/hooks/contexts/useContextDetailDrawer";
 import { mapAutocomplete } from "../src/pages/top";
@@ -58,6 +58,7 @@ import { excludeNullish } from "../src/utils/collection";
 import { EventCategoryType } from "../src/utils/displayData";
 import { COLOR } from "../src/utils/styling";
 
+// FIXME: URLのPath追加
 const openMenuList = [
     {
         icon: <AccountCircleOutlinedIcon />,
@@ -203,9 +204,13 @@ export const MainLayout: React.FC<{
     const { data: eventData, loading: eventLoading } = useGetEventAllQuery();
     const { data: decoderData } = useDecoderQuery();
     const { data: session } = useSession();
-    const [upsertEvent] = useUpsertEventMutation();
     const [createEvent] = useCreateEventMutation();
-
+    const { data: userData } = useGetUserQuery({
+        variables: {
+            id: Number(session?.user?.userId),
+        },
+        skip: !session,
+    });
     const { push } = useRouter();
 
     const theme = useTheme();
@@ -438,13 +443,17 @@ export const MainLayout: React.FC<{
                                 />
                             </Grid>
                             <Grid item>
-                                {/* FIXME: 疎通実装 */}
-                                <Typography variant="subtitle1">User Name</Typography>
+                                <Typography variant="subtitle1">
+                                    {userData?.getUser.familyName}{" "}
+                                    {userData?.getUser.givenName}
+                                </Typography>
                             </Grid>
                             <Grid item>
                                 <OpenIconButton
-                                    title={"YRU太郎"}
-                                    subTitle={"Group Director"}
+                                    title={`${userData?.getUser.familyName ?? ""} ${
+                                        userData?.getUser.givenName ?? ""
+                                    }`}
+                                    subTitle={userData?.getUser.position ?? ""}
                                     tooltip={"メニューを開く"}
                                     menuList={openMenuList}
                                     allSuffix={
