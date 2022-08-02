@@ -46,6 +46,7 @@ import { EventDetailDrawer } from "../src/components/event/EventDetailDrawer";
 import {
     CreateEventMutationVariables,
     GetEventAllDocument,
+    useCreateEventMutation,
     useDecoderQuery,
     useGetEventAllQuery,
     useGetUserQuery,
@@ -428,8 +429,9 @@ export const MainLayout: React.FC<{
                                         const params: CreateEventMutationVariables["params"] =
                                             {
                                                 id: undefined,
-                                                userId: session?.user
-                                                    .userId as unknown as number, // FIXME: Login 機能を実装する
+                                                userId: Number(
+                                                    session?.user.userId
+                                                ) as unknown as number, // FIXME: Login 機能を実装する
                                                 name: formValues.eventTitle,
                                                 begin: formValues.startDate!,
                                                 end: formValues.endDate!,

@@ -23,19 +23,23 @@ import {
     Typography,
 } from "@mui/material";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import React from "react";
 import { Control, Controller, useForm, UseFormGetValues } from "react-hook-form";
 import {
     GetUserDocument,
+    GetUserListGroupDocument,
     GetUserQuery,
     PositionDef,
     ThemeDef,
     useDecoderQuery,
+    useDeleteUserMutation,
     useGetUserQuery,
     useUpdateUserMutation,
 } from "../../generated/graphql";
 import { PageMode, PageModeType } from "../../pages/manage/user/[userId]";
 import { validationRules } from "../../pages/signin";
+import { pagesPath } from "../../utils/$path";
 
 export type UserProfileProps = {
     userId: string;
@@ -52,6 +56,7 @@ type FormInputList = {
 };
 
 export const UserProfile: React.VFC<UserProfileProps> = ({ userId }) => {
+    const router = useRouter();
     const { data: session } = useSession();
     const { handleSubmit, setError, control, reset, getValues } = useForm<FormInputList>({
         mode: "onChange",
@@ -76,6 +81,14 @@ export const UserProfile: React.VFC<UserProfileProps> = ({ userId }) => {
             return;
         },
         refetchQueries: [GetUserDocument],
+    });
+    const [deleteUser] = useDeleteUserMutation({
+        variables: { id: Number(userId) },
+        onCompleted: () => {
+            setOpenSnack(true);
+            void router.push(pagesPath.manage.user.list.$url());
+        },
+        refetchQueries: [GetUserListGroupDocument],
     });
 
     const handleClose = () => {
@@ -120,13 +133,35 @@ export const UserProfile: React.VFC<UserProfileProps> = ({ userId }) => {
         setOpen(true);
         return;
     }, []);
+    // 削除ボタン->削除しますか？->はい
     const onClickDeleteConfirm = React.useCallback(() => {
-        setOpen(false);
+        void deleteUser();
         return;
     }, []);
+
     // 停止ボタン押下
     const onClickStop = React.useCallback(() => {
-        // return;
+        void updateUser({
+            variables: {
+                params: {
+                    id: Number(userId),
+                    isStop: true,
+                },
+            },
+        });
+        return;
+    }, []);
+
+    // 復活ボタン押下
+    const onClickGo = React.useCallback(() => {
+        void updateUser({
+            variables: {
+                params: {
+                    id: Number(userId),
+                    isStop: false,
+                },
+            },
+        });
         return;
     }, []);
 
@@ -222,14 +257,25 @@ export const UserProfile: React.VFC<UserProfileProps> = ({ userId }) => {
                             {/* FIXME: Sessionのかたづけどうする問題 */}
                             {session?.user.admin && (
                                 <>
-                                    <Button
-                                        onClick={onClickStop}
-                                        color="warning"
-                                        variant="contained"
-                                        style={{ width: "6em" }}
-                                    >
-                                        停止
-                                    </Button>
+                                    {userData?.getUser.isStop ? (
+                                        <Button
+                                            onClick={onClickGo}
+                                            color="success"
+                                            variant="contained"
+                                            style={{ width: "6em" }}
+                                        >
+                                            復活
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            onClick={onClickStop}
+                                            color="warning"
+                                            variant="contained"
+                                            style={{ width: "6em" }}
+                                        >
+                                            停止
+                                        </Button>
+                                    )}
                                     <Button
                                         onClick={onClickDelete}
                                         color="error"
@@ -276,7 +322,7 @@ export const UserProfile: React.VFC<UserProfileProps> = ({ userId }) => {
 
             <Dialog
                 open={open}
-                onClose={handleClose}
+                onClose={() => setOpen(false)}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
@@ -289,8 +335,13 @@ export const UserProfile: React.VFC<UserProfileProps> = ({ userId }) => {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>いいえ</Button>
-                    <Button onClick={onClickDeleteConfirm} autoFocus>
+                    <Button onClick={() => setOpen(false)}>いいえ</Button>
+                    <Button
+                        onClick={onClickDeleteConfirm}
+                        autoFocus
+                        color="error"
+                        variant="contained"
+                    >
                         はい
                     </Button>
                 </DialogActions>
@@ -303,7 +354,7 @@ export const UserProfile: React.VFC<UserProfileProps> = ({ userId }) => {
                 anchorOrigin={{ vertical: "top", horizontal: "right" }}
             >
                 <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
-                    登録が完了しました。
+                    データの更新が完了しました。
                 </Alert>
             </Snackbar>
         </>
