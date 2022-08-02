@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { pagesPath } from "../../utils/$path";
 
+/** 自身のユーザーではない場合はリダイレクトするHooks */
 export const useRedirectOwner = () => {
     const { data: session, status } = useSession();
     const router = useRouter();
