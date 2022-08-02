@@ -40,6 +40,7 @@ import {
 import { PageMode, PageModeType } from "../../pages/manage/user/[userId]";
 import { validationRules } from "../../pages/signin";
 import { pagesPath } from "../../utils/$path";
+import { ToolTipWrapper } from "../common/ToolTipWrapper";
 
 export type UserProfileProps = {
     userId: string;
@@ -183,6 +184,18 @@ export const UserProfile: React.VFC<UserProfileProps> = ({ userId }) => {
         return <Skeleton animation="wave" height={40} width="30em" />;
     }
 
+    const DeleteButton = () => (
+        <Button
+            onClick={onClickDelete}
+            color="error"
+            variant="contained"
+            style={{ width: "6em" }}
+            disabled={session?.user?.userId === Number(userId)}
+        >
+            削除
+        </Button>
+    );
+
     return (
         <>
             <Box
@@ -247,7 +260,7 @@ export const UserProfile: React.VFC<UserProfileProps> = ({ userId }) => {
                             ) : (
                                 <Button
                                     type="submit"
-                                    color="primary"
+                                    color="success"
                                     variant="contained"
                                     style={{ width: "6em" }}
                                 >
@@ -276,14 +289,14 @@ export const UserProfile: React.VFC<UserProfileProps> = ({ userId }) => {
                                             停止
                                         </Button>
                                     )}
-                                    <Button
-                                        onClick={onClickDelete}
-                                        color="error"
-                                        variant="contained"
-                                        style={{ width: "6em" }}
-                                    >
-                                        削除
-                                    </Button>
+
+                                    {session?.user?.userId === Number(userId) ? (
+                                        <ToolTipWrapper title="自分は削除できないです。">
+                                            <DeleteButton />
+                                        </ToolTipWrapper>
+                                    ) : (
+                                        <DeleteButton />
+                                    )}
                                 </>
                             )}
                         </Stack>

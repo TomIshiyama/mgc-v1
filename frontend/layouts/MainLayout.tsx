@@ -58,25 +58,6 @@ import { excludeNullish } from "../src/utils/collection";
 import { EventCategoryType } from "../src/utils/displayData";
 import { COLOR } from "../src/utils/styling";
 
-// FIXME: URLのPath追加
-const openMenuList = [
-    {
-        icon: <AccountCircleOutlinedIcon />,
-        label: "プロフィール",
-        link: "#",
-    },
-    {
-        icon: <FlagCircleOutlinedIcon sx={{ color: COLOR.event }} />,
-        label: "マイイベント",
-        link: "/events",
-    },
-    {
-        icon: <SettingsApplicationsIcon sx={{ color: COLOR.setting }} />,
-        label: "設定",
-        link: "#",
-    },
-];
-
 export const drawerWidth = 240;
 
 //HACK: Refactor
@@ -88,7 +69,7 @@ export const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open
 }>(({ theme, open, bgcolor }) => ({
     flexGrow: 1,
     ...(bgcolor ? { backgroundColor: bgcolor } : undefined),
-    height: "100vh",
+    height: "100%",
     padding: theme.spacing(3),
     transition: theme.transitions.create("margin", {
         easing: theme.transitions.easing.sharp,
@@ -198,7 +179,7 @@ export const MenuItems: React.VFC<MenuItemsProps> = ({ defs }) => {
 };
 
 export const MainLayout: React.FC<{
-    frontMode: string | undefined;
+    frontMode?: string | undefined;
     children: React.ReactNode;
     bgcolor?: HTMLElement["style"]["backgroundColor"];
 }> = ({ children, bgcolor }) => {
@@ -233,6 +214,27 @@ export const MainLayout: React.FC<{
         await signOut();
         await push(pagesPath.signin.$url().pathname);
     };
+
+    // 右上のアイコンクリック時のメニューリスト
+    const openMenuList = [
+        {
+            icon: <AccountCircleOutlinedIcon />,
+            label: "プロフィール",
+            link: pagesPath.user._userId(session?.user?.userId).$url(),
+        },
+        {
+            icon: <FlagCircleOutlinedIcon sx={{ color: COLOR.event }} />,
+            label: "マイイベント",
+            link: pagesPath.event.list.$url(),
+        },
+        {
+            icon: <SettingsApplicationsIcon sx={{ color: COLOR.setting }} />,
+            label: "設定",
+            link: "#",
+        },
+    ];
+
+    // 左のDrawerメニューリスト
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     const menuDefs: SideMenuDefType[] = excludeNullish([
         {
