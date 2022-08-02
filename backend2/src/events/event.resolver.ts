@@ -19,20 +19,12 @@ export class EventResolver {
     return data;
   }
 
-<<<<<<< HEAD
-  @Query(() => AttendEventList)
-  async getEventListByUserId(
-    @Args('userId', { type: () => Int }) id: number,
-  ): Promise<AttendEventList> {
-    const data = await this.eventRepository.getEventListByUserId(id);
-=======
   @Query(() => [Event])
   async getEventList(
     @Args('params', { type: () => EventUpsert, nullable: true })
     params?: Partial<Event>,
   ): Promise<Event[]> {
     const data = await this.eventRepository.findMany(params);
->>>>>>> 62c4225e09859934f51ba86e2e599a1c8f8438e2
     return data;
   }
 

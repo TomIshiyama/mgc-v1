@@ -2,7 +2,9 @@
 // prettier-ignore
 export const pagesPath = {
   event: {
-    $url: (url?: { hash?: string }) => ({ pathname: '/event' as const, hash: url?.hash })
+    list: {
+      $url: (url?: { hash?: string }) => ({ pathname: '/event/list' as const, hash: url?.hash })
+    }
   },
   manage: {
     user: {

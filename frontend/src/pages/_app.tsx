@@ -16,6 +16,7 @@ import { DetailDrawerProvider } from "../common/DetailDrawerProvider";
 import { FetchEventProvider } from "../common/FetchEventProvider";
 import { MaterialThemeProvider } from "../common/MaterialThemeProvider";
 import { MediaQueryProvider } from "../common/MediaQueryProvider";
+import { pagesPath } from "../utils/$path";
 
 moment.locale("ja");
 type NextPageWithLayout = NextPage & {
@@ -57,23 +58,23 @@ function MyApp({
     // useRedirectAuth();
 
     /** trueならリダイレクトする 判定チェック */
-    // const checkRedirect = React.useCallback(() => {
-    //     return (
-    //         !session &&
-    //         !(
-    //             pathname === pagesPath.signin.$url().pathname ||
-    //             pathname === pagesPath.signup.$url().pathname
-    //         )
-    //     );
-    // }, [session, pathname]);
+    const checkRedirect = React.useCallback(() => {
+        return (
+            !session &&
+            !(
+                pathname === pagesPath.signin.$url().pathname ||
+                pathname === pagesPath.signup.$url().pathname
+            )
+        );
+    }, [session, pathname]);
 
-    // React.useEffect(() => {
-    //     // 特定のページのみ処理を除く
-    //     if (!checkRedirect()) {
-    //         return;
-    //     }
-    //     void push(pagesPath.signin.$url().pathname);
-    // }, []);
+    React.useEffect(() => {
+        // 特定のページのみ処理を除く
+        if (!checkRedirect()) {
+            return;
+        }
+        void push(pagesPath.signin.$url().pathname);
+    }, []);
 
     // レイアウト 表示設定
     // ページごとに定義されたレイアウトがある場合はそれを使用する

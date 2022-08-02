@@ -135,8 +135,7 @@ export class UserRepository {
       throw new Error('ユーザー情報が間違っています。');
     }
 
-    // const compared = await bcrypt.compare(password, user.password);
-    const compared = password === user.password;
+    const compared = await bcrypt.compare(password, user.password);
 
     console.log('compared: ', compared);
 

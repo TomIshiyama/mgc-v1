@@ -2,8 +2,14 @@ import { ButtonBase, Typography } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import { Box } from "@mui/system";
 import moment from "moment";
+import { useSession } from "next-auth/react";
 import React from "react";
-import { useDecoderQuery, useGetEventListByUserIdQuery } from "../../generated/graphql";
+import {
+    GetEventListQuery,
+    useDecoderQuery,
+    useGetAttendeeEventListByUserIdQuery,
+    useGetEventListQuery,
+} from "../../generated/graphql";
 import { BaseEventProps } from "../../types/connection";
 import { defDateFormat } from "../../utils/definitions";
 import { EventCategoryType } from "../../utils/displayData";
@@ -21,10 +27,10 @@ const buttonProps = {
     colorPink: "#ffd6c9",
 };
 
-const testUserId = 1;
-
 export const EventPageComponent: React.VFC<{ children: React.ReactNode }> = () => {
     const [open, setOpen] = React.useState(true);
+
+    const { data: session } = useSession();
 
     const handleDrawerOpen = React.useCallback(() => {
         setOpen(true);
@@ -45,14 +51,23 @@ export const EventPageComponent: React.VFC<{ children: React.ReactNode }> = () =
         setIsOrganizer(false);
     }, []);
 
-    const { data: decoderData } = useDecoderQuery();
+    const { data: decoderData, loading: decoderLoading } = useDecoderQuery();
     const category = decoderData?.decoder.category;
 
-    const { data: eventData } = useGetEventListByUserIdQuery({
+    const { data: eventData, loading: eventLoading } = useGetEventListQuery({
         variables: {
-            userId: testUserId,
+            params: { userId: session?.user?.userId },
         },
     });
+
+    const { data: attendeeEventData, loading: attendeeLoading } =
+        useGetAttendeeEventListByUserIdQuery({
+            variables: {
+                userId: session?.user?.userId as number,
+            },
+        });
+
+    // console.log("eventData:", eventData);
 
     const mapEventListItem = React.useCallback(
         (datum: BaseEventProps): EventListItemProps => ({
@@ -65,19 +80,19 @@ export const EventPageComponent: React.VFC<{ children: React.ReactNode }> = () =
                 ?.code as EventCategoryType,
             chipLabel: category?.find((v) => v.id === datum.categoryId)?.name,
         }),
-        []
+        [category]
     );
 
-    const attendeeEventList = eventData?.getEventListByUserId?.eventList?.filter(
-        (event) => event.userId != testUserId
-    );
-    const organizeEventList = eventData?.getEventListByUserId?.eventList?.filter(
-        (event) => event.userId === testUserId
-    );
+    // const attendeeEventList = eventData.filter(
+    //     (event) => event.userId != testUserId
+    // );
+    // const organizeEventList = eventData?.getEventListByUserId?.eventList?.filter(
+    //     (event) => event.userId === testUserId
+    // );
 
-    const reMap = (args: BaseEventProps[] | null | undefined) =>
+    const reMap = (args: GetEventListQuery["getEventList"] | null | undefined) =>
         args?.reduce((acc, event) => {
-            const { begin } = event;
+            const { begin } = event as { begin: string };
             const dateStr = `${moment(begin).format(defDateFormat.ymd)}`;
             return {
                 ...acc,
@@ -85,6 +100,7 @@ export const EventPageComponent: React.VFC<{ children: React.ReactNode }> = () =
             };
         }, {} as { [dateStr: string]: EventListItemProps[] | undefined });
 
+    if (decoderLoading || eventLoading || attendeeLoading) return <></>;
     return (
         <Box
             sx={{
@@ -129,7 +145,11 @@ export const EventPageComponent: React.VFC<{ children: React.ReactNode }> = () =
                 </ButtonBase>
             </Stack>
             <EventPageListContent
-                events={isOrganizer ? reMap(organizeEventList) : reMap(attendeeEventList)}
+                events={
+                    isOrganizer
+                        ? reMap(eventData?.getEventList)
+                        : reMap(attendeeEventData?.getAttendeeEventListByUserId.eventList)
+                }
                 buttonList={[]}
                 description={<></>}
                 onClickIcon={handleDrawerClose}

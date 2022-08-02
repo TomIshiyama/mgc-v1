@@ -44,6 +44,7 @@ import { DateRangePickerModal } from "../src/components/common/DateRangePickerMo
 import { OpenIconButton } from "../src/components/common/OpenIconButton";
 import { EventDetailDrawer } from "../src/components/event/EventDetailDrawer";
 import {
+    CreateEventMutationVariables,
     GetEventAllDocument,
     useCreateUserMutation,
     useDecoderQuery,
@@ -237,7 +238,7 @@ export const MainLayout: React.FC<{
                 {
                     label: "マイイベント",
                     icon: <EmojiFlagsIcon sx={iconStyle} />,
-                    link: pagesPath.event.$url(),
+                    link: pagesPath.event.list.$url(),
                 },
             ],
         },
