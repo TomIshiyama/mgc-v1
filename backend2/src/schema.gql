@@ -14,7 +14,7 @@ type Decoder {
 }
 
 type Event {
-  userId: Int!
+  userId: Int
   id: Int!
   categoryId: Float
   name: String!
@@ -119,7 +119,7 @@ type AttendEventList {
 }
 
 input EventInput {
-  userId: Int!
+  userId: Int
   id: Int!
   categoryId: Float
   name: String!

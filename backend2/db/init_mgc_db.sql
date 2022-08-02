@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS categories (
 
 CREATE TABLE IF NOT EXISTS events (
     id INTEGER AUTO_INCREMENT NOT NULL,
-    user_id INTEGER NOT NULL,
+    user_id INTEGER,
     category_id TINYINT,
     name VARCHAR(255) NOT NULL,
     location VARCHAR(255),

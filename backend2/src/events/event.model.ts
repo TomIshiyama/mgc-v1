@@ -11,7 +11,7 @@ import {
 @InputType('EventInput')
 export class Event {
   @Field(() => Int)
-  userId: number;
+  userId?: number;
   @Field(() => Int)
   id: number;
   categoryId?: number;
