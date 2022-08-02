@@ -23,3 +23,8 @@ export const Z_INDEX = {
     toggleDrawer: "1250",
     subDrawer: "1070",
 } as const;
+
+export const DRAWNER = {
+    minWidth: "600px",
+    maxWidth: "600px",
+} as const;

@@ -46,7 +46,6 @@ import { EventDetailDrawer } from "../src/components/event/EventDetailDrawer";
 import {
     CreateEventMutationVariables,
     GetEventAllDocument,
-    useCreateEventMutation,
     useDecoderQuery,
     useGetEventAllQuery,
     useGetUserQuery,
@@ -68,7 +67,7 @@ const openMenuList = [
     {
         icon: <FlagCircleOutlinedIcon sx={{ color: COLOR.event }} />,
         label: "マイイベント",
-        link: "#",
+        link: "/events",
     },
     {
         icon: <SettingsApplicationsIcon sx={{ color: COLOR.setting }} />,
@@ -198,12 +197,14 @@ export const MenuItems: React.VFC<MenuItemsProps> = ({ defs }) => {
 };
 
 export const MainLayout: React.FC<{
+    frontMode: string | undefined;
     children: React.ReactNode;
     bgcolor?: HTMLElement["style"]["backgroundColor"];
 }> = ({ children, bgcolor }) => {
     const { data: eventData, loading: eventLoading } = useGetEventAllQuery();
     const { data: decoderData } = useDecoderQuery();
     const { data: session } = useSession();
+
     const [createEvent] = useCreateEventMutation();
     const { data: userData } = useGetUserQuery({
         variables: {
@@ -211,6 +212,7 @@ export const MainLayout: React.FC<{
         },
         skip: !session,
     });
+
     const { push } = useRouter();
 
     const theme = useTheme();
@@ -230,6 +232,7 @@ export const MainLayout: React.FC<{
         await signOut();
         await push(pagesPath.signin.$url().pathname);
     };
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     const menuDefs: SideMenuDefType[] = excludeNullish([
         {
             title: "メニュー",
@@ -242,7 +245,7 @@ export const MainLayout: React.FC<{
                 {
                     label: "マイイベント",
                     icon: <EmojiFlagsIcon sx={iconStyle} />,
-                    link: "#", // FIXME: 遷移先URL
+                    link: pagesPath.event.list.$url(),
                 },
             ],
         },
@@ -435,6 +438,7 @@ export const MainLayout: React.FC<{
                                             };
                                         await createEvent({
                                             variables: {
+                                                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                                                 params: params,
                                             },
                                             refetchQueries: [GetEventAllDocument],

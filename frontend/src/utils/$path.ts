@@ -6,6 +6,11 @@ export const pagesPath = {
       $url: (url?: { hash?: string }) => ({ pathname: '/error/forbidden' as const, hash: url?.hash })
     }
   },
+  event: {
+    list: {
+      $url: (url?: { hash?: string }) => ({ pathname: '/event/list' as const, hash: url?.hash })
+    }
+  },
   manage: {
     user: {
       _userId: (userId: string | number) => ({
