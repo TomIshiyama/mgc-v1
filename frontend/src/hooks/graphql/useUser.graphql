@@ -50,6 +50,12 @@ mutation UpdateUser($params: UserUpsert!) {
     }
 }
 
+mutation DeleteUser($id: Int!) {
+    deleteUser(id: $id) {
+        id
+    }
+}
+
 mutation CreateUser($params: UserUpsert!) {
     createUser(params: $params) {
         id

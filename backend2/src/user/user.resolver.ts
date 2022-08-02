@@ -45,6 +45,14 @@ export class UserResolver {
     return data;
   }
 
+  @Mutation(() => UserKey)
+  async deleteUser(
+    @Args('id', { type: () => Int! }) id: number,
+  ): Promise<UserKey> {
+    const data = await this.userRepository.delete(id);
+    return data;
+  }
+
   @Mutation(() => UserLoginResponse)
   async login(
     @Args('params', { type: () => UserLoginInput }) params: UserLoginInput,

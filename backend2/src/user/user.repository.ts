@@ -134,6 +134,15 @@ export class UserRepository {
     return { id: data.id };
   }
 
+  delete(userId: number): Promise<UserKey> {
+    const data = await this.prisma.users.delete({
+      where: {
+        id: userId,
+      },
+    });
+    return { id: data.id };
+  }
+
   /** ユーザーログイン */
   async login({ email, password }: UserLoginInput): Promise<UserLoginResponse> {
     const user = await this.prisma.users.findFirst({
