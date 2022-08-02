@@ -140,9 +140,9 @@ export type Mutation = {
   createUser: UserKey;
   deleteAttendee: AttendeeKey;
   login: UserLoginResponse;
+  updateUser: UserUpsertResponse;
   upsertAttendee: AttendeeKey;
   upsertEvent: EventUpsertResponse;
-  upsertUser: UserUpsertResponse;
 };
 
 
@@ -171,6 +171,11 @@ export type MutationLoginArgs = {
 };
 
 
+export type MutationUpdateUserArgs = {
+  params: UserUpsert;
+};
+
+
 export type MutationUpsertAttendeeArgs = {
   params: AttendeeKeyInput;
 };
@@ -178,11 +183,6 @@ export type MutationUpsertAttendeeArgs = {
 
 export type MutationUpsertEventArgs = {
   params: EventUpsert;
-};
-
-
-export type MutationUpsertUserArgs = {
-  params: UserUpsert;
 };
 
 export enum PositionDef {
@@ -253,7 +253,7 @@ export type User = {
   givenName: Scalars['String'];
   iconName?: Maybe<Scalars['String']>;
   iconPath?: Maybe<Scalars['String']>;
-  id: Scalars['ID'];
+  id: Scalars['Int'];
   isAdmin: Scalars['Boolean'];
   isStop: Scalars['Boolean'];
   lastUpdate: Scalars['DateTime'];
@@ -274,7 +274,7 @@ export type UserInput = {
   givenName: Scalars['String'];
   iconName?: InputMaybe<Scalars['String']>;
   iconPath?: InputMaybe<Scalars['String']>;
-  id: Scalars['ID'];
+  id: Scalars['Int'];
   isAdmin: Scalars['Boolean'];
   isStop: Scalars['Boolean'];
   lastUpdate: Scalars['DateTime'];
@@ -285,11 +285,11 @@ export type UserInput = {
 
 export type UserKey = {
   __typename?: 'UserKey';
-  id: Scalars['ID'];
+  id: Scalars['Int'];
 };
 
 export type UserKeyInput = {
-  id: Scalars['ID'];
+  id: Scalars['Int'];
 };
 
 export type UserLoginInput = {
@@ -317,7 +317,7 @@ export type UserUpsert = {
   givenName?: InputMaybe<Scalars['String']>;
   iconName?: InputMaybe<Scalars['String']>;
   iconPath?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['ID']>;
+  id?: InputMaybe<Scalars['Int']>;
   isAdmin?: InputMaybe<Scalars['Boolean']>;
   isStop?: InputMaybe<Scalars['Boolean']>;
   lastUpdate?: InputMaybe<Scalars['DateTime']>;
@@ -329,7 +329,7 @@ export type UserUpsert = {
 export type UserUpsertResponse = {
   __typename?: 'UserUpsertResponse';
   email: Scalars['String'];
-  id: Scalars['ID'];
+  id: Scalars['Int'];
   password: Scalars['String'];
 };
 
@@ -404,26 +404,26 @@ export type GetUserQueryVariables = Exact<{
 }>;
 
 
-export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, isAdmin: boolean, givenName: string, familyName: string } };
+export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: number, givenName: string, familyName: string, givenKana?: string | null, familyKana?: string | null, email: string, division: string, position: PositionDef, iconPath?: string | null, iconName?: string | null, description?: string | null, theme: ThemeDef, isAdmin: boolean, isStop: boolean, lastUpdate: any, attendees?: string | null } };
 
 export type GetUserListGroupQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUserListGroupQuery = { __typename?: 'Query', getUserListGroup: Array<Array<{ __typename?: 'User', givenName: string, familyName: string, givenKana?: string | null, familyKana?: string | null, email: string, password: string, division: string, position: PositionDef, iconPath?: string | null, iconName?: string | null, description?: string | null, theme: ThemeDef, isAdmin: boolean, isStop: boolean, lastUpdate: any, attendees?: string | null }>> };
+export type GetUserListGroupQuery = { __typename?: 'Query', getUserListGroup: Array<Array<{ __typename?: 'User', id: number, givenName: string, familyName: string, givenKana?: string | null, familyKana?: string | null, email: string, division: string, position: PositionDef, iconPath?: string | null, iconName?: string | null, description?: string | null, theme: ThemeDef, isAdmin: boolean, isStop: boolean, lastUpdate: any, attendees?: string | null }>> };
 
-export type UpsertUserMutationVariables = Exact<{
+export type UpdateUserMutationVariables = Exact<{
   params: UserUpsert;
 }>;
 
 
-export type UpsertUserMutation = { __typename?: 'Mutation', upsertUser: { __typename?: 'UserUpsertResponse', id: string, email: string, password: string } };
+export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'UserUpsertResponse', id: number, email: string, password: string } };
 
 export type CreateUserMutationVariables = Exact<{
   params: UserUpsert;
 }>;
 
 
-export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'UserKey', id: string } };
+export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'UserKey', id: number } };
 
 export type LoginMutationVariables = Exact<{
   params: UserLoginInput;
@@ -854,9 +854,21 @@ export const GetUserDocument = gql`
     query GetUser($id: Int!) {
   getUser(id: $id) {
     id
-    isAdmin
     givenName
     familyName
+    givenKana
+    familyKana
+    email
+    division
+    position
+    iconPath
+    iconName
+    description
+    theme
+    isAdmin
+    isStop
+    lastUpdate
+    attendees
   }
 }
     `;
@@ -891,12 +903,12 @@ export type GetUserQueryResult = Apollo.QueryResult<GetUserQuery, GetUserQueryVa
 export const GetUserListGroupDocument = gql`
     query GetUserListGroup {
   getUserListGroup {
+    id
     givenName
     familyName
     givenKana
     familyKana
     email
-    password
     division
     position
     iconPath
@@ -937,41 +949,41 @@ export function useGetUserListGroupLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type GetUserListGroupQueryHookResult = ReturnType<typeof useGetUserListGroupQuery>;
 export type GetUserListGroupLazyQueryHookResult = ReturnType<typeof useGetUserListGroupLazyQuery>;
 export type GetUserListGroupQueryResult = Apollo.QueryResult<GetUserListGroupQuery, GetUserListGroupQueryVariables>;
-export const UpsertUserDocument = gql`
-    mutation UpsertUser($params: UserUpsert!) {
-  upsertUser(params: $params) {
+export const UpdateUserDocument = gql`
+    mutation UpdateUser($params: UserUpsert!) {
+  updateUser(params: $params) {
     id
     email
     password
   }
 }
     `;
-export type UpsertUserMutationFn = Apollo.MutationFunction<UpsertUserMutation, UpsertUserMutationVariables>;
+export type UpdateUserMutationFn = Apollo.MutationFunction<UpdateUserMutation, UpdateUserMutationVariables>;
 
 /**
- * __useUpsertUserMutation__
+ * __useUpdateUserMutation__
  *
- * To run a mutation, you first call `useUpsertUserMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpsertUserMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [upsertUserMutation, { data, loading, error }] = useUpsertUserMutation({
+ * const [updateUserMutation, { data, loading, error }] = useUpdateUserMutation({
  *   variables: {
  *      params: // value for 'params'
  *   },
  * });
  */
-export function useUpsertUserMutation(baseOptions?: Apollo.MutationHookOptions<UpsertUserMutation, UpsertUserMutationVariables>) {
+export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUserMutation, UpdateUserMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpsertUserMutation, UpsertUserMutationVariables>(UpsertUserDocument, options);
+        return Apollo.useMutation<UpdateUserMutation, UpdateUserMutationVariables>(UpdateUserDocument, options);
       }
-export type UpsertUserMutationHookResult = ReturnType<typeof useUpsertUserMutation>;
-export type UpsertUserMutationResult = Apollo.MutationResult<UpsertUserMutation>;
-export type UpsertUserMutationOptions = Apollo.BaseMutationOptions<UpsertUserMutation, UpsertUserMutationVariables>;
+export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
+export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
+export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
 export const CreateUserDocument = gql`
     mutation CreateUser($params: UserUpsert!) {
   createUser(params: $params) {
