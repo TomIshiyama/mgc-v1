@@ -225,7 +225,7 @@ export const MainLayout: React.FC<{
         {
             icon: <FlagCircleOutlinedIcon sx={{ color: COLOR.event }} />,
             label: "マイイベント",
-            link: "/events",
+            link: pagesPath.event.list.$url(),
         },
         {
             icon: <SettingsApplicationsIcon sx={{ color: COLOR.setting }} />,
