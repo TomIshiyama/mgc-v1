@@ -7,7 +7,7 @@ import moment from "moment";
 import React from "react";
 import { defDateFormat } from "../../utils/definitions";
 import { EventCategoryType } from "../../utils/displayData";
-import { COLOR } from "../../utils/styling";
+import { COLOR, DRAWNER } from "../../utils/styling";
 import { TemporaryDrawer, TemporaryDrawerProps } from "./TemporaryDrawer";
 
 export type BasicButtonType = {
@@ -104,6 +104,8 @@ export const DetailDrawer: React.VFC<DetailDrawerProps> = ({
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "space-between",
+                        maxWidth: DRAWNER.maxWidth,
+                        minWidth: DRAWNER.minWidth,
                     }}
                     className="event-detail-drawer__wrapper"
                 >

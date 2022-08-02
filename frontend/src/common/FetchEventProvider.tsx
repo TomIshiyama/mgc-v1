@@ -1,23 +1,35 @@
 import React, { createContext } from "react";
 import { useGetEventAllQuery } from "../generated/graphql";
 import { useFetch, UseFetchResponse } from "../hooks/request/useFetch";
-import { BaseCategoryProps, BaseEventProps } from "../types/connection";
+import {
+    BaseAttendeeProps,
+    BaseCategoryProps,
+    BaseEventProps,
+} from "../types/connection";
+
+const userId = 1;
 
 export const FetchEventContext = createContext<{
     event: UseFetchResponse<BaseEventProps[]> | undefined;
     category: UseFetchResponse<BaseCategoryProps[]> | undefined;
-}>({ event: undefined, category: undefined });
+    attendee: UseFetchResponse<BaseAttendeeProps[]> | undefined;
+}>({ event: undefined, category: undefined, attendee: undefined });
 
 export const FetchEventProvider: React.FC<{
     children: React.ReactNode;
 }> = ({ children }: { children: React.ReactNode }) => {
     const event = useFetch<BaseEventProps[]>({
-        initialUrl: `${process.env.NEXT_PUBLIC_API_ENDPOINT!}events`,
+        initialUrl: `${process.env.NEXT_PUBLIC_API_ENDPOINT!}events?user_id=${userId}`,
         headers: {},
     });
 
     const category = useFetch<BaseCategoryProps[]>({
         initialUrl: `${process.env.NEXT_PUBLIC_API_ENDPOINT!}categories`,
+        headers: {},
+    });
+
+    const attendee = useFetch<BaseCategoryProps[]>({
+        initialUrl: `${process.env.NEXT_PUBLIC_API_ENDPOINT!}attendees?user_id=${userId}`,
         headers: {},
     });
 
@@ -41,6 +53,7 @@ export const FetchEventProvider: React.FC<{
                         createdDate: datum.createdDate as Date,
                     })) ?? [],
                 category,
+                attendee,
             }}
         >
             {children}

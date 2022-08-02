@@ -1,6 +1,11 @@
 /* eslint-disable */
 // prettier-ignore
 export const pagesPath = {
+  event: {
+    list: {
+      $url: (url?: { hash?: string }) => ({ pathname: '/event/list' as const, hash: url?.hash })
+    }
+  },
   manage: {
     user: {
       _userId: (userId: string | number) => ({

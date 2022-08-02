@@ -30,8 +30,13 @@ query GetEvent($eventId: Int!) {
     }
 }
 
+<<<<<<< HEAD
+query GetEventListByUserId($userId: Int!) {
+    getEventListByUserId(userId: $userId) {
+=======
 query getEventList($params: EventUpsert) {
     getEventList(params: $params) {
+>>>>>>> 62c4225e09859934f51ba86e2e599a1c8f8438e2
         userId
         id
         categoryId
