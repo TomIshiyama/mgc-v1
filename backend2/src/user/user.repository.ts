@@ -134,7 +134,7 @@ export class UserRepository {
     return { id: data.id };
   }
 
-  delete(userId: number): Promise<UserKey> {
+  async delete(userId: number): Promise<UserKey> {
     const data = await this.prisma.users.delete({
       where: {
         id: userId,
