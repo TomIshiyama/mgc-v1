@@ -30,6 +30,11 @@ export const pagesPath = {
   top: {
     $url: (url?: { hash?: string }) => ({ pathname: '/top' as const, hash: url?.hash })
   },
+  user: {
+    _userId: (userId: string | number) => ({
+      $url: (url?: { hash?: string }) => ({ pathname: '/user/[userId]' as const, query: { userId }, hash: url?.hash })
+    })
+  },
   $url: (url?: { hash?: string }) => ({ pathname: '/' as const, hash: url?.hash })
 }
 
