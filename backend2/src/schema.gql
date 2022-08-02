@@ -198,6 +198,7 @@ input EventUpsert {
 type Mutation {
   updateUser(params: UserUpsert!): UserUpsertResponse!
   createUser(params: UserUpsert!): UserKey!
+  deleteUser(id: Int!): UserKey!
   login(params: UserLoginInput!): UserLoginResponse!
   changePassword(params: ChangePasswordInput!): ChangePasswordResponse!
   upsertEvent(params: EventUpsert!): EventUpsertResponse!
