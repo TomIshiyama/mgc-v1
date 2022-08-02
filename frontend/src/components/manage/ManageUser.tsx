@@ -11,7 +11,9 @@ export type ManageUserListProps = { key?: React.Key };
 
 export const ManageUserList: React.VFC<ManageUserListProps> = ({ key }) => {
     const router = useRouter();
-    const { data, loading } = useGetUserListGroupQuery();
+    const { data, loading } = useGetUserListGroupQuery({
+        fetchPolicy: "no-cache",
+    });
 
     const groupList: UserListProps["groupList"] = (
         data?.getUserListGroup as User[][]
