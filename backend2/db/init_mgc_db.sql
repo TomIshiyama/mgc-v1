@@ -63,7 +63,8 @@ CREATE TABLE IF NOT EXISTS events (
     PRIMARY KEY (id),
     CONSTRAINT fk_user_id
         FOREIGN KEY (user_id)
-        REFERENCES users (id),
+        REFERENCES users (id)
+        ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT fk_category_id
         FOREIGN KEY (category_id)
         REFERENCES categories (id)
