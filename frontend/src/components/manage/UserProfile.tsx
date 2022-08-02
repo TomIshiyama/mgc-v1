@@ -39,8 +39,6 @@ import { validationRules } from "../../pages/signin";
 
 export type UserProfileProps = {
     userId: string;
-    viewEdit: PageModeType;
-    setViewEdit: React.Dispatch<React.SetStateAction<PageModeType>>;
 };
 
 type FormInputList = {
@@ -53,11 +51,7 @@ type FormInputList = {
     passwordVerify: string;
 };
 
-export const UserProfile: React.VFC<UserProfileProps> = ({
-    userId,
-    // setViewEdit,
-    // viewEdit,
-}) => {
+export const UserProfile: React.VFC<UserProfileProps> = ({ userId }) => {
     const { data: session } = useSession();
     const { handleSubmit, setError, control, reset, getValues } = useForm<FormInputList>({
         mode: "onChange",
