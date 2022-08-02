@@ -1,20 +1,12 @@
 query GetUser($id: Int!) {
     getUser(id: $id) {
         id
-        isAdmin
-        givenName
-        familyName
-    }
-}
-
-query GetUserListGroup {
-    getUserListGroup {
         givenName
         familyName
         givenKana
         familyKana
         email
-        password
+        # password
         division
         position
         iconPath
@@ -28,11 +20,39 @@ query GetUserListGroup {
     }
 }
 
-mutation UpsertUser($params: UserUpsert!) {
-    upsertUser(params: $params) {
+query GetUserListGroup {
+    getUserListGroup {
+        id
+        givenName
+        familyName
+        givenKana
+        familyKana
+        email
+        # password
+        division
+        position
+        iconPath
+        iconName
+        description
+        theme
+        isAdmin
+        isStop
+        lastUpdate
+        attendees
+    }
+}
+
+mutation UpdateUser($params: UserUpsert!) {
+    updateUser(params: $params) {
         id
         email
         password
+    }
+}
+
+mutation DeleteUser($id: Int!) {
+    deleteUser(id: $id) {
+        id
     }
 }
 

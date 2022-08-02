@@ -50,10 +50,13 @@ export class UserRepository {
   /**
    * ユーザー登録・編集
    */
-  async upsert(userInput: UserUpsert): Promise<UserUpsertResponse> {
+  async update(userInput: UserUpsert): Promise<UserUpsertResponse> {
     // パスワード生成
     const salt = bcrypt.genSaltSync(SALT_ROUNDS);
-    const hash = bcrypt.hashSync(userInput.password, salt);
+    // パスワードがリクエストに含まれない場合は更新しないようにundefined
+    const hash = userInput.password
+      ? bcrypt.hashSync(userInput.password, salt)
+      : undefined;
 
     const columnMapping = {
       given_name: userInput.givenName,
@@ -68,20 +71,31 @@ export class UserRepository {
       icon_name: userInput.iconName,
       description: userInput.description,
       theme: userInput.theme,
-      is_admin: userInput.isAdmin === true ? 1 : 0,
-      is_stop: userInput.isStop === true ? 1 : 0,
+      is_admin:
+        userInput.isAdmin === true
+          ? 1
+          : userInput.isAdmin == null
+          ? undefined
+          : 0,
+
+      is_stop:
+        userInput.isStop === true
+          ? 1
+          : userInput.isStop == null
+          ? undefined
+          : 0,
       last_update: new Date(),
     };
 
-    const data = await this.prisma.users.upsert({
+    const data = await this.prisma.users.update({
       where: {
         id: userInput.id,
         // email: userInput.email,
       },
-      create: { ...columnMapping },
-      update: {
+      data: {
         ...columnMapping,
       },
+      // create: { ...columnMapping },
     });
 
     return { id: data.id, email: data.email, password: data.password };
@@ -117,6 +131,15 @@ export class UserRepository {
       },
     });
 
+    return { id: data.id };
+  }
+
+  async delete(userId: number): Promise<UserKey> {
+    const data = await this.prisma.users.delete({
+      where: {
+        id: userId,
+      },
+    });
     return { id: data.id };
   }
 

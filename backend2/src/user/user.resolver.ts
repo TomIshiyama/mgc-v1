@@ -30,10 +30,10 @@ export class UserResolver {
   }
 
   @Mutation(() => UserUpsertResponse)
-  async upsertUser(
+  async updateUser(
     @Args('params', { type: () => UserUpsert }) params: UserUpsert,
   ): Promise<UserUpsertResponse> {
-    const data = await this.userRepository.upsert(params);
+    const data = await this.userRepository.update(params);
     return data;
   }
 
@@ -42,6 +42,14 @@ export class UserResolver {
     @Args('params', { type: () => UserUpsert }) params: UserUpsert,
   ): Promise<UserKey> {
     const data = await this.userRepository.create(params);
+    return data;
+  }
+
+  @Mutation(() => UserKey)
+  async deleteUser(
+    @Args('id', { type: () => Int! }) id: number,
+  ): Promise<UserKey> {
+    const data = await this.userRepository.delete(id);
     return data;
   }
 

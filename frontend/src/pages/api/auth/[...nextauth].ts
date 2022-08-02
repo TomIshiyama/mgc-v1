@@ -59,6 +59,7 @@ export default NextAuth({
                         userId: login.userId,
                         email: login.email,
                         admin: login.isAdmin,
+                        // image: login.
                     });
                 } else {
                     // ログイン失敗 認証を拒否
@@ -96,6 +97,7 @@ export default NextAuth({
                     userId: user.userId,
                     admin: user.admin,
                     email: user.email,
+                    // image: user.image,
                 };
             }
 
@@ -109,6 +111,7 @@ export default NextAuth({
             session.user.userId = token?.userId as string;
             session.user.admin = token?.admin;
             session.user.email = token?.email;
+            // session.user?.image = token?.picture;
             return session;
         },
         // eslint-disable-next-line @typescript-eslint/require-await
