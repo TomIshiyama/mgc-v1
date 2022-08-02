@@ -1,6 +1,11 @@
 /* eslint-disable */
 // prettier-ignore
 export const pagesPath = {
+  error: {
+    forbidden: {
+      $url: (url?: { hash?: string }) => ({ pathname: '/error/forbidden' as const, hash: url?.hash })
+    }
+  },
   manage: {
     user: {
       _userId: (userId: string | number) => ({
