@@ -2,9 +2,11 @@ import React from "react";
 import { MainLayout } from "../../../../layouts/MainLayout";
 import { Head } from "../../../components/common/Head";
 import { ManageUserList } from "../../../components/manage/ManageUser";
+import { useRedirectAdmin } from "../../../hooks/common/useRedirectAdmin";
 import { COLOR } from "../../../utils/styling";
 
 const List = () => {
+    useRedirectAdmin();
     return (
         <>
             <Head
