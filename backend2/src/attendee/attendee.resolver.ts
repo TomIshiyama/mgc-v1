@@ -12,10 +12,10 @@ import { AttendeeRepository } from './attendee.repository';
 export class AttendeeResolver {
   constructor(private attendeeRepository: AttendeeRepository) {}
 
-  @Query(() => Attendee)
+  @Query(() => Attendee, { nullable: true })
   async getAttendee(
     @Args('params', { type: () => AttendeeKey }) params: AttendeeKey,
-  ): Promise<Attendee | string> {
+  ): Promise<Attendee | void> {
     const data = await this.attendeeRepository.findUnique(params);
     return data;
   }

@@ -13,7 +13,7 @@ import {
 export class AttendeeRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findUnique(params: AttendeeKey): Promise<Attendee> {
+  async findUnique(params: AttendeeKey): Promise<Attendee | void> {
     const data = await this.prisma.attendees.findUnique({
       where: {
         user_id_event_id: {
@@ -22,6 +22,7 @@ export class AttendeeRepository {
         },
       },
     });
+    if (!data) return;
     return humps.camelizeKeys(data) as Attendee;
   }
 
