@@ -43,4 +43,12 @@ export class EventResolver {
     const data = await this.eventRepository.createEvent(params);
     return data;
   }
+
+  @Mutation(() => EventUpsertResponse)
+  async deleteEvent(
+    @Args('eventId', { type: () => Int }) eventId: number,
+  ): Promise<EventUpsertResponse> {
+    const data = await this.eventRepository.deleteEvent(eventId);
+    return data;
+  }
 }

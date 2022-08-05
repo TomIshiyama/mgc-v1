@@ -81,4 +81,13 @@ export class EventRepository {
     });
     return { id: data.id };
   }
+
+  async deleteEvent(eventId: number) {
+    const data = await this.prisma.events.delete({
+      where: {
+        id: eventId,
+      },
+    });
+    return { id: data.id };
+  }
 }
