@@ -84,6 +84,8 @@ type UserLoginResponse {
   userId: Float!
   email: String!
   isAdmin: Boolean!
+  iconPath: String
+  iconName: String
 }
 
 type ChangePasswordResponse {
@@ -176,7 +178,7 @@ type Query {
   getEvent(eventId: Int!): Event!
   getEventList(params: EventUpsert): [Event!]!
   decoder: Decoder!
-  getAttendee(params: AttendeeKeyInput!): Attendee!
+  getAttendee(params: AttendeeKeyInput!): Attendee
   getAttendeeEventListByUserId(userId: Int!): AttendEventList!
   getAttendeeUserListByEventId(eventId: Int!): AttendeeUserList!
 }
@@ -203,6 +205,7 @@ type Mutation {
   changePassword(params: ChangePasswordInput!): ChangePasswordResponse!
   upsertEvent(params: EventUpsert!): EventUpsertResponse!
   createEvent(params: EventUpsert!): EventUpsertResponse!
+  deleteEvent(eventId: Int!): EventUpsertResponse!
   upsertAttendee(params: AttendeeKeyInput!): AttendeeKey!
   deleteAttendee(params: AttendeeKeyInput!): AttendeeKey!
 }

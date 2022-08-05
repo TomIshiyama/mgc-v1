@@ -70,6 +70,8 @@ export class UserLoginResponse {
   userId: number;
   email: string;
   isAdmin: boolean;
+  iconPath?: string;
+  iconName?: string;
 }
 
 @ObjectType()
