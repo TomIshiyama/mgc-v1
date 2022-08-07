@@ -27,9 +27,7 @@ export default NextAuth({
                 },
             },
             authorize: async (credentials, req) => {
-                // FIXME: apollo client 導入後実装
                 // ここで Server sideと疎通
-
                 if (!credentials?.email || !credentials?.password) {
                     throw new Error("あかんやつやで");
                 }
@@ -53,13 +51,14 @@ export default NextAuth({
                 // 突合したステータスと照合
                 if (data?.login.userId) {
                     const { login } = data;
+
                     // ログイン成功後、ユーザー情報を返却する。値はsessionに格納される。
                     return Promise.resolve({
                         // name: "fixme_man",
                         userId: login.userId,
                         email: login.email,
                         admin: login.isAdmin,
-                        // image: login.
+                        image: `${login?.iconPath ?? ""}/${login?.iconName ?? ""}`,
                     });
                 } else {
                     // ログイン失敗 認証を拒否
@@ -97,10 +96,9 @@ export default NextAuth({
                     userId: user.userId,
                     admin: user.admin,
                     email: user.email,
-                    // image: user.image,
+                    image: user.image,
                 };
             }
-
             return token;
         },
         // セッションに含める情報
@@ -109,9 +107,11 @@ export default NextAuth({
             session.refreshToken = token?.refreshToken;
             session.accessTokenExpires = token?.accessTokenExpires;
             session.user.userId = token?.userId as string;
-            session.user.admin = token?.admin;
             session.user.email = token?.email;
-            // session.user?.image = token?.picture;
+            session.user.admin = token?.admin as boolean;
+            if (session.user && token?.image) {
+                session.user.image = token?.image as string;
+            }
             return session;
         },
         // eslint-disable-next-line @typescript-eslint/require-await
