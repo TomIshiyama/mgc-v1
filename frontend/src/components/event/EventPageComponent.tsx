@@ -56,18 +56,17 @@ export const EventPageComponent: React.VFC<{ children: React.ReactNode }> = () =
 
     const { data: eventData, loading: eventLoading } = useGetEventListQuery({
         variables: {
-            params: { userId: session?.user?.userId },
+            params: { userId: Number(session?.user?.userId) },
         },
     });
 
+    // 主催
     const { data: attendeeEventData, loading: attendeeLoading } =
         useGetAttendeeEventListByUserIdQuery({
             variables: {
-                userId: session?.user?.userId as number,
+                userId: Number(session?.user?.userId),
             },
         });
-
-    // console.log("eventData:", eventData);
 
     const mapEventListItem = React.useCallback(
         (datum: BaseEventProps): EventListItemProps => ({
