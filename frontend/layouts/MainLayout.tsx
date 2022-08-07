@@ -220,7 +220,7 @@ export const MainLayout: React.FC<{
         {
             icon: <AccountCircleOutlinedIcon />,
             label: "プロフィール",
-            link: pagesPath.user._userId(session?.user?.userId).$url(),
+            link: pagesPath.user._userId((session?.user?.userId as string) ?? "").$url(),
         },
         {
             icon: <FlagCircleOutlinedIcon sx={{ color: COLOR.event }} />,
