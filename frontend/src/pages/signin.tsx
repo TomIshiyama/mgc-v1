@@ -63,6 +63,12 @@ export const validationRules: {
     division: {
         required: message.required,
     },
+    eventName: {
+        required: message.required,
+    },
+    category: {
+        required: message.required,
+    },
 };
 
 // POSTリクエスト（サインイン・サインアウトなど）に必要なCSRFトークンを返却する
