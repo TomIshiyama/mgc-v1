@@ -19,7 +19,7 @@ export const DetailDrawerContext = createContext<{
         open: boolean
     ) => (event: React.KeyboardEvent | React.MouseEvent) => void;
     doToggleDrawer?: (anchor: Anchor, open: boolean) => void;
-    mode?: ContentModeType;
+    mode: ContentModeType;
     setMode?: React.Dispatch<React.SetStateAction<ContentModeType>>;
     key?: React.Key;
     setKey?: React.Dispatch<React.SetStateAction<React.Key | undefined>>;
@@ -30,12 +30,13 @@ export const DetailDrawerContext = createContext<{
         left: false,
         bottom: false,
     },
+    mode: "view",
 });
 
 /** イベント詳細のDrawerのステートを配布する */
 export const DetailDrawerProvider = ({ children }) => {
     const { state, toggleDrawer, doToggleDrawer } = useDrawer(false);
-    const [mode, setMode] = React.useState<ContentModeType>("top");
+    const [mode, setMode] = React.useState<ContentModeType>("view");
     const [key, setKey] = React.useState<React.Key | undefined>(undefined);
 
     return (
