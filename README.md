@@ -55,7 +55,7 @@ MGC は次の機能を持っているアプリケーション：
 -   クライアントとバックエンド起動をする
 
 ```
-npm run init
+npm run init2
 ```
 
 ## 作業の進め方
@@ -83,7 +83,3 @@ git checkout -b MGC-20-top-page # 例
 -   GNU AGPLv3
     https://choosealicense.com/licenses/agpl-3.0/
 
-## TEST PUSH
-
--   (テストプッシュのとき下記の文言を変更します。)
--   へもへももへじ
