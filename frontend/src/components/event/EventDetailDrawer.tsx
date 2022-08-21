@@ -1,6 +1,7 @@
 import moment from "moment";
 import { useSession } from "next-auth/react";
 import React from "react";
+import { EventUpsert } from "../../../../backend2/src/events/event.model";
 import {
     GetAttendeeDocument,
     GetAttendeeEventListByUserIdDocument,
@@ -15,6 +16,7 @@ import {
     useGetAttendeeQuery,
     useGetAttendeeUserListByEventIdQuery,
     useGetEventQuery,
+    useUpdateEventMutation,
     useUpsertAttendeeMutation,
 } from "../../generated/graphql";
 import { useContextDetailDrawer } from "../../hooks/contexts/useContextDetailDrawer";
@@ -61,7 +63,7 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
     });
     const { data: decoderData } = useDecoderQuery();
     const category = decoderData?.decoder.category;
-    // const [createAttendee] = useCreate
+
     const [upsertAttendee] = useUpsertAttendeeMutation({
         refetchQueries: [
             GetAttendeeUserListByEventIdDocument,
@@ -92,6 +94,56 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
         ],
     });
 
+    const [updateEvent] = useUpdateEventMutation({
+        refetchQueries: [
+            GetAttendeeEventListByUserIdDocument,
+            GetEventListDocument,
+            GetEventDocument,
+            GetEventAllDocument,
+        ],
+    });
+
+    // const [params, setParams] = React.useState<EventUpsert>({
+    //     id: key,
+    // });
+    const params: EventUpsert = { id: Number(key) };
+
+    // const [updateEvent] = useUpdateEventMutation({
+    //     refetchQueries: [
+    //         GetAttendeeEventListByUserIdDocument,
+    //         GetEventListDocument,
+    //         GetEventDocument,
+    //         GetEventAllDocument,
+    //     ],
+    // });
+    console.log("key : ", key);
+
+    // DetailDrawer内部で呼ばれる関数
+    const onSubmit: DetailDrawerProps["onSubmit"] = (data) => {
+        console.log("ON SUBMIT", data, category);
+        console.log(category);
+        const params: EventUpsert = {
+            id: Number(data.key),
+            categoryId: category?.find((v) => v.code === data.category)?.id ?? undefined,
+            name: data.name,
+            detail: data.detail,
+            location: data.location,
+            begin: new Date(data.begin),
+            end: new Date(data.end),
+        };
+
+        void updateEvent({
+            variables: {
+                params: params,
+            },
+        });
+    };
+
+    const onCloseEvent = () => {
+        doToggleDrawer?.(anchor, false);
+        setMode?.(CONTENT_MODE.view); // Drawer閉じたあとはViewに戻す
+    };
+
     // HACK:resourceから値を渡せばFindの必要がなくなる
     const mapEventDetail = React.useCallback(
         (datum?: GetEventQuery["getEvent"]): DetailDrawerProps => ({
@@ -107,7 +159,9 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
                 category: category?.find((v) => v.id === datum?.categoryId)
                     ?.code as EventCategoryType,
                 description: datum?.detail ?? "",
+                key: key,
             },
+            onSubmit: onSubmit,
             max: 10,
             anchor: "right",
             margin: { top: "5em" },
@@ -119,9 +173,9 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
             showCloseButton: true,
             overwrite: {
                 open: state[anchor],
-                onClose: toggleDrawer?.(anchor, false),
-                onBackdropClick: toggleDrawer?.(anchor, false),
-                onCloseIcon: toggleDrawer?.(anchor, false),
+                onClose: onCloseEvent,
+                onBackdropClick: onCloseEvent,
+                onCloseIcon: onCloseEvent,
                 onOpen: toggleDrawer?.(anchor, true),
             },
         }),
@@ -147,10 +201,19 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
                         ? {
                               label: "本登録",
                               color: "info",
+                              type: "submit",
                               onClick: () => {
-                                  // doToggleDrawer?.(anchor, false);
                                   setMode?.(() => CONTENT_MODE.edit);
-                                  void deleteEvent();
+                                  //   console.log(data);
+                                  //   void updateEvent({
+                                  //       variables: {
+                                  //           params: {
+                                  //               id: Number(key),
+                                  //               isTemporary: false, // 仮登録フラグ・オフ
+                                  //           },
+                                  //       },
+                                  //   });
+                                  console.log("aaaaaa");
                               },
                               disabled: !isTemporaryEvent, // 仮登録状態のみ謳歌
                           }
@@ -190,7 +253,8 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
                               color: "primary",
                               disabled: isTemporaryEvent,
                               // disabled: isJoin(user.id)
-                              onClick: () => {
+                              onClick: (data: any) => {
+                                  console.log(data);
                                   void upsertAttendee({
                                       variables: {
                                           params: {
