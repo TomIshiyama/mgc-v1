@@ -1,13 +1,22 @@
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { Event, EventUpsert, EventUpsertResponse } from './event.model';
+import {
+  Event,
+  EventDistinctKey,
+  EventKeyMap,
+  EventUpsert,
+  EventUpsertResponse,
+} from './event.model';
 import { EventRepository } from './event.repository';
 @Resolver()
 export class EventResolver {
   constructor(private eventRepository: EventRepository) {}
 
   @Query(() => [Event])
-  async getEventAll(): Promise<Event[]> {
-    const data = await this.eventRepository.findAll();
+  async getEventAll(
+    @Args('distinct', { type: () => [EventKeyMap], nullable: true })
+    distinct?: EventDistinctKey[],
+  ): Promise<Event[]> {
+    const data = await this.eventRepository.findAll(distinct);
     return data;
   }
 
@@ -33,6 +42,14 @@ export class EventResolver {
     @Args('params', { type: () => EventUpsert }) params: EventUpsert,
   ): Promise<EventUpsertResponse> {
     const data = await this.eventRepository.upsertEvent(params);
+    return data;
+  }
+
+  @Mutation(() => EventUpsertResponse)
+  async updateEvent(
+    @Args('params', { type: () => EventUpsert }) params: EventUpsert,
+  ): Promise<EventUpsertResponse> {
+    const data = await this.eventRepository.updateEvent(params);
     return data;
   }
 
