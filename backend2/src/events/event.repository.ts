@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import * as humps from 'humps';
 import { PrismaService } from '../prisma.service';
-import { Event, EventUpsert } from './event.model';
+import { Event, EventDistinctKey, EventUpsert } from './event.model';
 
 @Injectable()
 export class EventRepository {
   constructor(private prisma: PrismaService) {}
-  async findAll(): Promise<Event[]> {
+  async findAll(distinct?: EventDistinctKey[]): Promise<Event[]> {
     const data = await this.prisma.events.findMany({
       orderBy: {
         id: 'asc',
       },
+      distinct: distinct,
     });
     return data.map((datum) => humps.camelizeKeys(datum) as Event);
   }
@@ -45,11 +46,13 @@ export class EventRepository {
     return {
       user_id: params.userId,
       name: params.name,
-      begin: new Date(params.begin),
-      end: new Date(params.end),
+      begin: params?.begin ? new Date(params.begin) : undefined,
+      end: params?.end ? new Date(params.end) : undefined,
       location: params.location,
       detail: params.detail,
-      is_temporary: Number(params.isTemporary), // 0 or 1が来る想定
+      is_temporary: params?.isTemporary
+        ? Number(params.isTemporary)
+        : undefined, // 0 or 1が来る想定
       category_id: params.categoryId,
       last_update: new Date(),
     };
@@ -68,6 +71,17 @@ export class EventRepository {
       },
     });
 
+    return { id: data.id };
+  }
+
+  async updateEvent(params: EventUpsert) {
+    const column = this.columnMap(params);
+    const data = await this.prisma.events.update({
+      where: {
+        id: params.id,
+      },
+      data: column,
+    });
     return { id: data.id };
   }
 
