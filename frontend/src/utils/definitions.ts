@@ -13,4 +13,5 @@ export const defDateFormat = {
     ymd: "YYYY/MM/DD",
     dayOfWeek: "ddd",
     fullDayOfWeek: "dddd",
+    dateTimeLocal: "YYYY-MM-DDTHH:mm",
 } as const;
