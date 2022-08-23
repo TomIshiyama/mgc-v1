@@ -1,5 +1,5 @@
-query GetEventAll {
-    getEventAll {
+query GetEventAll($distinct: [EventKeyMap!]) {
+    getEventAll(distinct: $distinct) {
         userId
         id
         categoryId
@@ -48,6 +48,12 @@ query getEventList($params: EventUpsert) {
 
 mutation UpsertEvent($params: EventUpsert!) {
     upsertEvent(params: $params) {
+        id
+    }
+}
+
+mutation UpdateEvent($params: EventUpsert!) {
+    updateEvent(params: $params) {
         id
     }
 }
