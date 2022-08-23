@@ -174,13 +174,27 @@ input AttendeeInput {
 type Query {
   getUser(id: Int!): User!
   getUserListGroup: [[User!]!]!
-  getEventAll: [Event!]!
+  getEventAll(distinct: [EventKeyMap!]): [Event!]!
   getEvent(eventId: Int!): Event!
   getEventList(params: EventUpsert): [Event!]!
   decoder: Decoder!
   getAttendee(params: AttendeeKeyInput!): Attendee
   getAttendeeEventListByUserId(userId: Int!): AttendEventList!
   getAttendeeUserListByEventId(eventId: Int!): AttendeeUserList!
+}
+
+enum EventKeyMap {
+  userId
+  id
+  categoryId
+  name
+  location
+  detail
+  begin
+  end
+  isTemporary
+  lastUpdate
+  createdDate
 }
 
 input EventUpsert {
@@ -204,6 +218,7 @@ type Mutation {
   login(params: UserLoginInput!): UserLoginResponse!
   changePassword(params: ChangePasswordInput!): ChangePasswordResponse!
   upsertEvent(params: EventUpsert!): EventUpsertResponse!
+  updateEvent(params: EventUpsert!): EventUpsertResponse!
   createEvent(params: EventUpsert!): EventUpsertResponse!
   deleteEvent(eventId: Int!): EventUpsertResponse!
   upsertAttendee(params: AttendeeKeyInput!): AttendeeKey!

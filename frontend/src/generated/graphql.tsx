@@ -114,6 +114,20 @@ export type EventInput = {
   userId?: InputMaybe<Scalars['Int']>;
 };
 
+export enum EventKeyMap {
+  Begin = 'begin',
+  CategoryId = 'categoryId',
+  CreatedDate = 'createdDate',
+  Detail = 'detail',
+  End = 'end',
+  Id = 'id',
+  IsTemporary = 'isTemporary',
+  LastUpdate = 'lastUpdate',
+  Location = 'location',
+  Name = 'name',
+  UserId = 'userId'
+}
+
 export type EventUpsert = {
   begin?: InputMaybe<Scalars['DateTime']>;
   categoryId?: InputMaybe<Scalars['Float']>;
@@ -142,6 +156,7 @@ export type Mutation = {
   deleteEvent: EventUpsertResponse;
   deleteUser: UserKey;
   login: UserLoginResponse;
+  updateEvent: EventUpsertResponse;
   updateUser: UserUpsertResponse;
   upsertAttendee: AttendeeKey;
   upsertEvent: EventUpsertResponse;
@@ -180,6 +195,11 @@ export type MutationDeleteUserArgs = {
 
 export type MutationLoginArgs = {
   params: UserLoginInput;
+};
+
+
+export type MutationUpdateEventArgs = {
+  params: EventUpsert;
 };
 
 
@@ -235,6 +255,11 @@ export type QueryGetAttendeeUserListByEventIdArgs = {
 
 export type QueryGetEventArgs = {
   eventId: Scalars['Int'];
+};
+
+
+export type QueryGetEventAllArgs = {
+  distinct?: InputMaybe<Array<EventKeyMap>>;
 };
 
 
@@ -387,7 +412,9 @@ export type DecoderQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type DecoderQuery = { __typename?: 'Query', decoder: { __typename?: 'Decoder', category: Array<{ __typename?: 'DecoderItem', code: string, name?: string | null, id?: number | null }>, divisionCode: Array<{ __typename?: 'DecoderItem', code: string }> } };
 
-export type GetEventAllQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetEventAllQueryVariables = Exact<{
+  distinct?: InputMaybe<Array<EventKeyMap> | EventKeyMap>;
+}>;
 
 
 export type GetEventAllQuery = { __typename?: 'Query', getEventAll: Array<{ __typename?: 'Event', userId?: number | null, id: number, categoryId?: number | null, name: string, location?: string | null, detail?: string | null, begin: any, end: any, isTemporary: boolean, lastUpdate: any, createdDate: any }> };
@@ -412,6 +439,13 @@ export type UpsertEventMutationVariables = Exact<{
 
 
 export type UpsertEventMutation = { __typename?: 'Mutation', upsertEvent: { __typename?: 'EventUpsertResponse', id: number } };
+
+export type UpdateEventMutationVariables = Exact<{
+  params: EventUpsert;
+}>;
+
+
+export type UpdateEventMutation = { __typename?: 'Mutation', updateEvent: { __typename?: 'EventUpsertResponse', id: number } };
 
 export type CreateEventMutationVariables = Exact<{
   params: EventUpsert;
@@ -723,8 +757,8 @@ export type DecoderQueryHookResult = ReturnType<typeof useDecoderQuery>;
 export type DecoderLazyQueryHookResult = ReturnType<typeof useDecoderLazyQuery>;
 export type DecoderQueryResult = Apollo.QueryResult<DecoderQuery, DecoderQueryVariables>;
 export const GetEventAllDocument = gql`
-    query GetEventAll {
-  getEventAll {
+    query GetEventAll($distinct: [EventKeyMap!]) {
+  getEventAll(distinct: $distinct) {
     userId
     id
     categoryId
@@ -752,6 +786,7 @@ export const GetEventAllDocument = gql`
  * @example
  * const { data, loading, error } = useGetEventAllQuery({
  *   variables: {
+ *      distinct: // value for 'distinct'
  *   },
  * });
  */
@@ -889,6 +924,39 @@ export function useUpsertEventMutation(baseOptions?: Apollo.MutationHookOptions<
 export type UpsertEventMutationHookResult = ReturnType<typeof useUpsertEventMutation>;
 export type UpsertEventMutationResult = Apollo.MutationResult<UpsertEventMutation>;
 export type UpsertEventMutationOptions = Apollo.BaseMutationOptions<UpsertEventMutation, UpsertEventMutationVariables>;
+export const UpdateEventDocument = gql`
+    mutation UpdateEvent($params: EventUpsert!) {
+  updateEvent(params: $params) {
+    id
+  }
+}
+    `;
+export type UpdateEventMutationFn = Apollo.MutationFunction<UpdateEventMutation, UpdateEventMutationVariables>;
+
+/**
+ * __useUpdateEventMutation__
+ *
+ * To run a mutation, you first call `useUpdateEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateEventMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateEventMutation, { data, loading, error }] = useUpdateEventMutation({
+ *   variables: {
+ *      params: // value for 'params'
+ *   },
+ * });
+ */
+export function useUpdateEventMutation(baseOptions?: Apollo.MutationHookOptions<UpdateEventMutation, UpdateEventMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateEventMutation, UpdateEventMutationVariables>(UpdateEventDocument, options);
+      }
+export type UpdateEventMutationHookResult = ReturnType<typeof useUpdateEventMutation>;
+export type UpdateEventMutationResult = Apollo.MutationResult<UpdateEventMutation>;
+export type UpdateEventMutationOptions = Apollo.BaseMutationOptions<UpdateEventMutation, UpdateEventMutationVariables>;
 export const CreateEventDocument = gql`
     mutation CreateEvent($params: EventUpsert!) {
   createEvent(params: $params) {
