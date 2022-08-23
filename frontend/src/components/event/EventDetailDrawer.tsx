@@ -47,11 +47,13 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
         variables: {
             eventId: Number(key),
         },
+        skip: !key,
     });
     const { data: attendeeData } = useGetAttendeeUserListByEventIdQuery({
         variables: {
             eventId: Number(key),
         },
+        skip: !key,
     });
     const { data: attend } = useGetAttendeeQuery({
         variables: {
@@ -60,6 +62,7 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
                 eventId: Number(key),
             },
         },
+        skip: !session || !key,
     });
     const { data: decoderData } = useDecoderQuery();
     const category = decoderData?.decoder.category;
@@ -103,25 +106,12 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
         ],
     });
 
-    // const [params, setParams] = React.useState<EventUpsert>({
-    //     id: key,
-    // });
     const params: EventUpsert = { id: Number(key) };
 
-    // const [updateEvent] = useUpdateEventMutation({
-    //     refetchQueries: [
-    //         GetAttendeeEventListByUserIdDocument,
-    //         GetEventListDocument,
-    //         GetEventDocument,
-    //         GetEventAllDocument,
-    //     ],
-    // });
     console.log("key : ", key);
 
     // DetailDrawer内部で呼ばれる関数
     const onSubmit: DetailDrawerProps["onSubmit"] = (data) => {
-        console.log("ON SUBMIT", data, category);
-        console.log(category);
         const params: EventUpsert = {
             id: Number(data.key),
             categoryId: category?.find((v) => v.code === data.category)?.id ?? undefined,
@@ -130,6 +120,7 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
             location: data.location,
             begin: new Date(data.begin),
             end: new Date(data.end),
+            isTemporary: false,
         };
 
         void updateEvent({
@@ -204,16 +195,6 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
                               type: "submit",
                               onClick: () => {
                                   setMode?.(() => CONTENT_MODE.edit);
-                                  //   console.log(data);
-                                  //   void updateEvent({
-                                  //       variables: {
-                                  //           params: {
-                                  //               id: Number(key),
-                                  //               isTemporary: false, // 仮登録フラグ・オフ
-                                  //           },
-                                  //       },
-                                  //   });
-                                  console.log("aaaaaa");
                               },
                               disabled: !isTemporaryEvent, // 仮登録状態のみ謳歌
                           }
