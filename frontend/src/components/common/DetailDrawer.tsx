@@ -327,21 +327,23 @@ const EventDetailDrawerEdit: React.FC<EventDetailDrawerEditProps> = ({
                                 },
                         }}
                     >
-                        {data?.decoder?.category?.map((code, index) => (
-                            <MUIProps.ToggleButton
-                                key={index}
-                                value={code.code}
-                                sx={{
-                                    width: "6em",
-                                    height: "20px",
-                                    bgcolor: COLOR[code.code as keyof typeof COLOR],
-                                    margin: "0 4px",
-                                }}
-                                size="small"
-                            >
-                                {code.name}
-                            </MUIProps.ToggleButton>
-                        ))}
+                        {data?.decoder?.category
+                            ?.filter((v) => v.code !== "temporary")
+                            .map((code, index) => (
+                                <MUIProps.ToggleButton
+                                    key={index}
+                                    value={code.code}
+                                    sx={{
+                                        width: "6em",
+                                        height: "20px",
+                                        bgcolor: COLOR[code.code as keyof typeof COLOR],
+                                        margin: "0 4px",
+                                    }}
+                                    size="small"
+                                >
+                                    {code.name}
+                                </MUIProps.ToggleButton>
+                            ))}
                     </MUIProps.ToggleButtonGroup>
                 )}
             />
