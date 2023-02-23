@@ -69,7 +69,7 @@ export const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open
 }>(({ theme, open, bgcolor }) => ({
     flexGrow: 1,
     ...(bgcolor ? { backgroundColor: bgcolor } : undefined),
-    height: "100%",
+    height: "100vh",
     padding: theme.spacing(3),
     transition: theme.transitions.create("margin", {
         easing: theme.transitions.easing.sharp,
@@ -262,11 +262,12 @@ export const MainLayout: React.FC<{
                           icon: <GroupIcon sx={iconStyle} />,
                           link: pagesPath.manage.user.list.$url().pathname,
                       },
-                      {
-                          label: "イベント",
-                          icon: <EmojiFlagsIcon sx={iconStyle} />,
-                          link: "#",
-                      },
+                      // この機能は本来の仕様にはないので一旦封印する
+                      //   {
+                      //       label: "イベント",
+                      //       icon: <EmojiFlagsIcon sx={iconStyle} />,
+                      //       link: "#",
+                      //   },
                   ],
               }
             : undefined,
