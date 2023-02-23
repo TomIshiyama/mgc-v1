@@ -50,9 +50,12 @@ export class EventRepository {
       end: params?.end ? new Date(params.end) : undefined,
       location: params.location,
       detail: params.detail,
-      is_temporary: params?.isTemporary
-        ? Number(params.isTemporary)
-        : undefined, // 0 or 1が来る想定
+      is_temporary:
+        params?.isTemporary == null
+          ? undefined
+          : params?.isTemporary === true
+          ? 1
+          : 0, // 0 or 1が来る想定
       category_id: params.categoryId,
       last_update: new Date(),
     };
