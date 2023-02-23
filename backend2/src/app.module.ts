@@ -4,11 +4,12 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AttendeeModule } from './attendee/attendee.module';
+import { ConnpassModule } from './connpass/connpass.module';
 import { DecoderModule } from './decoder/decoder.module';
 import { EventModule } from './events/event.module';
 import { PrismaService } from './prisma.service';
 import { UserModule } from './user/user.module';
-import { AttendeeModule } from './attendee/attendee.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AttendeeModule } from './attendee/attendee.module';
     EventModule,
     DecoderModule,
     AttendeeModule,
+    ConnpassModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
