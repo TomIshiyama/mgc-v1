@@ -290,7 +290,7 @@ const EventDetailDrawerEdit: React.FC<EventDetailDrawerEditProps> = ({
     const { data } = useDecoderQuery();
 
     return (
-        <MUIProps.Container>
+        <MUIProps.Container sx={{ padding: "10px", height: "auto" }}>
             <input value={initialValue.key} disabled></input>
             <Controller
                 name="name"
@@ -425,7 +425,7 @@ const EventDetailDrawerEdit: React.FC<EventDetailDrawerEditProps> = ({
                 name="detail"
                 defaultValue={initialValue.description}
                 control={control}
-                rules={validationRules.givenName}
+                // rules={validationRules.givenName}
                 render={({ field, fieldState }) => (
                     <MUIProps.TextField
                         {...field}

@@ -21,5 +21,5 @@
     "typescript.suggest.paths": true, // importやrequireコールの中のパスの提案
     "typescript.enablePromptUseWorkspaceTsdk": true,
     "eslint.workingDirectories": ["./frontend"],
-    "cSpell.words": ["camelize"]
+    "cSpell.words": ["camelize", "CONNPASS"]
 }

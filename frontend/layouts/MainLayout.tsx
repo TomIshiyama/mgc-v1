@@ -69,7 +69,7 @@ export const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open
 }>(({ theme, open, bgcolor }) => ({
     flexGrow: 1,
     ...(bgcolor ? { backgroundColor: bgcolor } : undefined),
-    height: "100vh",
+    height: bgcolor ? "auto" : "100vh",
     padding: theme.spacing(3),
     transition: theme.transitions.create("margin", {
         easing: theme.transitions.easing.sharp,

@@ -112,6 +112,7 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
 
     // DetailDrawer内部で呼ばれる関数
     const onSubmit: DetailDrawerProps["onSubmit"] = (data) => {
+        console.log("onSubmit", data);
         const params: EventUpsert = {
             id: Number(data.key),
             categoryId: category?.find((v) => v.code === data.category)?.id ?? undefined,
@@ -127,6 +128,9 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
             variables: {
                 params: params,
             },
+            // onCompleted: (data) => {
+            //     setMode?.(CONTENT_MODE.view);
+            // },
         });
     };
 
@@ -182,6 +186,9 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
 
     const isTemporaryEvent = Boolean(eventData?.getEvent.isTemporary);
 
+    console.log("eventData?.getEvent", eventData?.getEvent);
+    console.log("isTemporaryEvent", isTemporaryEvent);
+
     return (
         <>
             <EventDetailDrawerView
@@ -208,7 +215,8 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
                           }
                         : {
                               label: "登録",
-                              color: "primary",
+                              color: "info",
+                              type: "submit",
                               onClick: () => {
                                   // FIXME: 登録Mutation
                                   setMode?.(() => CONTENT_MODE.view);

@@ -105,8 +105,9 @@ export const EventPageComponent: React.VFC<{ children: React.ReactNode }> = () =
             sx={{
                 backgroundColor: COLOR.normal.userBgcolor,
                 marginTop: "20px",
+                marginLeft: "2em",
                 display: "inherit",
-                height: "805px",
+                height: "auto",
             }}
         >
             <Typography variant="h3" color="#ffd6c9">
