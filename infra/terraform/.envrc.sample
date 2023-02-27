@@ -1,0 +1,13 @@
+# ここで設定したTESTはカレントディレクトリ配下のみ有効にできる
+export TEST=
+
+export AWS_ACCESS_KEY_ID=
+export AWS_SECRET_ACCESS_KEY=
+export AWS_DEFAULT_REGION=
+
+# 上位フォルダで設定した環境変数の削除（unset)もできる
+unset ABC
+# unset AWS_ACCESS_KEY_ID
+# unset AWS_SECRET_ACCESS_KEY
+# unset AWS_DEFAULT_REGION
+
