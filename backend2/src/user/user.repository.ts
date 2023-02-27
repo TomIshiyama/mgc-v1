@@ -170,6 +170,8 @@ export class UserRepository {
       userId: user.id,
       email: user.email,
       isAdmin: Boolean(user.is_admin),
+      iconPath: user.icon_path,
+      iconName: user.icon_name,
     };
   }
 
