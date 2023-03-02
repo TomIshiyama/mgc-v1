@@ -4,7 +4,31 @@
 # TODO:
 brew install direnv
 brew install git-secrets
+brew install tfenv
 ```
+
+## tfenv
+
+```zshrc
+export PATH=$PATH ~/.packer/bin
+```
+
+install
+
+```
+tfenv list-remote
+```
+
+use
+
+```
+tfenv use
+```
+
+tfenv list でローカルのバージョンファイルを確認
+
+terraform init 初期化
+terraform apply で適用
 
 ## direnv
 
@@ -35,3 +59,9 @@ export AWS_DEFAULT_REGION=
 # 上位フォルダ環境変数の削除（unset)もできる
 unset ABC
 ```
+
+## plugins
+
+code --install-extension HashiCorp.terraform  
+brew install tflint  
+[tflint](https://github.com/terraform-linters/tflint)
