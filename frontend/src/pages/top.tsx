@@ -49,7 +49,7 @@ const Top = () => {
 };
 
 Top.getLayout = (page: React.ReactNode) => {
-    return <MainLayout>{page}</MainLayout>;
+    return <MainLayout bgcolor="white">{page}</MainLayout>;
 };
 
 export default Top;

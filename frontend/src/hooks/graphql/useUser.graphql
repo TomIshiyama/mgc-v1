@@ -67,6 +67,8 @@ mutation Login($params: UserLoginInput!) {
         userId
         email
         isAdmin
+        iconPath
+        iconName
     }
 }
 

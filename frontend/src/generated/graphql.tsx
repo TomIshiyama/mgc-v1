@@ -97,7 +97,7 @@ export type Event = {
   lastUpdate: Scalars['DateTime'];
   location?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  userId: Scalars['Int'];
+  userId?: Maybe<Scalars['Int']>;
 };
 
 export type EventInput = {
@@ -111,8 +111,22 @@ export type EventInput = {
   lastUpdate: Scalars['DateTime'];
   location?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
-  userId: Scalars['Int'];
+  userId?: InputMaybe<Scalars['Int']>;
 };
+
+export enum EventKeyMap {
+  Begin = 'begin',
+  CategoryId = 'categoryId',
+  CreatedDate = 'createdDate',
+  Detail = 'detail',
+  End = 'end',
+  Id = 'id',
+  IsTemporary = 'isTemporary',
+  LastUpdate = 'lastUpdate',
+  Location = 'location',
+  Name = 'name',
+  UserId = 'userId'
+}
 
 export type EventUpsert = {
   begin?: InputMaybe<Scalars['DateTime']>;
@@ -139,8 +153,10 @@ export type Mutation = {
   createEvent: EventUpsertResponse;
   createUser: UserKey;
   deleteAttendee: AttendeeKey;
+  deleteEvent: EventUpsertResponse;
   deleteUser: UserKey;
   login: UserLoginResponse;
+  updateEvent: EventUpsertResponse;
   updateUser: UserUpsertResponse;
   upsertAttendee: AttendeeKey;
   upsertEvent: EventUpsertResponse;
@@ -167,6 +183,11 @@ export type MutationDeleteAttendeeArgs = {
 };
 
 
+export type MutationDeleteEventArgs = {
+  eventId: Scalars['Int'];
+};
+
+
 export type MutationDeleteUserArgs = {
   id: Scalars['Int'];
 };
@@ -174,6 +195,11 @@ export type MutationDeleteUserArgs = {
 
 export type MutationLoginArgs = {
   params: UserLoginInput;
+};
+
+
+export type MutationUpdateEventArgs = {
+  params: EventUpsert;
 };
 
 
@@ -201,7 +227,7 @@ export enum PositionDef {
 export type Query = {
   __typename?: 'Query';
   decoder: Decoder;
-  getAttendee: Attendee;
+  getAttendee?: Maybe<Attendee>;
   getAttendeeEventListByUserId: AttendEventList;
   getAttendeeUserListByEventId: AttendeeUserList;
   getEvent: Event;
@@ -229,6 +255,11 @@ export type QueryGetAttendeeUserListByEventIdArgs = {
 
 export type QueryGetEventArgs = {
   eventId: Scalars['Int'];
+};
+
+
+export type QueryGetEventAllArgs = {
+  distinct?: InputMaybe<Array<EventKeyMap>>;
 };
 
 
@@ -306,6 +337,8 @@ export type UserLoginInput = {
 export type UserLoginResponse = {
   __typename?: 'UserLoginResponse';
   email: Scalars['String'];
+  iconName?: Maybe<Scalars['String']>;
+  iconPath?: Maybe<Scalars['String']>;
   isAdmin: Scalars['Boolean'];
   name?: Maybe<Scalars['String']>;
   userId: Scalars['Float'];
@@ -339,19 +372,26 @@ export type UserUpsertResponse = {
   password: Scalars['String'];
 };
 
+export type GetAttendeeQueryVariables = Exact<{
+  params: AttendeeKeyInput;
+}>;
+
+
+export type GetAttendeeQuery = { __typename?: 'Query', getAttendee?: { __typename?: 'Attendee', userId: number, eventId: number } | null };
+
 export type GetAttendeeEventListByUserIdQueryVariables = Exact<{
   userId: Scalars['Int'];
 }>;
 
 
-export type GetAttendeeEventListByUserIdQuery = { __typename?: 'Query', getAttendeeEventListByUserId: { __typename?: 'AttendEventList', userId: number, eventList: Array<{ __typename?: 'Event', userId: number, id: number, categoryId?: number | null, name: string, location?: string | null, detail?: string | null, begin: any, end: any, isTemporary: boolean, lastUpdate: any, createdDate: any }> } };
+export type GetAttendeeEventListByUserIdQuery = { __typename?: 'Query', getAttendeeEventListByUserId: { __typename?: 'AttendEventList', userId: number, eventList: Array<{ __typename?: 'Event', userId?: number | null, id: number, categoryId?: number | null, name: string, location?: string | null, detail?: string | null, begin: any, end: any, isTemporary: boolean, lastUpdate: any, createdDate: any }> } };
 
 export type GetAttendeeUserListByEventIdQueryVariables = Exact<{
   eventId: Scalars['Int'];
 }>;
 
 
-export type GetAttendeeUserListByEventIdQuery = { __typename?: 'Query', getAttendeeUserListByEventId: { __typename?: 'AttendeeUserList', eventId: number, userlist: Array<{ __typename?: 'User', givenName: string, familyName: string, givenKana?: string | null, familyKana?: string | null, email: string, password: string, division: string, position: PositionDef, iconPath?: string | null, iconName?: string | null, description?: string | null, theme: ThemeDef, isAdmin: boolean, isStop: boolean, lastUpdate: any, attendees?: string | null }> } };
+export type GetAttendeeUserListByEventIdQuery = { __typename?: 'Query', getAttendeeUserListByEventId: { __typename?: 'AttendeeUserList', eventId: number, userlist: Array<{ __typename?: 'User', id: number, givenName: string, familyName: string, givenKana?: string | null, familyKana?: string | null, email: string, password: string, division: string, position: PositionDef, iconPath?: string | null, iconName?: string | null, description?: string | null, theme: ThemeDef, isAdmin: boolean, isStop: boolean, lastUpdate: any, attendees?: string | null }> } };
 
 export type UpsertAttendeeMutationVariables = Exact<{
   params: AttendeeKeyInput;
@@ -372,24 +412,26 @@ export type DecoderQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type DecoderQuery = { __typename?: 'Query', decoder: { __typename?: 'Decoder', category: Array<{ __typename?: 'DecoderItem', code: string, name?: string | null, id?: number | null }>, divisionCode: Array<{ __typename?: 'DecoderItem', code: string }> } };
 
-export type GetEventAllQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetEventAllQueryVariables = Exact<{
+  distinct?: InputMaybe<Array<EventKeyMap> | EventKeyMap>;
+}>;
 
 
-export type GetEventAllQuery = { __typename?: 'Query', getEventAll: Array<{ __typename?: 'Event', userId: number, id: number, categoryId?: number | null, name: string, location?: string | null, detail?: string | null, begin: any, end: any, isTemporary: boolean, lastUpdate: any, createdDate: any }> };
+export type GetEventAllQuery = { __typename?: 'Query', getEventAll: Array<{ __typename?: 'Event', userId?: number | null, id: number, categoryId?: number | null, name: string, location?: string | null, detail?: string | null, begin: any, end: any, isTemporary: boolean, lastUpdate: any, createdDate: any }> };
 
 export type GetEventQueryVariables = Exact<{
   eventId: Scalars['Int'];
 }>;
 
 
-export type GetEventQuery = { __typename?: 'Query', getEvent: { __typename?: 'Event', userId: number, id: number, categoryId?: number | null, name: string, location?: string | null, detail?: string | null, begin: any, end: any, isTemporary: boolean, lastUpdate: any, createdDate: any } };
+export type GetEventQuery = { __typename?: 'Query', getEvent: { __typename?: 'Event', userId?: number | null, id: number, categoryId?: number | null, name: string, location?: string | null, detail?: string | null, begin: any, end: any, isTemporary: boolean, lastUpdate: any, createdDate: any } };
 
 export type GetEventListQueryVariables = Exact<{
   params?: InputMaybe<EventUpsert>;
 }>;
 
 
-export type GetEventListQuery = { __typename?: 'Query', getEventList: Array<{ __typename?: 'Event', userId: number, id: number, categoryId?: number | null, name: string, location?: string | null, detail?: string | null, begin: any, end: any, isTemporary: boolean, lastUpdate: any, createdDate: any }> };
+export type GetEventListQuery = { __typename?: 'Query', getEventList: Array<{ __typename?: 'Event', userId?: number | null, id: number, categoryId?: number | null, name: string, location?: string | null, detail?: string | null, begin: any, end: any, isTemporary: boolean, lastUpdate: any, createdDate: any }> };
 
 export type UpsertEventMutationVariables = Exact<{
   params: EventUpsert;
@@ -398,12 +440,26 @@ export type UpsertEventMutationVariables = Exact<{
 
 export type UpsertEventMutation = { __typename?: 'Mutation', upsertEvent: { __typename?: 'EventUpsertResponse', id: number } };
 
+export type UpdateEventMutationVariables = Exact<{
+  params: EventUpsert;
+}>;
+
+
+export type UpdateEventMutation = { __typename?: 'Mutation', updateEvent: { __typename?: 'EventUpsertResponse', id: number } };
+
 export type CreateEventMutationVariables = Exact<{
   params: EventUpsert;
 }>;
 
 
 export type CreateEventMutation = { __typename?: 'Mutation', createEvent: { __typename?: 'EventUpsertResponse', id: number } };
+
+export type DeleteEventMutationVariables = Exact<{
+  eventId: Scalars['Int'];
+}>;
+
+
+export type DeleteEventMutation = { __typename?: 'Mutation', deleteEvent: { __typename?: 'EventUpsertResponse', id: number } };
 
 export type GetUserQueryVariables = Exact<{
   id: Scalars['Int'];
@@ -443,7 +499,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserLoginResponse', userId: number, email: string, isAdmin: boolean } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserLoginResponse', userId: number, email: string, isAdmin: boolean, iconPath?: string | null, iconName?: string | null } };
 
 export type ChangePasswordMutationVariables = Exact<{
   params: ChangePasswordInput;
@@ -453,6 +509,42 @@ export type ChangePasswordMutationVariables = Exact<{
 export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: { __typename?: 'ChangePasswordResponse', userId: string, status: ChangePasswordStatusDef } };
 
 
+export const GetAttendeeDocument = gql`
+    query getAttendee($params: AttendeeKeyInput!) {
+  getAttendee(params: $params) {
+    userId
+    eventId
+  }
+}
+    `;
+
+/**
+ * __useGetAttendeeQuery__
+ *
+ * To run a query within a React component, call `useGetAttendeeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAttendeeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAttendeeQuery({
+ *   variables: {
+ *      params: // value for 'params'
+ *   },
+ * });
+ */
+export function useGetAttendeeQuery(baseOptions: Apollo.QueryHookOptions<GetAttendeeQuery, GetAttendeeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAttendeeQuery, GetAttendeeQueryVariables>(GetAttendeeDocument, options);
+      }
+export function useGetAttendeeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAttendeeQuery, GetAttendeeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAttendeeQuery, GetAttendeeQueryVariables>(GetAttendeeDocument, options);
+        }
+export type GetAttendeeQueryHookResult = ReturnType<typeof useGetAttendeeQuery>;
+export type GetAttendeeLazyQueryHookResult = ReturnType<typeof useGetAttendeeLazyQuery>;
+export type GetAttendeeQueryResult = Apollo.QueryResult<GetAttendeeQuery, GetAttendeeQueryVariables>;
 export const GetAttendeeEventListByUserIdDocument = gql`
     query GetAttendeeEventListByUserId($userId: Int!) {
   getAttendeeEventListByUserId(userId: $userId) {
@@ -506,6 +598,7 @@ export const GetAttendeeUserListByEventIdDocument = gql`
   getAttendeeUserListByEventId(eventId: $eventId) {
     eventId
     userlist {
+      id
       givenName
       familyName
       givenKana
@@ -664,8 +757,8 @@ export type DecoderQueryHookResult = ReturnType<typeof useDecoderQuery>;
 export type DecoderLazyQueryHookResult = ReturnType<typeof useDecoderLazyQuery>;
 export type DecoderQueryResult = Apollo.QueryResult<DecoderQuery, DecoderQueryVariables>;
 export const GetEventAllDocument = gql`
-    query GetEventAll {
-  getEventAll {
+    query GetEventAll($distinct: [EventKeyMap!]) {
+  getEventAll(distinct: $distinct) {
     userId
     id
     categoryId
@@ -693,6 +786,7 @@ export const GetEventAllDocument = gql`
  * @example
  * const { data, loading, error } = useGetEventAllQuery({
  *   variables: {
+ *      distinct: // value for 'distinct'
  *   },
  * });
  */
@@ -830,6 +924,39 @@ export function useUpsertEventMutation(baseOptions?: Apollo.MutationHookOptions<
 export type UpsertEventMutationHookResult = ReturnType<typeof useUpsertEventMutation>;
 export type UpsertEventMutationResult = Apollo.MutationResult<UpsertEventMutation>;
 export type UpsertEventMutationOptions = Apollo.BaseMutationOptions<UpsertEventMutation, UpsertEventMutationVariables>;
+export const UpdateEventDocument = gql`
+    mutation UpdateEvent($params: EventUpsert!) {
+  updateEvent(params: $params) {
+    id
+  }
+}
+    `;
+export type UpdateEventMutationFn = Apollo.MutationFunction<UpdateEventMutation, UpdateEventMutationVariables>;
+
+/**
+ * __useUpdateEventMutation__
+ *
+ * To run a mutation, you first call `useUpdateEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateEventMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateEventMutation, { data, loading, error }] = useUpdateEventMutation({
+ *   variables: {
+ *      params: // value for 'params'
+ *   },
+ * });
+ */
+export function useUpdateEventMutation(baseOptions?: Apollo.MutationHookOptions<UpdateEventMutation, UpdateEventMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateEventMutation, UpdateEventMutationVariables>(UpdateEventDocument, options);
+      }
+export type UpdateEventMutationHookResult = ReturnType<typeof useUpdateEventMutation>;
+export type UpdateEventMutationResult = Apollo.MutationResult<UpdateEventMutation>;
+export type UpdateEventMutationOptions = Apollo.BaseMutationOptions<UpdateEventMutation, UpdateEventMutationVariables>;
 export const CreateEventDocument = gql`
     mutation CreateEvent($params: EventUpsert!) {
   createEvent(params: $params) {
@@ -863,6 +990,39 @@ export function useCreateEventMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateEventMutationHookResult = ReturnType<typeof useCreateEventMutation>;
 export type CreateEventMutationResult = Apollo.MutationResult<CreateEventMutation>;
 export type CreateEventMutationOptions = Apollo.BaseMutationOptions<CreateEventMutation, CreateEventMutationVariables>;
+export const DeleteEventDocument = gql`
+    mutation DeleteEvent($eventId: Int!) {
+  deleteEvent(eventId: $eventId) {
+    id
+  }
+}
+    `;
+export type DeleteEventMutationFn = Apollo.MutationFunction<DeleteEventMutation, DeleteEventMutationVariables>;
+
+/**
+ * __useDeleteEventMutation__
+ *
+ * To run a mutation, you first call `useDeleteEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteEventMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteEventMutation, { data, loading, error }] = useDeleteEventMutation({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *   },
+ * });
+ */
+export function useDeleteEventMutation(baseOptions?: Apollo.MutationHookOptions<DeleteEventMutation, DeleteEventMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteEventMutation, DeleteEventMutationVariables>(DeleteEventDocument, options);
+      }
+export type DeleteEventMutationHookResult = ReturnType<typeof useDeleteEventMutation>;
+export type DeleteEventMutationResult = Apollo.MutationResult<DeleteEventMutation>;
+export type DeleteEventMutationOptions = Apollo.BaseMutationOptions<DeleteEventMutation, DeleteEventMutationVariables>;
 export const GetUserDocument = gql`
     query GetUser($id: Int!) {
   getUser(id: $id) {
@@ -1069,6 +1229,8 @@ export const LoginDocument = gql`
     userId
     email
     isAdmin
+    iconPath
+    iconName
   }
 }
     `;

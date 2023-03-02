@@ -304,33 +304,32 @@ export const UserProfile: React.VFC<UserProfileProps> = ({ userId }) => {
                 </Box>
 
                 {/* 共通部分 テーマ */}
-                <Container>
-                    <Box width="50%">
-                        <Typography component={"label"}>テーマ</Typography>
 
-                        <FormControl fullWidth sx={{ mt: 2, mb: 1 }} margin="dense">
-                            <InputLabel id="position-select-label">テーマ</InputLabel>
-                            <Select
-                                id="position-select-label"
-                                onChange={onChangeTheme}
-                                defaultValue={userData?.getUser.theme}
+                <Box width="50%" paddingLeft={2}>
+                    <Typography component={"label"}>テーマ</Typography>
+
+                    <FormControl fullWidth sx={{ mt: 2, mb: 1 }} margin="dense">
+                        <InputLabel id="position-select-label">テーマ</InputLabel>
+                        <Select
+                            id="position-select-label"
+                            onChange={onChangeTheme}
+                            defaultValue={userData?.getUser.theme}
+                        >
+                            <MenuItem
+                                selected={userData?.getUser.theme === ThemeDef.Normal}
+                                value={ThemeDef.Normal}
                             >
-                                <MenuItem
-                                    selected={userData?.getUser.theme === ThemeDef.Normal}
-                                    value={ThemeDef.Normal}
-                                >
-                                    ノーマル
-                                </MenuItem>
-                                <MenuItem
-                                    selected={userData?.getUser.theme === ThemeDef.Dark}
-                                    value={ThemeDef.Dark}
-                                >
-                                    ダーク
-                                </MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Box>
-                </Container>
+                                ノーマル
+                            </MenuItem>
+                            <MenuItem
+                                selected={userData?.getUser.theme === ThemeDef.Dark}
+                                value={ThemeDef.Dark}
+                            >
+                                ダーク
+                            </MenuItem>
+                        </Select>
+                    </FormControl>
+                </Box>
             </Box>
 
             <Dialog
