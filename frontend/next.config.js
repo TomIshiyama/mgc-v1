@@ -18,6 +18,7 @@
 
 const config = {
     experimental: {
+        optimizeFonts: true,
         swcLoader: true,
         swcMinify: true,
         cpus: 4,

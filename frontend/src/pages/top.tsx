@@ -1,3 +1,4 @@
+import { Box } from "@mui/system";
 import moment from "moment";
 import React from "react";
 // eslint-disable-next-line import/named
@@ -29,21 +30,23 @@ const Top = () => {
                 description="TOP画面 "
                 keyword="カレンダー トップ画面"
             />
-            <TopPageComponent>
-                <Calendar
-                    localizer={mLocalizer}
-                    events={mapCalender(eventData?.getEventAll ?? [])}
-                    startAccessor="start"
-                    endAccessor="end"
-                    style={{ minHeight: 500, height: "80vh" }}
-                    selectable
-                    onSelectEvent={(e: Event) => {
-                        const resource = e.resource as BaseEventProps;
-                        doToggleDrawer?.("right", true);
-                        setKey?.(resource.id!);
-                    }}
-                />
-            </TopPageComponent>
+            <Box height="auto">
+                <TopPageComponent>
+                    <Calendar
+                        localizer={mLocalizer}
+                        events={mapCalender(eventData?.getEventAll ?? [])}
+                        startAccessor="start"
+                        endAccessor="end"
+                        style={{ minHeight: 500, height: "80vh" }}
+                        selectable
+                        onSelectEvent={(e: Event) => {
+                            const resource = e.resource as BaseEventProps;
+                            doToggleDrawer?.("right", true);
+                            setKey?.(resource.id!);
+                        }}
+                    />
+                </TopPageComponent>
+            </Box>
         </>
     );
 };

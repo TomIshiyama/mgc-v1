@@ -69,6 +69,12 @@ export const validationRules: {
     category: {
         required: message.required,
     },
+    location: {
+        required: message.required,
+    },
+    detail: {
+        required: message.required,
+    },
 };
 
 // POSTリクエスト（サインイン・サインアウトなど）に必要なCSRFトークンを返却する
@@ -76,7 +82,7 @@ export const getServerSideProps = async (ctx: CtxOrReq | undefined) => {
     return {
         props: {
             title: "login",
-            csrfToken: await getCsrfToken(ctx),
+            csrfToken: (await getCsrfToken(ctx)) ?? "",
         },
     };
 };
@@ -85,7 +91,8 @@ const SignIn = ({ csrfToken }: { csrfToken: string | undefined }) => {
     const router = useRouter();
 
     const [isError, setIsError] = React.useState(false);
-    const { handleSubmit, setError, control } = useForm<FormInputList>({
+
+    const { handleSubmit, control } = useForm<FormInputList>({
         mode: "onChange",
     });
 

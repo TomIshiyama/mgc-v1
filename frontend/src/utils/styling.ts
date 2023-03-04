@@ -3,7 +3,7 @@ export const COLOR = {
     meeting: "aqua",
     tech: "gold",
     meetup: "hotPink", // deepPink
-    fff: "MediumSpringGreen",
+    fftt: "MediumSpringGreen",
     primary: "CornflowerBlue",
     anniversary: "Khaki",
     etc: "RosyBrown",
