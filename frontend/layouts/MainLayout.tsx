@@ -68,8 +68,8 @@ export const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open
     bgcolor?: HTMLElement["style"]["backgroundColor"];
 }>(({ theme, open, bgcolor }) => ({
     flexGrow: 1,
-    ...(bgcolor ? { backgroundColor: bgcolor } : undefined),
-    height: bgcolor ? "auto" : "100vh",
+    ...(bgcolor ? { backgroundColor: bgcolor } : { backgroundColor: "whitesmoke" }),
+    height: "auto",
     padding: theme.spacing(3),
     transition: theme.transitions.create("margin", {
         easing: theme.transitions.easing.sharp,
