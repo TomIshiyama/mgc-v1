@@ -91,7 +91,7 @@ export const DetailDrawer: React.VFC<DetailDrawerProps> = ({
                         minWidth: DRAWNER.minWidth,
                     }}
                     className="event-detail-drawer__wrapper"
-                    component="form"
+                    component={viewEditMode === ViewEditMode.view ? "div" : "form"}
                     onSubmit={handleSubmit(onSubmitCallBack)}
                 >
                     {/* center side
@@ -312,120 +312,131 @@ const EventDetailDrawerEdit: React.FC<EventDetailDrawerEditProps> = ({
                 )}
             />
 
-            <Controller
-                name="category"
-                defaultValue={initialValue.category}
-                control={control}
-                rules={validationRules.division}
-                render={({ field, fieldState }) => (
-                    <MUIProps.ToggleButtonGroup
-                        {...field}
-                        sx={{
-                            "& .css-1gjgmky-MuiToggleButtonGroup-root .MuiToggleButtonGroup-grouped":
-                                {
-                                    borderRadius: ".5em",
-                                },
-                        }}
-                    >
-                        {data?.decoder?.category
-                            ?.filter((v) => v.code !== "temporary")
-                            .map((code, index) => (
-                                <MUIProps.ToggleButton
-                                    key={index}
-                                    value={code.code}
-                                    sx={{
-                                        width: "6em",
-                                        height: "20px",
-                                        bgcolor: COLOR[code.code as keyof typeof COLOR],
-                                        margin: "0 4px",
-                                    }}
+            <Box margin={".5em 0"}>
+                <Controller
+                    name="category"
+                    defaultValue={
+                        initialValue.category === "temporary"
+                            ? undefined
+                            : initialValue.category
+                    }
+                    // defaultValue={initialValue.category}
+                    control={control}
+                    rules={validationRules.category}
+                    render={({ field, fieldState }) => (
+                        <MUIProps.ToggleButtonGroup
+                            {...field}
+                            sx={{
+                                "& .css-1gjgmky-MuiToggleButtonGroup-root .MuiToggleButtonGroup-grouped":
+                                    {
+                                        borderRadius: ".5em",
+                                    },
+                            }}
+                        >
+                            {data?.decoder?.category
+                                ?.filter((v) => v.code !== "temporary")
+                                .map((code, index) => (
+                                    <MUIProps.ToggleButton
+                                        key={index}
+                                        value={code.code}
+                                        sx={{
+                                            width: "6em",
+                                            height: "20px",
+                                            bgcolor:
+                                                COLOR[code.code as keyof typeof COLOR],
+                                            margin: "0 4px",
+                                        }}
+                                        size="small"
+                                    >
+                                        {code.name}
+                                    </MUIProps.ToggleButton>
+                                ))}
+                        </MUIProps.ToggleButtonGroup>
+                    )}
+                />
+            </Box>
+            <Box margin={".5em 0"}>
+                <Controller
+                    name="location"
+                    defaultValue={initialValue.location}
+                    control={control}
+                    rules={validationRules.location}
+                    render={({ field, fieldState }) => (
+                        <MUIProps.Autocomplete
+                            {...field}
+                            options={options}
+                            value={{ label: field.value }}
+                            onChange={(e, data) => field.onChange(data?.label)}
+                            defaultValue={options.find((v) => v.label === field.value)}
+                            // disablePortal
+                            sx={{ width: 300 }}
+                            renderInput={(params) => (
+                                <MUIProps.TextField
+                                    {...params}
+                                    label="開催場所"
                                     size="small"
-                                >
-                                    {code.name}
-                                </MUIProps.ToggleButton>
-                            ))}
-                    </MUIProps.ToggleButtonGroup>
-                )}
-            />
-
-            <Controller
-                name="location"
-                defaultValue={initialValue.location}
-                control={control}
-                rules={validationRules.location}
-                render={({ field, fieldState }) => (
-                    <MUIProps.Autocomplete
-                        {...field}
-                        options={options}
-                        value={{ label: field.value }}
-                        onChange={(e, data) => field.onChange(data?.label)}
-                        defaultValue={options.find((v) => v.label === field.value)}
-                        // disablePortal
-                        sx={{ width: 300 }}
-                        renderInput={(params) => (
-                            <MUIProps.TextField
-                                {...params}
-                                label="開催場所"
-                                size="small"
-                            />
-                        )}
-                    />
-                )}
-            />
-            <Controller
-                name="begin"
-                // defaultValue={"2022/12/01 12:30"}
-                defaultValue={moment(initialValue.beginDate).format(
-                    defDateFormat.dateTimeLocal
-                )}
-                control={control}
-                rules={validationRules.givenKana}
-                render={({ field, fieldState }) => (
-                    <MUIProps.TextField
-                        {...field}
-                        label="開始日時"
-                        type="datetime-local"
-                        // defaultValue={}
-                        defaultValue={"2022/12/01 12:30"}
-                        size="small"
-                        sx={{ width: 250 }}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        // TODO: InputProps
-                    />
-                )}
-            />
-            <Controller
-                name="end"
-                defaultValue={moment(initialValue.endDate).format(
-                    defDateFormat.dateTimeLocal
-                )}
-                control={control}
-                rules={validationRules.givenKana}
-                render={({ field, fieldState }) => (
-                    <MUIProps.TextField
-                        {...field}
-                        label="終了日時"
-                        type="datetime-local"
-                        defaultValue={"2020/12/01 12:00"}
-                        size="small"
-                        sx={{ width: 250 }}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        inputProps={{
-                            step: "900", // 5 min
-                        }}
-                    />
-                )}
-            />
+                                />
+                            )}
+                        />
+                    )}
+                />
+            </Box>
+            <Box margin={".5em 0"}>
+                <Controller
+                    name="begin"
+                    // defaultValue={"2022/12/01 12:30"}
+                    defaultValue={moment(initialValue.beginDate).format(
+                        defDateFormat.dateTimeLocal
+                    )}
+                    control={control}
+                    rules={validationRules.givenKana}
+                    render={({ field, fieldState }) => (
+                        <MUIProps.TextField
+                            {...field}
+                            label="開始日時"
+                            type="datetime-local"
+                            // defaultValue={}
+                            defaultValue={"2022/12/01 12:30"}
+                            size="small"
+                            sx={{ width: 250 }}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            // TODO: InputProps
+                        />
+                    )}
+                />
+                <Controller
+                    name="end"
+                    defaultValue={moment(initialValue.endDate).format(
+                        defDateFormat.dateTimeLocal
+                    )}
+                    control={control}
+                    rules={validationRules.givenKana}
+                    render={({ field, fieldState }) => (
+                        <MUIProps.TextField
+                            {...field}
+                            label="終了日時"
+                            type="datetime-local"
+                            defaultValue={"2020/12/01 12:00"}
+                            size="small"
+                            sx={{ width: 250 }}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            inputProps={{
+                                step: "900", // 5 min
+                            }}
+                        />
+                    )}
+                />
+            </Box>
 
             <Controller
                 name="detail"
                 defaultValue={initialValue.description}
                 control={control}
-                // rules={validationRules.givenName}
+                rules={validationRules.detail}
                 render={({ field, fieldState }) => (
                     <MUIProps.TextField
                         {...field}
