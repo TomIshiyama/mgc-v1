@@ -128,9 +128,9 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
             variables: {
                 params: params,
             },
-            // onCompleted: (data) => {
-            //     setMode?.(CONTENT_MODE.view);
-            // },
+            onCompleted: (data) => {
+                setMode?.(CONTENT_MODE.view);
+            },
         });
     };
 
@@ -156,7 +156,7 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
                 description: datum?.detail ?? "",
                 key: key,
             },
-            onSubmit: onSubmit,
+            onSubmit,
             max: 10,
             anchor: "right",
             margin: { top: "5em" },
@@ -219,7 +219,7 @@ export const EventDetailDrawer: React.VFC<EventDetailDrawerProps> = ({ mode }) =
                               type: "submit",
                               onClick: () => {
                                   // FIXME: 登録Mutation
-                                  setMode?.(() => CONTENT_MODE.view);
+                                  //   setMode?.(() => CONTENT_MODE.view);
                               },
                           },
                     isAttend
